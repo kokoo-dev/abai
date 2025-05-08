@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/schedules.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="page-title">
+            <h1>일정 관리</h1>
+        </div>
+
+        <!-- 서브 탭 네비게이션 -->
+        <div class="sub-tabs">
+            <a href="/schedules/matches" class="sub-tab active" id="matches-tab">
+                <i class="fas fa-futbol"></i> 경기
+            </a>
+            <a href="/schedules/calendar" class="sub-tab" id="calendar-tab">
+                <i class="far fa-calendar-alt"></i> 캘린더
+            </a>
+        </div>
+
+        <!-- 컨텐츠 영역 -->
+        <div class="tab-content">
+            <!-- 경기 일정 탭 컨텐츠 -->
+            <div id="matches-content" class="content-section active">
+                <!-- 경기 추가 버튼 -->
+                <div class="add-item-btn">
+                    <a href="/schedules/match-write" class="btn add-btn">
+                        <i class="fas fa-plus"></i> 새 경기 추가
+                    </a>
+                </div>
+
+                <!-- 필터 버튼 -->
+                <div class="item-filter">
+                    <button class="filter-btn active" data-filter="all">전체</button>
+                    <button class="filter-btn" data-filter="upcoming">예정</button>
+                    <button class="filter-btn" data-filter="completed">결과</button>
+                </div>
+
+                <!-- 경기 목록 -->
+                <div class="match-list">
+                    <!-- 예정된 경기 -->
+                    <div class="match-item upcoming" data-match-id="1">
+                        <div class="match-date">
+                            <span class="day">15</span>
+                            <span class="month">8월</span>
+                        </div>
+                        <div class="match-details">
+                            <div class="match-teams">
+                                <span class="team home">우리팀</span>
+                                <span class="versus">VS</span>
+                                <span class="team away">상대팀A</span>
+                            </div>
+                            <div class="match-info">
+                                <span class="match-time"><i class="far fa-clock"></i> 19:00</span>
+                                <span class="match-location"><i class="fas fa-map-marker-alt"></i> 한강공원 잔디구장</span>
+                            </div>
+                        </div>
+                        <div class="match-status upcoming-badge">예정</div>
+                    </div>
+
+                    <!-- 완료된 경기 -->
+                    <div class="match-item completed" data-match-id="2">
+                        <div class="match-date">
+                            <span class="day">10</span>
+                            <span class="month">8월</span>
+                        </div>
+                        <div class="match-details">
+                            <div class="match-teams">
+                                <span class="team home">우리팀</span>
+                                <span class="score">3:1</span>
+                                <span class="team away">상대팀B</span>
+                            </div>
+                            <div class="match-info">
+                                <span class="match-result win">승리</span>
+                                <span class="match-location"><i class="fas fa-map-marker-alt"></i> 상암 월드컵 경기장</span>
+                            </div>
+                        </div>
+                        <div class="match-status completed-badge">완료</div>
+                    </div>
+
+                    <!-- 추가 경기 항목들 -->
+                </div>
+            </div>
+
+            <!-- 캘린더 탭 컨텐츠 -->
+            <div id="calendar-content" class="content-section">
+                <div class="calendar-header">
+                    <button id="prev-month" class="month-nav"><i class="fas fa-chevron-left"></i></button>
+                    <h2 id="current-month">2023년 8월</h2>
+                    <button id="next-month" class="month-nav"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                
+                <div class="calendar-container">
+                    <div class="calendar-weekdays">
+                        <div>일</div>
+                        <div>월</div>
+                        <div>화</div>
+                        <div>수</div>
+                        <div>목</div>
+                        <div>금</div>
+                        <div>토</div>
+                    </div>
+                    <div class="calendar-days" id="calendar-days">
+                        <!-- 캘린더 날짜는 JavaScript로 동적 생성됨 -->
+                    </div>
+                </div>
+
+                <div class="calendar-legend">
+                    <div class="legend-item">
+                        <span class="legend-color match-color"></span>
+                        <span>경기 일정</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color birthday-color"></span>
+                        <span>팀원 생일</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
+
+    <!-- 일정 상세 정보 모달 -->
+    <div class="event-modal" id="event-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-date">2025년 5월 15일</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-events-list">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/schedules.js}" defer></script>
+</body>
+</html> 

@@ -1,0 +1,233 @@
+/* 홈 페이지 스타일 */
+.container {
+    padding-top: 0.5rem; /* 상단 여백 축소 */
+}
+
+.welcome-section {
+    text-align: center;
+    padding: 1rem 0; /* 패딩 줄임 (2rem에서 1rem으로) */
+}
+
+.welcome-section h1 {
+    font-size: 1.8rem; /* 폰트 크기 약간 줄임 */
+    color: var(--primary-color);
+    margin-bottom: 0.5rem; /* 여백 조정 */
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-logo {
+    width: 120px;
+    height: auto;
+    object-fit: contain;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem; /* 간격 줄임 */
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem; /* 패딩 줄임 */
+    background-color: rgba(52, 152, 219, 0.1);
+    border-radius: 6px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.25rem;
+}
+
+/* 공지사항 미리보기 스타일 */
+.notice-preview {
+    margin-bottom: 1rem;
+}
+
+.notice-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notice-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.notice-item:last-child {
+    border-bottom: none;
+}
+
+.notice-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-right: 0.75rem;
+    margin-top: 0.25rem;
+    min-width: 40px;
+    text-align: center;
+}
+
+.notice-badge.important {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.notice-badge.general {
+    background-color: rgba(52, 152, 219, 0.1);
+    color: var(--primary-color);
+}
+
+.notice-badge.event {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--secondary-color);
+}
+
+.notice-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.notice-title {
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+    text-decoration: none;
+}
+
+.notice-title:hover {
+    color: var(--primary-color);
+}
+
+.notice-date {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.view-all-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.view-all-btn:hover {
+    background-color: rgba(52, 152, 219, 0.05);
+    border-radius: 4px;
+}
+
+.view-all-btn i {
+    margin-left: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.match-info {
+    background-color: rgba(52, 152, 219, 0.05);
+    padding: 1rem;
+    border-radius: 6px;
+}
+
+.match-date {
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.match-teams {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.team {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.versus {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.match-location {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.match-location i {
+    color: var(--primary-color);
+    margin-right: 0.25rem;
+}
+
+.players-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.player-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.player-item:last-child {
+    border-bottom: none;
+}
+
+.player-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.player-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.player-name {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.player-stat {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.login-btn {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+} 

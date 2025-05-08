@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/match-write.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="page-title">
+            <h1>경기 설정</h1>
+        </div>
+
+        <!-- 경기 정보 입력 폼 (새로 추가) -->
+        <div class="match-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="match-date">경기 일자</label>
+                    <input type="date" id="match-date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="match-time">경기 시간</label>
+                    <input type="time" id="match-time" class="form-control">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="opponent-team">상대팀 이름</label>
+                    <input type="text" id="opponent-team" class="form-control" placeholder="상대팀 이름 입력">
+                </div>
+                <div class="form-group">
+                    <label for="match-location">경기 장소</label>
+                    <input type="text" id="match-location" class="form-control" placeholder="경기 장소 입력">
+                </div>
+            </div>
+        </div>
+
+        <!-- 쿼터 선택 탭 -->
+        <div class="quarter-tabs">
+            <button class="quarter-tab active" data-quarter="1">1쿼터</button>
+            <button class="quarter-tab" data-quarter="2">2쿼터</button>
+            <button class="quarter-tab" data-quarter="3">3쿼터</button>
+            <button class="quarter-tab" data-quarter="4">4쿼터</button>
+        </div>
+
+        <!-- 포메이션 선택 -->
+        <div class="formation-select-box">
+            <label for="formation-select">포메이션</label>
+            <select id="formation-select" class="formation-select">
+                <option value="433">4-3-3</option>
+                <option value="442">4-4-2</option>
+                <option value="4411">4-4-1-1</option>
+                <option value="352">3-5-2</option>
+                <option value="532">5-3-2</option>
+                <option value="343">3-4-3</option>
+            </select>
+        </div>
+
+        <!-- 축구장 영역 (넓게) -->
+        <div class="field-wrapper">
+            <div class="field">
+                <!-- 안내 메시지 (축구장 내부 상단) -->
+                <div class="field-instruction-inner">
+                    <p>포지션을 터치하여 선수를 선택하세요</p>
+                </div>
+                <!-- JS로 동적 생성됨 -->
+            </div>
+        </div>
+        
+        <!-- 저장 버튼 -->
+        <div class="save-formation">
+            <button class="btn save-btn">경기 정보 저장</button>
+        </div>
+
+        <!-- 선수 할당 모달 추가 -->
+        <div class="player-select-modal" id="player-select-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>선수 선택</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-player-list">
+                    <!-- 선수 목록은 JS로 동적 생성됨 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
+
+    <script th:src="@{/js/match-write.js}" defer></script>
+    <script>
+        // 페이지 로드 시 네비게이션 바에서 일정 탭 활성화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 모든 탭의 active 클래스 제거
+            document.querySelectorAll('.tab-container .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 일정 탭 활성화
+            document.querySelector('.tab-container .tab[href="/schedules"]').classList.add('active');
+        });
+    </script>
+</body>
+</html> 

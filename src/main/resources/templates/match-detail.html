@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/match-detail.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="match-header">
+            <div class="match-date">2023년 8월 10일 (목) 15:30</div>
+            <div class="match-location">
+                <i class="fas fa-map-marker-alt"></i> 상암 월드컵 경기장
+            </div>
+        </div>
+
+        <div class="match-score-card">
+            <div class="team-section home">
+                <div class="team-logo">
+                    <img src="/images/team-logo.png" alt="우리팀 로고">
+                </div>
+                <div class="team-name">우리팀</div>
+                <div class="team-score">3</div>
+            </div>
+            <div class="score-divider">
+                <div class="match-state">종료</div>
+            </div>
+            <div class="team-section away">
+                <div class="team-logo">
+                    <img src="/images/opponent-logo.png" alt="상대팀 로고">
+                </div>
+                <div class="team-name">상대팀</div>
+                <div class="team-score">1</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="summary">요약</button>
+            <button class="tab-btn" data-tab="stats">통계</button>
+            <button class="tab-btn" data-tab="lineup">라인업</button>
+        </div>
+
+        <div class="tab-content active" id="summary">
+            <div class="card">
+                <h3 class="section-title">경기 이벤트</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="timeline-time">12'</span>
+                        <div class="timeline-content">
+                            <div class="event goal">
+                                <i class="fas fa-futbol"></i>
+                                <span class="event-text"><strong>골</strong> - 김축구 (우리팀)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">34'</span>
+                        <div class="timeline-content">
+                            <div class="event yellow-card">
+                                <i class="fas fa-square"></i>
+                                <span class="event-text"><strong>옐로카드</strong> - 이수비 (상대팀)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">45'</span>
+                        <div class="timeline-content">
+                            <div class="event half-time">
+                                <i class="fas fa-stopwatch"></i>
+                                <span class="event-text"><strong>하프타임</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">58'</span>
+                        <div class="timeline-content">
+                            <div class="event goal">
+                                <i class="fas fa-futbol"></i>
+                                <span class="event-text"><strong>골</strong> - 박공격 (우리팀)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">67'</span>
+                        <div class="timeline-content">
+                            <div class="event goal">
+                                <i class="fas fa-futbol"></i>
+                                <span class="event-text"><strong>골</strong> - 정슈팅 (상대팀)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">85'</span>
+                        <div class="timeline-content">
+                            <div class="event goal">
+                                <i class="fas fa-futbol"></i>
+                                <span class="event-text"><strong>골</strong> - 김축구 (우리팀)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">90'</span>
+                        <div class="timeline-content">
+                            <div class="event full-time">
+                                <i class="fas fa-flag-checkered"></i>
+                                <span class="event-text"><strong>경기 종료</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="stats">
+            <div class="card">
+                <h3 class="section-title">경기 통계</h3>
+                <div class="stat-item">
+                    <div class="stat-label">점유율</div>
+                    <div class="stat-bars">
+                        <div class="stat-bar home" style="width: 60%">60%</div>
+                        <div class="stat-bar away" style="width: 40%">40%</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">슈팅</div>
+                    <div class="stat-bars">
+                        <div class="stat-bar home" style="width: 75%">15</div>
+                        <div class="stat-bar away" style="width: 25%">5</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">유효 슈팅</div>
+                    <div class="stat-bars">
+                        <div class="stat-bar home" style="width: 66.7%">8</div>
+                        <div class="stat-bar away" style="width: 33.3%">4</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">코너킥</div>
+                    <div class="stat-bars">
+                        <div class="stat-bar home" style="width: 71.4%">5</div>
+                        <div class="stat-bar away" style="width: 28.6%">2</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">파울</div>
+                    <div class="stat-bars">
+                        <div class="stat-bar home" style="width: 37.5%">3</div>
+                        <div class="stat-bar away" style="width: 62.5%">5</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="lineup">
+            <div class="card">
+                <h3 class="section-title">라인업</h3>
+                <div class="team-lineup">
+                    <h4>우리팀</h4>
+                    <ul class="player-list">
+                        <li class="player">
+                            <span class="player-number">1</span>
+                            <span class="player-name">이골키퍼</span>
+                            <span class="player-position">GK</span>
+                        </li>
+                        <li class="player">
+                            <span class="player-number">4</span>
+                            <span class="player-name">박수비</span>
+                            <span class="player-position">DF</span>
+                        </li>
+                        <li class="player">
+                            <span class="player-number">5</span>
+                            <span class="player-name">정수비</span>
+                            <span class="player-position">DF</span>
+                        </li>
+                        <li class="player">
+                            <span class="player-number">8</span>
+                            <span class="player-name">최미드필더</span>
+                            <span class="player-position">MF</span>
+                        </li>
+                        <li class="player">
+                            <span class="player-number">10</span>
+                            <span class="player-name">김축구</span>
+                            <span class="player-position">FW</span>
+                            <span class="player-stats">⚽ 2골</span>
+                        </li>
+                        <li class="player">
+                            <span class="player-number">11</span>
+                            <span class="player-name">박공격</span>
+                            <span class="player-position">FW</span>
+                            <span class="player-stats">⚽ 1골</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="team-lineup">
+                    <h4>상대팀</h4>
+                    <ul class="player-list">
+                        <li class="player">
+                            <span class="player-number">1</span>
+                            <span class="player-name">김수문장</span>
+                            <span class="player-position">GK</span>
+                        </li>
+                        <li class="player">
+                            <span class="player-number">3</span>
+                            <span class="player-name">이수비</span>
+                            <span class="player-position">DF</span>
+                            <span class="player-stats">🟨</span>
+                        </li>
+                        <li class="player">
+                            <span class="player-number">7</span>
+                            <span class="player-name">박미드필더</span>
+                            <span class="player-position">MF</span>
+                        </li>
+                        <li class="player">
+                            <span class="player-number">9</span>
+                            <span class="player-name">정슈팅</span>
+                            <span class="player-position">FW</span>
+                            <span class="player-stats">⚽ 1골</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn edit-btn">
+                <i class="fas fa-edit"></i> 경기 정보 수정
+            </button>
+            <button class="btn delete-btn">
+                <i class="fas fa-trash"></i> 경기 삭제
+            </button>
+        </div>
+    </div>
+
+    <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
+
+    <script th:src="@{/js/match-detail.js}" defer></script>
+</body>
+</html> 

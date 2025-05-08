@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-section">
+            <h1>ABAI FC</h1>
+            <div class="logo-container">
+                <img th:src="@{/images/logo.png}" alt="ABAI FC 로고" class="welcome-logo">
+            </div>
+        </div>
+
+        <div class="card quick-stats">
+            <h2 class="section-title">최근 기록</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">12</span>
+                    <span class="stat-label">경기 수</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">8</span>
+                    <span class="stat-label">승리</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">3</span>
+                    <span class="stat-label">무승부</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">1</span>
+                    <span class="stat-label">패배</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 공지사항 미리보기 섹션 -->
+        <div class="card notice-preview">
+            <h2 class="section-title">공지사항</h2>
+            <ul class="notice-list">
+                <li class="notice-item">
+                    <span class="notice-badge important">중요</span>
+                    <div class="notice-content">
+                        <a href="/notice-detail?id=1" class="notice-title">2024년 상반기 팀비 납부 안내</a>
+                        <span class="notice-date">2024.01.15</span>
+                    </div>
+                </li>
+                <li class="notice-item">
+                    <span class="notice-badge general">일반</span>
+                    <div class="notice-content">
+                        <a href="/notice-detail?id=2" class="notice-title">정기 모임 일정 안내</a>
+                        <span class="notice-date">2024.01.10</span>
+                    </div>
+                </li>
+                <li class="notice-item">
+                    <span class="notice-badge event">이벤트</span>
+                    <div class="notice-content">
+                        <a href="/notice-detail?id=3" class="notice-title">여름 친선경기 참가 모집</a>
+                        <span class="notice-date">2024.01.05</span>
+                    </div>
+                </li>
+            </ul>
+            <a href="/notices" class="view-all-btn">
+                <span>전체 공지사항 보기</span>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+
+        <div class="card upcoming-match">
+            <h2 class="section-title">다가오는 경기</h2>
+            <div class="match-info">
+                <div class="match-date">2023년 8월 15일 (화) 19:00</div>
+                <div class="match-teams">
+                    <span class="team">우리팀</span>
+                    <span class="versus">VS</span>
+                    <span class="team">상대팀</span>
+                </div>
+                <div class="match-location">
+                    <i class="fas fa-map-marker-alt"></i> 한강공원 잔디구장
+                </div>
+            </div>
+        </div>
+
+        <div class="card recent-players">
+            <h2 class="section-title">최근 활약 선수</h2>
+            <ul class="players-list">
+                <li class="player-item">
+                    <img src="/images/player1.jpg" alt="선수 이미지" class="player-img">
+                    <div class="player-info">
+                        <span class="player-name">김축구</span>
+                        <span class="player-stat">3골 / 2어시스트</span>
+                    </div>
+                </li>
+                <li class="player-item">
+                    <img src="/images/player2.jpg" alt="선수 이미지" class="player-img">
+                    <div class="player-info">
+                        <span class="player-name">이골키퍼</span>
+                        <span class="player-stat">5선방</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
+
+    <script th:src="@{/js/index.js}" defer></script>
+</body>
+</html>

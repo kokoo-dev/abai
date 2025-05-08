@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/notice-detail.css}">
+</head>
+<body>
+    <div class="container">
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <!-- 뒤로가기 버튼 -->
+            <div class="back-button">
+                <a href="/notice" class="btn-text">
+                    <i class="fas fa-arrow-left"></i> 목록으로 돌아가기
+                </a>
+            </div>
+
+            <!-- 공지사항 상세 정보 -->
+            <div class="notice-detail-container">
+                <div class="notice-header">
+                    <span class="notice-category important-badge">중요</span>
+                    <h1 class="notice-title">2024년 상반기 팀비 납부 안내</h1>
+                    <div class="notice-meta">
+                        <span class="notice-author">
+                            <i class="fas fa-user"></i> 관리자
+                        </span>
+                        <span class="notice-date">
+                            <i class="far fa-calendar-alt"></i> 2024.01.15
+                        </span>
+                        <span class="notice-views">
+                            <i class="far fa-eye"></i> 조회수 156
+                        </span>
+                    </div>
+                </div>
+
+                <div class="notice-content">
+                    <p>안녕하세요, 팀원 여러분!</p>
+                    <p>2024년 상반기 팀비 납부 안내드립니다.</p>
+                    <br>
+                    <h3>납부 금액</h3>
+                    <p>- 정회원: 100,000원</p>
+                    <p>- 준회원: 60,000원</p>
+                    <br>
+                    <h3>납부 기한</h3>
+                    <p>2024년 1월 31일까지</p>
+                    <br>
+                    <h3>납부 계좌</h3>
+                    <p>신한은행 123-456-789012 (예금주: 축구팀)</p>
+                    <br>
+                    <h3>팀비 사용 내역</h3>
+                    <p>- 구장 대여료: 70%</p>
+                    <p>- 장비 구입: 15%</p>
+                    <p>- 팀 운영비: 10%</p>
+                    <p>- 경기 운영비: 5%</p>
+                    <br>
+                    <p>문의사항은 총무에게 연락 바랍니다.</p>
+                    <p>감사합니다.</p>
+                </div>
+
+                <!-- 첨부파일 -->
+                <div class="notice-attachments">
+                    <h3>첨부파일</h3>
+                    <ul class="attachments-list">
+                        <li>
+                            <a href="#" class="attachment-link">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>팀비_사용_계획서.pdf</span>
+                                <span class="file-size">(2.1MB)</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="attachment-link">
+                                <i class="fas fa-file-excel"></i>
+                                <span>2023년_결산내역.xlsx</span>
+                                <span class="file-size">(1.5MB)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 댓글 섹션 -->
+                <div class="comments-section">
+                    <h3>댓글 <span class="comments-count">3</span></h3>
+                    
+                    <!-- 댓글 작성 폼 -->
+                    <div class="comment-form">
+                        <textarea placeholder="댓글을 작성하세요..." class="comment-textarea"></textarea>
+                        <button class="comment-submit btn">댓글 작성</button>
+                    </div>
+                    
+                    <!-- 댓글 목록 -->
+                    <ul class="comments-list">
+                        <li class="comment-item">
+                            <div class="comment-header">
+                                <span class="comment-author">김철수</span>
+                                <span class="comment-date">2024.01.15 14:30</span>
+                            </div>
+                            <div class="comment-body">
+                                납부 완료했습니다. 확인 부탁드려요!
+                            </div>
+                            <div class="comment-actions">
+                                <button class="btn-text">답글</button>
+                            </div>
+                        </li>
+                        <li class="comment-item">
+                            <div class="comment-header">
+                                <span class="comment-author">이영희</span>
+                                <span class="comment-date">2024.01.16 09:45</span>
+                            </div>
+                            <div class="comment-body">
+                                영수증 발급 가능한가요?
+                            </div>
+                            <div class="comment-actions">
+                                <button class="btn-text">답글</button>
+                            </div>
+                            
+                            <!-- 대댓글 -->
+                            <ul class="replies-list">
+                                <li class="comment-item reply-item">
+                                    <div class="comment-header">
+                                        <span class="comment-author">관리자</span>
+                                        <span class="comment-date">2024.01.16 10:30</span>
+                                    </div>
+                                    <div class="comment-body">
+                                        네, 가능합니다. 개인메시지로 연락주세요.
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 관리자 버튼 영역 -->
+                <div class="admin-actions">
+                    <button class="btn edit-btn">수정하기</button>
+                    <button class="btn delete-btn">삭제하기</button>
+                </div>
+            </div>
+        </main>
+
+        <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
+    </div>
+
+    <script th:src="@{/js/notice-detail.js}" defer></script>
+</body>
+</html> 

@@ -1,0 +1,246 @@
+/* 공지사항 상세 페이지 스타일 */
+.main-content {
+    padding-bottom: 4rem;
+}
+
+.back-button {
+    margin-bottom: 1rem;
+}
+
+.btn-text {
+    color: var(--primary-color);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.btn-text i {
+    margin-right: 0.5rem;
+}
+
+.btn-text:hover {
+    color: var(--primary-dark);
+    transform: translateX(-3px);
+}
+
+.notice-detail-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.notice-header {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.notice-category {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+
+.important-badge {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.notice-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+    color: var(--text-color);
+}
+
+.notice-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.notice-meta i {
+    margin-right: 0.3rem;
+}
+
+.notice-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+}
+
+.notice-content h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.notice-content p {
+    margin-bottom: 0.75rem;
+}
+
+.notice-attachments {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 2rem;
+}
+
+.notice-attachments h3 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-color);
+}
+
+.attachments-list {
+    list-style: none;
+    padding: 0;
+}
+
+.attachments-list li {
+    margin-bottom: 0.5rem;
+}
+
+.attachment-link {
+    display: flex;
+    align-items: center;
+    color: var(--primary-color);
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.attachment-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.attachment-link i {
+    font-size: 1.25rem;
+    margin-right: 0.75rem;
+}
+
+.file-size {
+    color: #999;
+    margin-left: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.comments-section {
+    margin-top: 2rem;
+}
+
+.comments-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.comments-count {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 0.8rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    margin-left: 0.5rem;
+}
+
+.comment-form {
+    margin-bottom: 1.5rem;
+}
+
+.comment-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    min-height: 100px;
+    margin-bottom: 0.75rem;
+    font-family: inherit;
+}
+
+.comment-submit {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    float: right;
+}
+
+.comments-list {
+    list-style: none;
+    padding: 0;
+}
+
+.comment-item {
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 0;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.comment-author {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.comment-date {
+    font-size: 0.85rem;
+    color: #999;
+}
+
+.comment-body {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+}
+
+.comment-actions {
+    text-align: right;
+}
+
+.replies-list {
+    list-style: none;
+    padding-left: 1.5rem;
+    margin-top: 0.75rem;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+}
+
+.reply-item {
+    border-bottom: none;
+    padding: 0.75rem 1rem;
+}
+
+.admin-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.edit-btn {
+    background-color: var(--secondary-color);
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+} 

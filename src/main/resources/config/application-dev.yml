@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://dpg-d0dakeidbo4c73avp460-a:5432/abai_cauw
+    username: admin
+    password: wZWFqRihQk6QhrW2TNmmYWivXEBGVRtQ
+  jpa:
+    show-sql: false
+  thymeleaf:
+    cache: true
