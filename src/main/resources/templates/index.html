@@ -13,6 +13,41 @@
             </div>
         </div>
 
+        <!-- 생일 알림 배너 추가 -->
+        <div class="birthday-banner" th:if="${upcomingBirthdays != null && !upcomingBirthdays.isEmpty()}">
+            <div class="birthday-icon">
+                <i class="fas fa-birthday-cake"></i>
+            </div>
+            <div class="birthday-content">
+                <span class="birthday-text">
+                    <span th:text="${upcomingBirthdays[0].name}">홍길동</span>
+                    <span th:if="${upcomingBirthdays.size() > 1}" th:text="' 외 ' + (${upcomingBirthdays.size()} - 1) + '명'"> 외 2명</span>
+                    <span>생일이 다가옵니다</span>
+                </span>
+            </div>
+            <a href="/schedules/calendar" class="birthday-arrow">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+
+        <div class="card upcoming-match highlight-match">
+            <h2 class="section-title">다가오는 경기</h2>
+            <div class="match-info">
+                <div class="match-date"><span class="countdown-badge">곧 시작!</span> 2023년 8월 15일 (화) 19:00</div>
+                <div class="match-teams">
+                    <span class="team">우리팀</span>
+                    <span class="versus">VS</span>
+                    <span class="team">상대팀</span>
+                </div>
+                <div class="match-location">
+                    <i class="fas fa-map-marker-alt"></i> 한강공원 잔디구장
+                </div>
+            </div>
+            <div class="match-cta">
+                <button class="attend-btn">경기 내용 보러 가기</button>
+            </div>
+        </div>
+
         <div class="card quick-stats">
             <h2 class="section-title">최근 기록</h2>
             <div class="stats-grid">
@@ -65,41 +100,6 @@
                 <span>전체 공지사항 보기</span>
                 <i class="fas fa-chevron-right"></i>
             </a>
-        </div>
-
-        <div class="card upcoming-match">
-            <h2 class="section-title">다가오는 경기</h2>
-            <div class="match-info">
-                <div class="match-date">2023년 8월 15일 (화) 19:00</div>
-                <div class="match-teams">
-                    <span class="team">우리팀</span>
-                    <span class="versus">VS</span>
-                    <span class="team">상대팀</span>
-                </div>
-                <div class="match-location">
-                    <i class="fas fa-map-marker-alt"></i> 한강공원 잔디구장
-                </div>
-            </div>
-        </div>
-
-        <div class="card recent-players">
-            <h2 class="section-title">최근 활약 선수</h2>
-            <ul class="players-list">
-                <li class="player-item">
-                    <img src="/images/player1.jpg" alt="선수 이미지" class="player-img">
-                    <div class="player-info">
-                        <span class="player-name">김축구</span>
-                        <span class="player-stat">3골 / 2어시스트</span>
-                    </div>
-                </li>
-                <li class="player-item">
-                    <img src="/images/player2.jpg" alt="선수 이미지" class="player-img">
-                    <div class="player-info">
-                        <span class="player-name">이골키퍼</span>
-                        <span class="player-stat">5선방</span>
-                    </div>
-                </li>
-            </ul>
         </div>
     </div>
 

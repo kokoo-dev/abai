@@ -119,6 +119,16 @@ const sampleEvents = [
     }
 ];
 
+// URL 경로에 따라 초기 탭 활성화
+const activateInitialTab = () => {
+    const currentPage = window.location.pathname;
+    if (currentPage.includes('/schedules/calendar')) {
+        switchTab('calendar');
+    } else {
+        switchTab('matches');
+    }
+};
+
 // 탭 전환 기능
 function switchTab(tabId) {
     // 모든 탭 컨텐츠와 탭 버튼 비활성화
@@ -277,81 +287,76 @@ function filterMatches(filter) {
     });
 }
 
-// 이벤트 리스너 등록
-matchesTab.addEventListener('click', function(e) {
-    e.preventDefault();
-    switchTab('matches');
-});
-
-calendarTab.addEventListener('click', function(e) {
-    e.preventDefault();
-    switchTab('calendar');
-});
-
-filterButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        // 활성화된 필터 버튼 변경
-        document.querySelector('.filter-btn.active').classList.remove('active');
-        this.classList.add('active');
-        
-        // 경기 필터링
-        filterMatches(this.dataset.filter);
+// 이벤트 리스너 및 초기화
+document.addEventListener('DOMContentLoaded', function() {
+    // 탭 전환 이벤트 리스너
+    if (matchesTab) {
+        matchesTab.addEventListener('click', function(e) {
+            e.preventDefault();
+            switchTab('matches');
+            history.pushState(null, '', '/schedules/matches');
+        });
+    }
+    
+    if (calendarTab) {
+        calendarTab.addEventListener('click', function(e) {
+            e.preventDefault();
+            switchTab('calendar');
+            history.pushState(null, '', '/schedules/calendar');
+        });
+    }
+    
+    // 브라우저 뒤로가기 이벤트 처리
+    window.addEventListener('popstate', function() {
+        activateInitialTab();
     });
-});
-
-prevMonthBtn.addEventListener('click', function() {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar();
-});
-
-nextMonthBtn.addEventListener('click', function() {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar();
-});
-
-// 모달 닫기 버튼 클릭 이벤트
-closeModalBtn.addEventListener('click', closeEventModal);
-
-// 모달 외부 클릭 시 닫기
-eventModal.addEventListener('click', function(e) {
-    if (e.target === eventModal) {
-        closeEventModal();
-    }
-});
-
-// 초기화 함수
-function init() {
-    // 이벤트 데이터 로드 (샘플 데이터 사용)
-    events = processEvents(sampleEvents);
     
-    // URL 기반 탭 전환
-    const path = window.location.pathname;
-    if (path.includes('/schedules/calendar')) {
-        switchTab('calendar');
-    } else {
-        switchTab('matches');
+    // 필터 버튼 이벤트 리스너
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const filter = this.getAttribute('data-filter');
+            filterMatches(filter);
+        });
+    });
+    
+    // 캘린더 네비게이션 이벤트 리스너
+    if (prevMonthBtn) {
+        prevMonthBtn.addEventListener('click', function() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        });
     }
     
-    // 네비게이션 바에서 일정 탭 활성화
+    if (nextMonthBtn) {
+        nextMonthBtn.addEventListener('click', function() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        });
+    }
+    
+    // 모달 닫기 이벤트 리스너
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeEventModal);
+    }
+    
+    // 모달 외부 클릭 시 닫기
+    if (eventModal) {
+        eventModal.addEventListener('click', function(e) {
+            if (e.target === eventModal) {
+                closeEventModal();
+            }
+        });
+    }
+    
+    // 네비게이션 바에서 현재 페이지에 해당하는 탭 활성화
     activateNavTab();
-}
-
-// 네비게이션 바에서 현재 페이지에 해당하는 탭 활성화
-function activateNavTab() {
-    // 먼저 모든 탭의 active 클래스 제거
-    document.querySelectorAll('.tab-container .tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
     
-    // 현재 경로에 따라 해당 탭 활성화
-    const path = window.location.pathname;
-    if (path.includes('/schedules')) {
-        document.querySelector('.tab-container .tab[href="/schedules"]').classList.add('active');
-    }
-}
-
-// 페이지 로드 시 초기화
-document.addEventListener('DOMContentLoaded', init);
+    // 초기 탭 활성화
+    activateInitialTab();
+});
 
 // 모달 열기 함수
 function openEventModal(dateString, dayEvents) {
@@ -496,4 +501,21 @@ function processEvents(rawEvents) {
 function updateEventsForCurrentMonth() {
     events = processEvents(sampleEvents);
     renderCalendar();
+}
+
+// 네비게이션 바에서 현재 페이지에 해당하는 탭 활성화
+function activateNavTab() {
+    // 먼저 모든 탭의 active 클래스 제거
+    document.querySelectorAll('.tab-container .tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // 현재 경로에 따라 해당 탭 활성화
+    const path = window.location.pathname;
+    if (path.includes('/schedules')) {
+        const scheduleTab = document.querySelector('.tab-container .tab[href="/schedules"]');
+        if (scheduleTab) {
+            scheduleTab.classList.add('active');
+        }
+    }
 } 

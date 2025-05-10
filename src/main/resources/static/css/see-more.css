@@ -9,7 +9,7 @@
     color: var(--primary-color);
 }
 
-.settings-section {
+.see-more-section {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;

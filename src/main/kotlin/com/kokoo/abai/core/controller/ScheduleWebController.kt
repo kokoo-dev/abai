@@ -1,4 +1,4 @@
-package com.kokoo.abai.web.controller
+package com.kokoo.abai.core.controller
 
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -13,13 +13,23 @@ class ScheduleWebController {
     @GetMapping("")
     fun schedules(model: Model): String {
 
-        return "schedules"
+        return "schedules/schedules"
+    }
+
+    @GetMapping("/{subTab}")
+    fun schedulesWithSubTab(
+        model: Model,
+        @PathVariable(name = "subTab") subTab: String
+    ): String {
+        model.addAttribute("subTab", subTab)
+
+        return "schedules/schedules"
     }
 
     @GetMapping("/match-write")
-    fun writeMatch(model: Model): String {
+    fun matchWrite(model: Model): String {
 
-        return "match-write"
+        return "schedules/match-write"
     }
 
     @GetMapping("/match/{id}")
@@ -29,6 +39,6 @@ class ScheduleWebController {
     ): String {
         model.addAttribute("id", id)
 
-        return "match-detail"
+        return "schedules/match-detail"
     }
 }

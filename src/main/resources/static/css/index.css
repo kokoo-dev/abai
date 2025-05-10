@@ -230,4 +230,127 @@
 .login-btn {
     font-size: 0.9rem;
     padding: 0.4rem 0.8rem;
-} 
+}
+
+/* 다가오는 경기 섹션 강조 스타일 */
+.highlight-match {
+    border: 2px solid #ff5722;
+    box-shadow: 0 4px 12px rgba(255, 87, 34, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.highlight-match::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 100%;
+    background-color: #ff5722;
+}
+
+.highlight-match .section-title {
+    color: #ff5722;
+    font-weight: 700;
+}
+
+.countdown-badge {
+    background-color: #ff5722;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-right: 8px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.match-cta {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.attend-btn {
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.attend-btn:hover {
+    background-color: #e64a19;
+    transform: translateY(-2px);
+}
+
+/* 생일 알림 배너 스타일 */
+.birthday-banner {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to right, #fcefff, #f1f8ff);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 12px auto;
+    max-width: 95%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #9c55ff;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.birthday-icon {
+    margin-right: 12px;
+    font-size: 18px;
+    color: #9c55ff;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.birthday-content {
+    flex: 1;
+}
+
+.birthday-text {
+    font-size: 0.9rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.birthday-arrow {
+    color: #9c55ff;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.birthday-arrow:hover {
+    background-color: rgba(156, 85, 255, 0.1);
+}

@@ -1,4 +1,4 @@
-package com.kokoo.abai.api.domain
+package com.kokoo.abai.core.domain
 
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate

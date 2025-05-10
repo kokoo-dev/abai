@@ -1,4 +1,4 @@
-package com.kokoo.abai.api.domain
+package com.kokoo.abai.core.domain
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

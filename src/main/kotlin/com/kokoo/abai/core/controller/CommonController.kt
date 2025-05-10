@@ -1,4 +1,4 @@
-package com.kokoo.abai.api.controller
+package com.kokoo.abai.core.controller
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController

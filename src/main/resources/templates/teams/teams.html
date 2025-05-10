@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/teams.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="page-title">
+            <h1>팀 관리</h1>
+        </div>
+
+        <!-- 서브 탭 네비게이션 -->
+        <div class="sub-tabs">
+            <a href="/stats/records" class="sub-tab active" id="records-tab">
+                <i class="fas fa-chart-bar"></i> 기록
+            </a>
+            <a href="/stats/players" class="sub-tab" id="players-tab">
+                <i class="fas fa-user-friends"></i> 선수
+            </a>
+        </div>
+
+        <!-- 컨텐츠 영역 -->
+        <div class="tab-content">
+            <!-- 기록 탭 컨텐츠 -->
+            <div id="records-content" class="content-section active">
+                <div class="player-filter">
+                    <div class="search-box">
+                        <input type="text" placeholder="선수 이름 검색" class="search-input">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="position-filter">
+                        <button class="filter-btn active" data-filter="all">전체</button>
+                        <button class="filter-btn" data-filter="GK">GK</button>
+                        <button class="filter-btn" data-filter="DF">DF</button>
+                        <button class="filter-btn" data-filter="MF">MF</button>
+                        <button class="filter-btn" data-filter="FW">FW</button>
+                    </div>
+                </div>
+
+                <div class="stat-cards">
+                    <div class="card stat-summary">
+                        <h3 class="section-title">팀 통계 요약</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <div class="summary-value">15</div>
+                                <div class="summary-label">경기</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-value">38</div>
+                                <div class="summary-label">득점</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-value">22</div>
+                                <div class="summary-label">실점</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-value">27</div>
+                                <div class="summary-label">어시스트</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card team-charts">
+                        <h3 class="section-title">팀 통계 차트</h3>
+                        <div class="charts-grid">
+                            <div class="chart-container">
+                                <canvas id="match-goal-trend-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card top-scorers">
+                        <h3 class="section-title">득점 순위</h3>
+                        <div class="rank-list">
+                            <div class="rank-item">
+                                <div class="rank-position">1</div>
+                                <div class="player-info">
+                                    <img src="/images/player1.jpg" alt="선수 이미지" class="player-avatar">
+                                    <div class="player-details">
+                                        <div class="player-name">김축구</div>
+                                        <div class="player-position">FW</div>
+                                    </div>
+                                </div>
+                                <div class="stat-value">12</div>
+                            </div>
+                            <div class="rank-item">
+                                <div class="rank-position">2</div>
+                                <div class="player-info">
+                                    <img src="/images/player3.jpg" alt="선수 이미지" class="player-avatar">
+                                    <div class="player-details">
+                                        <div class="player-name">박공격</div>
+                                        <div class="player-position">FW</div>
+                                    </div>
+                                </div>
+                                <div class="stat-value">8</div>
+                            </div>
+                            <div class="rank-item">
+                                <div class="rank-position">3</div>
+                                <div class="player-info">
+                                    <img src="/images/player4.jpg" alt="선수 이미지" class="player-avatar">
+                                    <div class="player-details">
+                                        <div class="player-name">최미드필더</div>
+                                        <div class="player-position">MF</div>
+                                    </div>
+                                </div>
+                                <div class="stat-value">5</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card top-assists">
+                        <h3 class="section-title">어시스트 순위</h3>
+                        <div class="rank-list">
+                            <div class="rank-item">
+                                <div class="rank-position">1</div>
+                                <div class="player-info">
+                                    <img src="/images/player4.jpg" alt="선수 이미지" class="player-avatar">
+                                    <div class="player-details">
+                                        <div class="player-name">최미드필더</div>
+                                        <div class="player-position">MF</div>
+                                    </div>
+                                </div>
+                                <div class="stat-value">10</div>
+                            </div>
+                            <div class="rank-item">
+                                <div class="rank-position">2</div>
+                                <div class="player-info">
+                                    <img src="/images/player1.jpg" alt="선수 이미지" class="player-avatar">
+                                    <div class="player-details">
+                                        <div class="player-name">김축구</div>
+                                        <div class="player-position">FW</div>
+                                    </div>
+                                </div>
+                                <div class="stat-value">7</div>
+                            </div>
+                            <div class="rank-item">
+                                <div class="rank-position">3</div>
+                                <div class="player-info">
+                                    <img src="/images/player5.jpg" alt="선수 이미지" class="player-avatar">
+                                    <div class="player-details">
+                                        <div class="player-name">정수비</div>
+                                        <div class="player-position">DF</div>
+                                    </div>
+                                </div>
+                                <div class="stat-value">4</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card player-list-card">
+                        <h3 class="section-title">전체 선수 기록</h3>
+                        <div class="player-table-container">
+                            <table class="player-table">
+                                <thead>
+                                    <tr>
+                                        <th class="sortable" data-sort="name">선수 <i class="fas fa-sort"></i></th>
+                                        <th class="sortable" data-sort="position">포지션 <i class="fas fa-sort"></i></th>
+                                        <th class="sortable" data-sort="games">경기 <i class="fas fa-sort"></i></th>
+                                        <th class="sortable" data-sort="goals">득점 <i class="fas fa-sort"></i></th>
+                                        <th class="sortable" data-sort="assists">어시스트 <i class="fas fa-sort"></i></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr data-position="GK">
+                                        <td>이골키퍼</td>
+                                        <td>GK</td>
+                                        <td>15</td>
+                                        <td>0</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr data-position="DF">
+                                        <td>박수비</td>
+                                        <td>DF</td>
+                                        <td>14</td>
+                                        <td>2</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr data-position="DF">
+                                        <td>정수비</td>
+                                        <td>DF</td>
+                                        <td>15</td>
+                                        <td>1</td>
+                                        <td>4</td>
+                                    </tr>
+                                    <tr data-position="MF">
+                                        <td>최미드필더</td>
+                                        <td>MF</td>
+                                        <td>15</td>
+                                        <td>5</td>
+                                        <td>10</td>
+                                    </tr>
+                                    <tr data-position="FW">
+                                        <td>김축구</td>
+                                        <td>FW</td>
+                                        <td>15</td>
+                                        <td>12</td>
+                                        <td>7</td>
+                                    </tr>
+                                    <tr data-position="FW">
+                                        <td>박공격</td>
+                                        <td>FW</td>
+                                        <td>13</td>
+                                        <td>8</td>
+                                        <td>3</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 선수 탭 컨텐츠 -->
+            <div id="players-content" class="content-section">
+                <div class="player-filter">
+                    <div class="search-box">
+                        <input type="text" placeholder="선수 이름 검색" class="search-input">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="position-filter">
+                        <button class="filter-btn active" data-filter="all">전체</button>
+                        <button class="filter-btn" data-filter="GK">GK</button>
+                        <button class="filter-btn" data-filter="DF">DF</button>
+                        <button class="filter-btn" data-filter="MF">MF</button>
+                        <button class="filter-btn" data-filter="FW">FW</button>
+                    </div>
+                </div>
+
+                <div class="player-grid">
+                    <div class="player-card" data-player-id="1" data-position="GK">
+                        <div class="player-image">
+                            <img src="/images/player2.jpg" alt="이골키퍼">
+                        </div>
+                        <div class="player-basic-info">
+                            <h3 class="player-name">이골키퍼</h3>
+                            <div class="player-position">GK</div>
+                            <div class="player-number">#1</div>
+                        </div>
+                    </div>
+
+                    <div class="player-card" data-player-id="2" data-position="DF">
+                        <div class="player-image">
+                            <img src="/images/player5.jpg" alt="박수비">
+                        </div>
+                        <div class="player-basic-info">
+                            <h3 class="player-name">박수비</h3>
+                            <div class="player-position">DF</div>
+                            <div class="player-number">#3</div>
+                        </div>
+                    </div>
+
+                    <div class="player-card" data-player-id="3" data-position="DF">
+                        <div class="player-image">
+                            <img src="/images/player5.jpg" alt="정수비">
+                        </div>
+                        <div class="player-basic-info">
+                            <h3 class="player-name">정수비</h3>
+                            <div class="player-position">DF</div>
+                            <div class="player-number">#4</div>
+                        </div>
+                    </div>
+
+                    <div class="player-card" data-player-id="4" data-position="MF">
+                        <div class="player-image">
+                            <img src="/images/player4.jpg" alt="최미드필더">
+                        </div>
+                        <div class="player-basic-info">
+                            <h3 class="player-name">최미드필더</h3>
+                            <div class="player-position">MF</div>
+                            <div class="player-number">#8</div>
+                        </div>
+                    </div>
+
+                    <div class="player-card" data-player-id="5" data-position="FW">
+                        <div class="player-image">
+                            <img src="/images/player1.jpg" alt="김축구">
+                        </div>
+                        <div class="player-basic-info">
+                            <h3 class="player-name">김축구</h3>
+                            <div class="player-position">FW</div>
+                            <div class="player-number">#10</div>
+                        </div>
+                    </div>
+
+                    <div class="player-card" data-player-id="6" data-position="FW">
+                        <div class="player-image">
+                            <img src="/images/player3.jpg" alt="박공격">
+                        </div>
+                        <div class="player-basic-info">
+                            <h3 class="player-name">박공격</h3>
+                            <div class="player-position">FW</div>
+                            <div class="player-number">#9</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
+
+    <!-- 선수 상세 정보 모달 -->
+    <div class="player-modal" id="player-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-player-name">선수 이름</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="player-profile">
+                    <div class="player-profile-image">
+                        <img id="modal-player-image" src="/images/player1.jpg" alt="선수 이미지">
+                    </div>
+                    <div class="player-profile-info">
+                        <div class="profile-row">
+                            <span class="info-label">등번호:</span>
+                            <span id="modal-player-number" class="info-value">#10</span>
+                        </div>
+                        <div class="profile-row">
+                            <span class="info-label">포지션:</span>
+                            <span id="modal-player-position" class="info-value">FW</span>
+                        </div>
+                        <div class="profile-row">
+                            <span class="info-label">생년월일:</span>
+                            <span id="modal-player-birth" class="info-value">1995-05-15</span>
+                        </div>
+                        <div class="profile-row">
+                            <span class="info-label">키:</span>
+                            <span id="modal-player-height" class="info-value">180cm</span>
+                        </div>
+                        <div class="profile-row">
+                            <span class="info-label">몸무게:</span>
+                            <span id="modal-player-weight" class="info-value">75kg</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="player-stats">
+                    <h4>능력치</h4>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-name">스피드</div>
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: 85%;"></div>
+                            </div>
+                            <div class="stat-value">85</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-name">슈팅</div>
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: 90%;"></div>
+                            </div>
+                            <div class="stat-value">90</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-name">패스</div>
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: 80%;"></div>
+                            </div>
+                            <div class="stat-value">80</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-name">드리블</div>
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: 88%;"></div>
+                            </div>
+                            <div class="stat-value">88</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-name">수비</div>
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: 45%;"></div>
+                            </div>
+                            <div class="stat-value">45</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-name">체력</div>
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: 75%;"></div>
+                            </div>
+                            <div class="stat-value">75</div>
+                        </div>
+                    </div>
+                    
+                    <div class="foot-preference">
+                        <h4>발 기술</h4>
+                        <div class="foot-stats">
+                            <div class="foot-item">
+                                <span class="foot-label">왼발:</span>
+                                <div class="star-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                            </div>
+                            <div class="foot-item">
+                                <span class="foot-label">오른발:</span>
+                                <div class="star-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/teams.js}" defer></script>
+</body>
+</html> 

@@ -2,15 +2,15 @@
 <html lang="ko">
 <head>
     <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
-    <link rel="stylesheet" th:href="@{/css/settings.css}">
+    <link rel="stylesheet" th:href="@{/css/see-more.css}">
 </head>
 <body>
     <div class="container">
         <div class="page-title">
-            <h1>설정</h1>
+            <h1>더보기</h1>
         </div>
 
-        <div class="settings-section">
+        <div class="see-more-section">
             <div class="card profile-card">
                 <div class="profile-header">
                     <div class="profile-picture">
@@ -83,39 +83,6 @@
                 </div>
             </div>
 
-            <div class="card app-settings-card">
-                <h3 class="section-title">앱 설정</h3>
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-title">데이터 표시</div>
-                        <div class="setting-desc">앱에 표시되는 데이터 유형 선택</div>
-                    </div>
-                    <button class="btn view-btn">설정</button>
-                </div>
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-title">언어 설정</div>
-                        <div class="setting-desc">앱 언어 변경</div>
-                    </div>
-                    <select class="form-control language-select">
-                        <option value="ko" selected>한국어</option>
-                        <option value="en">English</option>
-                        <option value="ja">日本語</option>
-                        <option value="zh">中文</option>
-                    </select>
-                </div>
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-title">다크 모드</div>
-                        <div class="setting-desc">어두운 테마로 전환</div>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="dark-mode-toggle">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-            </div>
-
             <div class="card team-info-card">
                 <h3 class="section-title">팀 정보</h3>
                 <div class="setting-item">
@@ -123,7 +90,7 @@
                         <div class="setting-title">공지사항</div>
                         <div class="setting-desc">팀 공지사항 확인</div>
                     </div>
-                    <a href="/notices" class="btn view-btn">보기</a>
+                    <a href="/see-more/notices" class="btn view-btn">보기</a>
                 </div>
                 <div class="setting-item">
                     <div class="setting-info">
@@ -151,6 +118,6 @@
 
     <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
 
-    <script th:src="@{/js/settings.js}" defer></script>
+    <script th:src="@{/js/see-more.js}" defer></script>
 </body>
 </html> 
