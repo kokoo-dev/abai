@@ -17,4 +17,4 @@ data class Member(
 
     @Column(nullable = false)
     val uniformNumber: Int
-)
+) : BaseEntity()

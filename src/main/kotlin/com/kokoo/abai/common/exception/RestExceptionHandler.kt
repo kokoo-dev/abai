@@ -15,11 +15,11 @@ import org.springframework.web.servlet.resource.NoResourceFoundException
 
 private val logger = KotlinLogging.logger {}
 
-@RestControllerAdvice
+@RestControllerAdvice(value = ["com.kokoo.abai.core.controller.api"])
 class RestExceptionHandler {
 
     @ExceptionHandler(Exception::class)
-    protected fun handleException(exception: Exception): ResponseEntity<ErrorResponse> {
+    fun handleException(exception: Exception): ResponseEntity<ErrorResponse> {
         logger.error(exception) { "exception handler" }
 
         return error(ErrorCode.INTERNAL_SERVER_ERROR)
@@ -41,14 +41,14 @@ class RestExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException::class)
-    protected fun handleNotFoundException(exception: NoResourceFoundException): ResponseEntity<ErrorResponse> {
+    fun handleNotFoundException(exception: NoResourceFoundException): ResponseEntity<ErrorResponse> {
         logger.error(exception) { "not found exception handler" }
 
         return error(ErrorCode.NOT_FOUND)
     }
 
     @ExceptionHandler(BusinessException::class)
-    protected fun handleBusinessException(exception: BusinessException): ResponseEntity<ErrorResponse> {
+    fun handleBusinessException(exception: BusinessException): ResponseEntity<ErrorResponse> {
         logger.error(exception) { "business exception handler" }
 
         return error(exception.errorCode)

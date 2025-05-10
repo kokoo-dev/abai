@@ -1,4 +1,4 @@
-package com.kokoo.abai.core.controller
+package com.kokoo.abai.core.controller.web
 
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
