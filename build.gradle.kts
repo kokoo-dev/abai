@@ -3,19 +3,6 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
-    kotlin("plugin.jpa") version "1.9.25"
-    kotlin("plugin.noarg") version "1.9.25"
-    kotlin("plugin.allopen") version "1.9.25"
-}
-
-noArg {
-    annotation("jakarta.persistence.Entity")
-}
-
-allOpen {
-    annotation("jakarta.persistence.Entity")
-    annotation("jakarta.persistence.Embeddable")
-    annotation("jakarta.persistence.MappedSuperclass")
 }
 
 group = "com.kokoo"
@@ -44,8 +31,14 @@ dependencies {
     // web
     implementation("org.springframework.boot:spring-boot-starter-web")
 
-    // jpa
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    // jdbc
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+
+    // exposed
+    implementation("org.jetbrains.exposed:exposed-core:0.61.0")
+    implementation("org.jetbrains.exposed:exposed-dao:0.61.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.61.0")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.61.0")
 
     // postgres
     implementation("org.postgresql:postgresql")

@@ -3,7 +3,6 @@ package com.kokoo.abai.common.exception
 import com.kokoo.abai.common.error.ErrorCode
 import com.kokoo.abai.common.error.ErrorResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.hibernate.exception.ConstraintViolationException
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -27,7 +26,6 @@ class RestExceptionHandler {
 
     @ExceptionHandler(
         value = [
-            ConstraintViolationException::class,
             MethodArgumentNotValidException::class,
             MethodArgumentTypeMismatchException::class,
             HttpMessageNotReadableException::class,
