@@ -10,6 +10,10 @@ const matchTimeInput = document.getElementById('match-time');
 const opponentTeamInput = document.getElementById('opponent-team');
 const matchLocationInput = document.getElementById('match-location');
 
+// 주소 검색 관련 DOM 요소 참조
+const searchLocationBtn = document.getElementById('search-location');
+const addressSearchContainer = document.getElementById('address-search-container');
+
 // 전역 변수
 let currentQuarter = 1;
 let formations = {
@@ -25,7 +29,8 @@ let matchInfo = {
     date: '',
     time: '',
     opponentTeam: '',
-    location: ''
+    location: '',
+    address: ''
 };
 
 // 포메이션별 포지션 정보
@@ -183,8 +188,10 @@ opponentTeamInput.addEventListener('input', function() {
     matchInfo.opponentTeam = this.value;
 });
 
-matchLocationInput.addEventListener('input', function() {
-    matchInfo.location = this.value;
+// 주소 검색 관련 이벤트 처리
+// 주소 검색 버튼 클릭 시
+searchLocationBtn.addEventListener('click', function() {
+    searchAddress()
 });
 
 // 필드 전체에 대한 클릭 이벤트 처리 (모달 사용 방식으로 변경)
@@ -397,6 +404,14 @@ function applyPlayerPositions() {
 
 // 초기화 시 선수 데이터 수집
 document.addEventListener('DOMContentLoaded', function() {
+    // 모든 탭의 active 클래스 제거
+    document.querySelectorAll('.tab-container .tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    // 일정 탭 활성화
+    document.querySelector('.tab-container .tab[href="/schedules"]').classList.add('active');
+
     // 기본 선수 데이터 설정
     allPlayers = [
         { id: '1', number: '1', name: '김골키퍼', position: 'GK' },
@@ -480,4 +495,78 @@ function populateModalPlayerList(position) {
         
         modalPlayerList.appendChild(playerItem);
     });
+}
+
+// 카카오 주소 검색 API 초기화 및 실행
+function searchAddress() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            // 선택한 주소 정보를 가져와서 입력 필드에 설정
+            let addr = '';
+            let extraAddr = '';
+
+            // 사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져옴
+            if (data.userSelectedType === 'R') { // 도로명 주소 선택
+                addr = data.roadAddress;
+            } else { // 지번 주소 선택
+                addr = data.jibunAddress;
+            }
+
+            // 사용자가 선택한 주소가 도로명 타입일 때 참고항목을 조합
+            if(data.userSelectedType === 'R'){
+                // 법정동명이 있을 경우 추가
+                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                    extraAddr += data.bname;
+                }
+                // 건물명이 있고, 공동주택일 경우 추가
+                if(data.buildingName !== '' && data.apartment === 'Y'){
+                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                }
+                // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열 생성
+                if(extraAddr !== ''){
+                    extraAddr = ' (' + extraAddr + ')';
+                }
+            }
+
+            // 선택한 주소를 입력 필드에 값으로 설정
+            matchLocationInput.value = addr;
+            matchInfo.location = addr;
+            matchInfo.address = addr;
+            
+            // 주소 선택 효과 추가
+            matchLocationInput.classList.add('address-selected');
+            
+            // 주소 검색 컨테이너 숨기기
+            addressSearchContainer.style.display = 'none';
+            
+            // 선택 확인 메시지 표시 (선택적)
+            showAddressSelectionMessage();
+        }
+    }).open();
+}
+
+// 주소 선택 후 확인 메시지 표시 함수
+function showAddressSelectionMessage() {
+    // 기존 메시지가 있으면 제거
+    const existingMessage = document.querySelector('.address-selection-message');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+    
+    // 메시지 요소 생성
+    const messageElement = document.createElement('div');
+    messageElement.className = 'address-selection-message';
+    messageElement.textContent = '주소가 성공적으로 선택되었습니다.';
+    
+    // 메시지 추가
+    const locationGroup = document.querySelector('.location-group');
+    locationGroup.appendChild(messageElement);
+    
+    // 3초 후 메시지 사라지게 함
+    setTimeout(() => {
+        messageElement.classList.add('fade-out');
+        setTimeout(() => {
+            messageElement.remove();
+        }, 500);
+    }, 3000);
 } 

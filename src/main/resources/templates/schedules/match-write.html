@@ -27,9 +27,14 @@
                     <label for="opponent-team">상대팀 이름</label>
                     <input type="text" id="opponent-team" class="form-control" placeholder="상대팀 이름 입력">
                 </div>
-                <div class="form-group">
+            </div>
+            <div class="form-row">
+                <div class="form-group location-group">
                     <label for="match-location">경기 장소</label>
-                    <input type="text" id="match-location" class="form-control" placeholder="경기 장소 입력">
+                    <div class="location-input-container">
+                        <input type="text" id="match-location" class="form-control location-input" placeholder="경기 장소 입력" readonly>
+                        <button id="search-location" class="btn map-search-btn">주소 검색</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -87,18 +92,7 @@
 
     <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
 
+    <script type="text/javascript" src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script th:src="@{/js/schedules/match-write.js}" defer></script>
-    <script>
-        // 페이지 로드 시 네비게이션 바에서 일정 탭 활성화
-        document.addEventListener('DOMContentLoaded', function() {
-            // 모든 탭의 active 클래스 제거
-            document.querySelectorAll('.tab-container .tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // 일정 탭 활성화
-            document.querySelector('.tab-container .tab[href="/schedules"]').classList.add('active');
-        });
-    </script>
 </body>
 </html> 

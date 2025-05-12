@@ -790,11 +790,10 @@
 
 /* 경기 정보 입력 폼 스타일 */
 .match-form {
-    background-color: #f8f9fa;
-    border-radius: 8px;
+    margin-bottom: 2rem;
+    background-color: #f9f9f9;
     padding: 1rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 6px;
 }
 
 .form-row {
@@ -815,6 +814,11 @@
     margin-bottom: 0.75rem;
 }
 
+/* 장소 입력 그룹을 별도로 스타일링 */
+.location-group {
+    flex: 1 0 100%;
+}
+
 .form-control {
     width: 100%;
     padding: 0.5rem;
@@ -823,12 +827,85 @@
     font-size: 0.95rem;
 }
 
+/* 위치 입력 필드 스타일 수정 */
+.location-input {
+    font-size: 1rem;
+    padding: 0.75rem;
+    background-color: #fff;
+    font-weight: 500;
+    color: #333;
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+/* 주소가 선택되었을 때 효과 */
+.location-input.address-selected {
+    background-color: #f0f7ff;
+    color: #003366;
+    font-weight: 600;
+    border-color: #0056b3;
+}
+
+/* 주소 선택 확인 메시지 */
+.address-selection-message {
+    margin-top: 0.5rem;
+    color: #28a745;
+    font-size: 0.9rem;
+    background-color: rgba(40, 167, 69, 0.1);
+    border-radius: 4px;
+    padding: 0.5rem;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+    font-weight: 500;
+}
+
+/* 메시지 페이드 아웃 효과 */
+.address-selection-message.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 label {
     display: block;
     margin-bottom: 0.35rem;
     font-weight: 500;
     font-size: 0.9rem;
     color: #444;
+}
+
+/* 지도 관련 스타일 */
+.location-input-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 0.25rem;
+    overflow: hidden;
+}
+
+.location-input-container .form-control {
+    border: none;
+    flex: 1;
+}
+
+.map-search-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 /* 선수 선택 모달 스타일 */
@@ -995,4 +1072,88 @@ label {
 .empty-position {
     background-color: rgba(255, 255, 255, 0.5);
     border: 2px dashed rgba(255, 255, 255, 0.7);
+}
+
+/* 지도 관련 스타일 */
+.location-input-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.map-search-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+#address-search-container {
+    margin-top: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+    background-color: white;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 10;
+}
+
+.address-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+#address-search-input {
+    flex-grow: 1;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+#address-search-btn, #address-close-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    min-width: 80px;
+}
+
+#address-close-btn {
+    background-color: #6c757d;
+}
+
+.address-results-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #e9e9e9;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+}
+
+.address-result-item {
+    padding: 1rem;
+    border-bottom: 1px solid #e9e9e9;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.address-result-item:last-child {
+    border-bottom: none;
+}
+
+.address-result-item:hover {
+    background-color: #f0f4f8;
 } 
