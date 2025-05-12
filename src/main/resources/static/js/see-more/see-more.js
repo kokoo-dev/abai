@@ -148,20 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function() {
             if (confirm('정말 로그아웃하시겠습니까?')) {
-                // API 호출 예시
-                // fetch('/api/auth/logout', {
-                //     method: 'POST'
-                // })
-                // .then(() => {
-                //     window.location.href = '/login';
-                // })
-                // .catch(error => {
-                //     console.error('로그아웃 중 오류 발생:', error);
-                //     alert('로그아웃 중 오류가 발생했습니다.');
-                // });
-                
-                // 임시 리다이렉트
-                window.location.href = '/login';
+                document.getElementById('logout-form').submit()
             }
         });
     }

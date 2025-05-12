@@ -2,5 +2,8 @@ spring:
   config:
     activate:
       on-profile: local
+  exposed:
+    show-sql: true
+    generate-ddl: true
   thymeleaf:
     cache: false

@@ -31,6 +31,9 @@ dependencies {
     // web
     implementation("org.springframework.boot:spring-boot-starter-web")
 
+    // security
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
     // jdbc
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
 
@@ -39,6 +42,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:0.61.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.61.0")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.61.0")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.61.0")
 
     // postgres
     implementation("org.postgresql:postgresql")

@@ -1,10 +1,7 @@
 package com.kokoo.abai.common.config
 
-import com.kokoo.abai.core.domain.Member
 import jakarta.annotation.PostConstruct
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 
@@ -26,9 +23,5 @@ class ExposedConfig(
     @PostConstruct
     fun init() {
         Database.connect(url, driver, username, password)
-
-        transaction {
-            SchemaUtils.create(Member)
-        }
     }
 }
