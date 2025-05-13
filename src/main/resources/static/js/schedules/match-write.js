@@ -9,10 +9,20 @@ const matchDateInput = document.getElementById('match-date');
 const matchTimeInput = document.getElementById('match-time');
 const opponentTeamInput = document.getElementById('opponent-team');
 const matchLocationInput = document.getElementById('match-location');
+const matchAddressInput = document.getElementById('match-address');
 
 // 주소 검색 관련 DOM 요소 참조
 const searchLocationBtn = document.getElementById('search-location');
-const addressSearchContainer = document.getElementById('address-search-container');
+const mapContainer = document.getElementById('map-container');
+const mapElement = document.getElementById('map');
+const keywordInput = document.getElementById('keyword');
+const searchKeywordBtn = document.getElementById('search-keyword');
+
+// 카카오맵 관련 전역 변수
+let map = null;
+let markers = [];
+let infowindow = null;
+let ps = null;
 
 // 전역 변수
 let currentQuarter = 1;
@@ -30,7 +40,9 @@ let matchInfo = {
     time: '',
     opponentTeam: '',
     location: '',
-    address: ''
+    address: '',
+    latitude: '',
+    longitude: ''
 };
 
 // 포메이션별 포지션 정보
@@ -191,7 +203,29 @@ opponentTeamInput.addEventListener('input', function() {
 // 주소 검색 관련 이벤트 처리
 // 주소 검색 버튼 클릭 시
 searchLocationBtn.addEventListener('click', function() {
-    searchAddress()
+    // 지도 영역 토글
+    if (mapContainer.style.display === 'none' || mapContainer.style.display === '') {
+        mapContainer.style.display = 'block';
+        
+        // 지도가 아직 초기화되지 않았다면 초기화
+        if (!map) {
+            initMap();
+        }
+    } else {
+        mapContainer.style.display = 'none';
+    }
+});
+
+// 키워드 검색 버튼 클릭 시
+searchKeywordBtn.addEventListener('click', function() {
+    searchPlaces();
+});
+
+// 키워드 입력창에서 엔터 키 입력 시
+keywordInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchPlaces();
+    }
 });
 
 // 필드 전체에 대한 클릭 이벤트 처리 (모달 사용 방식으로 변경)
@@ -212,7 +246,7 @@ fieldElement.addEventListener('click', function(e) {
 // 저장 버튼 클릭 이벤트
 saveBtn.addEventListener('click', function() {
     // 필수 정보 확인
-    if (!matchInfo.date || !matchInfo.time || !matchInfo.opponentTeam || !matchInfo.location) {
+    if (!matchInfo.date || !matchInfo.time || !matchInfo.opponentTeam || !matchInfo.location || !matchInfo.address) {
         alert('경기 정보(일시, 상대팀, 장소)를 모두 입력해주세요.');
         return;
     }
@@ -241,12 +275,6 @@ function renderFormation(formationType) {
     const oldPositionsContainer = fieldElement.querySelector('.positions-container');
     if (oldPositionsContainer) {
         oldPositionsContainer.remove();
-    }
-    
-    // 골키퍼 영역 제거
-    const oldGoalkeeperArea = fieldElement.querySelector('.goalkeeper-area');
-    if (oldGoalkeeperArea) {
-        oldGoalkeeperArea.remove();
     }
     
     // 포지션 컨테이너 생성
@@ -294,7 +322,7 @@ function renderFormation(formationType) {
             rowPositions.forEach(pos => {
                 const positionElement = document.createElement('div');
                 positionElement.className = 'formation-position';
-                positionElement.dataset.position = `pos_${layout.indexOf(pos)}`;
+                positionElement.dataset.position = `${layout.indexOf(pos)}`;
                 
                 const jersey = document.createElement('div');
                 jersey.className = 'jersey empty-position';
@@ -497,52 +525,219 @@ function populateModalPlayerList(position) {
     });
 }
 
-// 카카오 주소 검색 API 초기화 및 실행
-function searchAddress() {
-    new daum.Postcode({
-        oncomplete: function(data) {
-            // 선택한 주소 정보를 가져와서 입력 필드에 설정
-            let addr = '';
-            let extraAddr = '';
+// 카카오맵 초기화 함수
+function initMap() {
+    // 지도 객체 생성
+    const options = {
+        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 서울 시청
+        level: 3
+    };
+    map = new kakao.maps.Map(mapElement, options);
+    
+    // 장소 검색 객체 생성
+    ps = new kakao.maps.services.Places();
+    
+    // 인포윈도우 객체 생성
+    infowindow = new kakao.maps.InfoWindow({zIndex: 1});
+}
 
-            // 사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져옴
-            if (data.userSelectedType === 'R') { // 도로명 주소 선택
-                addr = data.roadAddress;
-            } else { // 지번 주소 선택
-                addr = data.jibunAddress;
-            }
+// 키워드로 장소 검색
+function searchPlaces() {
+    const keyword = keywordInput.value;
+    
+    if (!keyword.trim()) {
+        alert('검색어를 입력해주세요');
+        return;
+    }
+    
+    // 키워드 검색 실행
+    ps.keywordSearch(keyword, placesSearchCB);
+}
 
-            // 사용자가 선택한 주소가 도로명 타입일 때 참고항목을 조합
-            if(data.userSelectedType === 'R'){
-                // 법정동명이 있을 경우 추가
-                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-                    extraAddr += data.bname;
-                }
-                // 건물명이 있고, 공동주택일 경우 추가
-                if(data.buildingName !== '' && data.apartment === 'Y'){
-                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-                }
-                // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열 생성
-                if(extraAddr !== ''){
-                    extraAddr = ' (' + extraAddr + ')';
-                }
-            }
+// 장소검색 콜백함수
+function placesSearchCB(data, status, pagination) {
+    if (status === kakao.maps.services.Status.OK) {
+        // 검색 결과 목록과 마커를 표출
+        displayPlaces(data);
+        
+        // 페이지 번호 표시
+        // displayPagination(pagination); // 필요시 구현
+    } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+        alert('검색 결과가 없습니다.');
+    } else if (status === kakao.maps.services.Status.ERROR) {
+        alert('검색 중 오류가 발생했습니다.');
+    }
+}
 
-            // 선택한 주소를 입력 필드에 값으로 설정
-            matchLocationInput.value = addr;
-            matchInfo.location = addr;
-            matchInfo.address = addr;
+// 검색 결과 표시 함수
+function displayPlaces(places) {
+    // 이전 마커들 제거
+    removeAllMarkers();
+    
+    const bounds = new kakao.maps.LatLngBounds();
+    
+    // 검색 결과 목록 생성
+    const listEl = document.createElement('div');
+    listEl.className = 'place-list';
+    
+    // 기존에 결과 목록이 있으면 제거
+    const existingList = document.querySelector('.place-list');
+    if (existingList) {
+        existingList.remove();
+    }
+    
+    // 마커와 인포윈도우 표시
+    for (let i = 0; i < places.length; i++) {
+        // 마커 생성
+        const position = new kakao.maps.LatLng(places[i].y, places[i].x);
+        const marker = addMarker(position, i);
+        
+        // 검색 결과 항목 생성
+        const itemEl = getListItem(i, places[i]);
+        
+        // 마커에 클릭 이벤트 추가
+        (function(marker, place, item) {
+            // 마커 클릭 시
+            kakao.maps.event.addListener(marker, 'click', function() {
+                // 인포윈도우에 장소 정보 표시
+                displayInfowindow(marker, place);
+                
+                // 선택한 장소 정보 저장
+                selectPlace(place);
+            });
             
-            // 주소 선택 효과 추가
-            matchLocationInput.classList.add('address-selected');
+            // 마커에 마우스 오버 시
+            kakao.maps.event.addListener(marker, 'mouseover', function() {
+                displayInfowindow(marker, place);
+            });
             
-            // 주소 검색 컨테이너 숨기기
-            addressSearchContainer.style.display = 'none';
+            // 마커에 마우스 아웃 시
+            kakao.maps.event.addListener(marker, 'mouseout', function() {
+                infowindow.close();
+            });
             
-            // 선택 확인 메시지 표시 (선택적)
-            showAddressSelectionMessage();
-        }
-    }).open();
+            // 목록 아이템 클릭 시
+            itemEl.onclick = function() {
+                // 해당 마커를 클릭하여 마커 정보창 표시
+                map.panTo(position);
+                displayInfowindow(marker, place);
+                
+                // 선택한 장소 정보 저장
+                selectPlace(place);
+                
+                // 선택된 항목 스타일 적용
+                const selected = document.querySelector('.place-item.selected');
+                if (selected) {
+                    selected.classList.remove('selected');
+                }
+                this.classList.add('selected');
+            };
+        })(marker, places[i], itemEl);
+        
+        listEl.appendChild(itemEl);
+        bounds.extend(position);
+    }
+    
+    // 검색 결과 목록을 지도 아래에 추가
+    mapContainer.appendChild(listEl);
+    
+    // 검색된 장소 위치를 기준으로 지도 범위 재설정
+    map.setBounds(bounds);
+}
+
+// 검색 결과 항목 생성 함수
+function getListItem(index, place) {
+    const item = document.createElement('div');
+    item.className = 'place-item';
+    
+    const itemStr = `
+        <div class="place-item-inner">
+            <div class="place-marker">${index + 1}</div>
+            <div class="place-info">
+                <h5 class="place-name">${place.place_name}</h5>
+                <span class="place-category">${place.category_name}</span>
+                <span class="place-address">${place.address_name}</span>
+                ${place.road_address_name ? 
+                    `<span class="place-road-address">${place.road_address_name}</span>` : ''}
+                ${place.phone ? 
+                    `<span class="place-phone">${place.phone}</span>` : ''}
+            </div>
+            <button class="select-place-btn">선택</button>
+        </div>
+    `;
+    
+    item.innerHTML = itemStr;
+    
+    // 선택 버튼 클릭 이벤트
+    item.querySelector('.select-place-btn').addEventListener('click', function(e) {
+        e.stopPropagation(); // 버블링 방지
+        selectPlace(place);
+    });
+    
+    return item;
+}
+
+// 마커 생성 함수
+function addMarker(position, idx) {
+    const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png';
+    const imageSize = new kakao.maps.Size(36, 37);  // 마커 이미지의 크기
+    const imgOptions = {
+        spriteSize: new kakao.maps.Size(36, 691),    // 스프라이트 이미지의 크기
+        spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10),    // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+        offset: new kakao.maps.Point(13, 37)    // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+    };
+    const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions);
+    const marker = new kakao.maps.Marker({
+        position: position,
+        image: markerImage
+    });
+    
+    marker.setMap(map);
+    markers.push(marker);
+    
+    return marker;
+}
+
+// 모든 마커 제거 함수
+function removeAllMarkers() {
+    for (let i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+    markers = [];
+}
+
+// 인포윈도우 표시 함수
+function displayInfowindow(marker, place) {
+    const content = `
+        <div class="place-info-window">
+            <div class="place-info-name">${place.place_name}</div>
+            <div class="place-info-address">${place.address_name}</div>
+        </div>
+    `;
+    
+    infowindow.setContent(content);
+    infowindow.open(map, marker);
+}
+
+// 장소 선택 함수
+function selectPlace(place) {
+    // 선택한 장소 정보 저장
+    matchLocationInput.value = place.place_name;
+    matchAddressInput.value = place.address_name;
+    matchInfo.location = place.place_name;
+    matchInfo.address = place.address_name;
+    matchInfo.latitude = place.y;
+    matchInfo.longitude = place.x;
+    
+    // 주소 선택 효과 추가
+    matchLocationInput.classList.add('address-selected');
+    matchAddressInput.classList.add('address-selected');
+    
+    // 지도 숨기기
+    mapContainer.style.display = 'none';
+    
+    // 선택 확인 메시지 표시
+    showAddressSelectionMessage();
 }
 
 // 주소 선택 후 확인 메시지 표시 함수
@@ -556,7 +751,7 @@ function showAddressSelectionMessage() {
     // 메시지 요소 생성
     const messageElement = document.createElement('div');
     messageElement.className = 'address-selection-message';
-    messageElement.textContent = '주소가 성공적으로 선택되었습니다.';
+    messageElement.textContent = '장소가 성공적으로 선택되었습니다.';
     
     // 메시지 추가
     const locationGroup = document.querySelector('.location-group');

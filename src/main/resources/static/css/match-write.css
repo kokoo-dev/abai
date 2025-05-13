@@ -211,18 +211,6 @@
     margin-bottom: 0;
 }
 
-/* 골키퍼 영역 */
-.goalkeeper-area {
-    width: 100%;
-    height: 10%; /* 15%에서 10%로 줄여 골키퍼 영역 높이 더 감소 */
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    bottom: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
 /* 골키퍼 포지션 */
 .gk-position {
     position: relative;
@@ -704,18 +692,7 @@
 .pos-type-fw,
 .pos-type-am,
 .pos-type-mf,
-.pos-type-df,
-.formation-4411 .formation-row-1 .formation-position[data-pos-type="FW"],
-.formation-4411 .formation-row-1 .formation-position[data-pos-type="FW"] .jersey {
-    /* 모든 포지션 타입별 효과 제거 */
-    border: none;
-    color: inherit;
-    text-shadow: none;
-    font-weight: normal;
-    box-shadow: none;
-    background-color: inherit;
-    transform: none;
-}
+.pos-type-df
 
 /* 애니메이션 제거 */
 @keyframes pulse {
@@ -725,67 +702,10 @@
     }
 }
 
-/* 4411 포메이션 FW 행 스타일링 */
-.formation-4411 .formation-row-1 .formation-position[data-pos-type="FW"] {
-    transform: scale(1.1);
-}
-
-.formation-4411 .formation-row-1 .formation-position[data-pos-type="FW"] .jersey {
-    border: 2px solid #ff4d4d;
-    box-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
-}
-
-/* 행 간격을 조정하기 위한 특별 스타일 */
-.formation-4411-field .positions-container {
-    height: 95%;
-    justify-content: space-between;
-}
-
-/* 4411 포메이션의 행별 위치 최적화 */
-.formation-4411-field .formation-4411 .formation-row-1 {
-    margin-top: 3%;
-    margin-bottom: 1%;
-}
-
-.formation-4411-field .formation-4411 .formation-row-2 {
-    margin-top: 1%;
-    margin-bottom: 1%;
-}
-
-.formation-4411-field .formation-4411 .formation-row-3 {
-    margin-top: 1%;
-    margin-bottom: 1%;
-}
-
-.formation-4411-field .formation-4411 .formation-row-4 {
-    margin-top: 1%;
-    margin-bottom: 3%;
-}
-
-/* 골키퍼 위치 조정 */
-.formation-4411-field .gk-position {
-    bottom: 1%;
-}
-
 /* 4행일 때 선수 이름 표시 조정 */
 .rows-4 .player-name-display {
     margin-top: 0.15rem;
     font-size: 0.7rem;
-}
-
-/* 기존 4-4-1-1 포메이션 관련 스타일 제거 */
-.formation-4411-field .positions-container,
-.formation-4411-field .formation-4411 .formation-row-1,
-.formation-4411-field .formation-4411 .formation-row-2,
-.formation-4411-field .formation-4411 .formation-row-3,
-.formation-4411-field .formation-4411 .formation-row-4,
-.formation-4411-field .gk-position {
-    /* 모든 4-4-1-1 관련 스타일 제거 */
-    margin: 0;
-    padding: 0;
-    height: auto;
-    bottom: auto;
-    justify-content: flex-start;
 }
 
 /* 경기 정보 입력 폼 스타일 */
@@ -1156,4 +1076,237 @@ label {
 
 .address-result-item:hover {
     background-color: #f0f4f8;
+}
+
+/* 지도 컨테이너 */
+#map-container {
+    margin-top: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* 지도 검색 박스 */
+.map-search-box {
+    padding: 10px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+}
+
+.map-search-box input {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.map-search-box button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.map-search-box button:hover {
+    background-color: #0069d9;
+}
+
+/* 장소 선택 효과 */
+.address-selected {
+    background-color: #e8f4ff;
+    border-color: #007bff;
+}
+
+/* 장소 선택 메시지 */
+.address-selection-message {
+    color: #28a745;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.address-selection-message.fade-out {
+    opacity: 0;
+}
+
+/* 검색 결과 목록 스타일 */
+.place-list {
+    margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    background: #fff;
+    border-top: 1px solid #ddd;
+}
+
+.place-item {
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.place-item:hover {
+    background: #f8f8f8;
+}
+
+.place-item.selected {
+    background: #e8f4ff;
+}
+
+.place-item-inner {
+    display: flex;
+    padding: 12px 15px;
+    align-items: center;
+}
+
+.place-marker {
+    width: 24px;
+    height: 24px;
+    background: #3b7bd4;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.place-info {
+    flex: 1;
+    overflow: hidden;
+}
+
+.place-name {
+    font-size: 15px;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.place-category {
+    display: inline-block;
+    font-size: 12px;
+    background: #f2f2f2;
+    padding: 2px 5px;
+    border-radius: 3px;
+    margin-right: 5px;
+    color: #666;
+}
+
+.place-address, 
+.place-road-address, 
+.place-phone {
+    display: block;
+    font-size: 13px;
+    color: #777;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.select-place-btn {
+    background: #3b7bd4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.select-place-btn:hover {
+    background: #2b6bc4;
+}
+
+/* 인포윈도우 스타일 */
+.place-info-window {
+    padding: 8px 10px;
+    min-width: 150px;
+    font-size: 13px;
+    text-align: center;
+}
+
+.place-info-name {
+    font-weight: bold;
+    margin-bottom: 3px;
+    color: #333;
+}
+
+.place-info-address {
+    font-size: 12px;
+    color: #777;
+}
+
+/* 지도 컨테이너 스타일 향상 */
+#map-container {
+    display: none;
+    margin-top: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#map {
+    width: 100%;
+    height: 350px;
+}
+
+/* 검색 박스 스타일 개선 */
+.map-search-box {
+    padding: 12px 15px;
+    background: #f5f6f7;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+}
+
+.map-search-box input {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.map-search-box button {
+    background-color: #3b7bd4;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    margin-left: 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.map-search-box button:hover {
+    background-color: #2b6bc4;
+}
+
+/* 주소 표시 컨테이너 스타일 */
+.location-address-container {
+    margin-top: 8px;
+}
+
+.location-address {
+    font-size: 14px;
+    color: #555;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+}
+
+/* 선택된 주소 스타일 */
+.location-address.address-selected {
+    background-color: #f0f7ff;
+    color: #555;
+    border-color: #a9c8e7;
 } 
