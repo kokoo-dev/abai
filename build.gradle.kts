@@ -18,6 +18,8 @@ repositories {
     mavenCentral()
 }
 
+val exposedVersion = "0.61.0"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -34,15 +36,12 @@ dependencies {
     // security
     implementation("org.springframework.boot:spring-boot-starter-security")
 
-    // jdbc
-    implementation("org.springframework.boot:spring-boot-starter-jdbc")
-
     // exposed
-    implementation("org.jetbrains.exposed:exposed-core:0.61.0")
-    implementation("org.jetbrains.exposed:exposed-dao:0.61.0")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.61.0")
-    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.61.0")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.61.0")
+    implementation("org.jetbrains.exposed:exposed-core:${exposedVersion}")
+    implementation("org.jetbrains.exposed:exposed-dao:${exposedVersion}")
+    implementation("org.jetbrains.exposed:exposed-jdbc:${exposedVersion}")
+    implementation("org.jetbrains.exposed:exposed-java-time:${exposedVersion}")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:${exposedVersion}")
 
     // postgres
     implementation("org.postgresql:postgresql")

@@ -1,9 +1,9 @@
 package com.kokoo.abai.core.domain
 
-import com.kokoo.abai.core.enums.RoleName
+import com.kokoo.abai.core.enums.RoleId
 
 object Role : BaseTable("role") {
-    val role = enumerationByName("role", 30, RoleName::class)
+    val id = enumerationByName("id", 30, RoleId::class)
 
-    override val primaryKey = PrimaryKey(role)
+    override val primaryKey = PrimaryKey(id)
 }

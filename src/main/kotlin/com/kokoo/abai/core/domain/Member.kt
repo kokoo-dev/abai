@@ -1,7 +1,7 @@
 package com.kokoo.abai.core.domain
 
 import com.kokoo.abai.core.enums.Position
-import org.jetbrains.exposed.sql.kotlin.datetime.date
+import org.jetbrains.exposed.sql.javatime.date
 
 object Member : BaseTable("member") {
     val id = long("id").autoIncrement()
@@ -9,11 +9,11 @@ object Member : BaseTable("member") {
     val password = varchar("password", 100)
     val name = varchar("name", 50)
     val birthday = date("birthday")
-    val height = uinteger("height")
-    val weight = uinteger("weight")
+    val height = integer("height")
+    val weight = integer("weight")
     val uniformNumber = integer("uniform_number")
-    val leftFoot = uinteger("left_foot")
-    val rightFoot = uinteger("right_foot")
+    val leftFoot = integer("left_foot")
+    val rightFoot = integer("right_foot")
     val preferredPosition = enumerationByName("preferred_position", 30, Position::class)
 
     override val primaryKey = PrimaryKey(id)
