@@ -1,9 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/abai_cauw?reWriteBatchedInserts=true
-    username: admin
-    password: qwer1234
-    driver-class-name: org.postgresql.Driver
+  config:
+    import: classpath:config/database.yml
   thymeleaf:
     cache: false
     prefix: classpath:/templates/
