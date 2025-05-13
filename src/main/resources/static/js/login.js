@@ -1,4 +1,4 @@
-import toastMessage from "./util/toastMessage.js"
+import ToastMessage from "./common/ToastMessage.js"
 
 document.addEventListener('DOMContentLoaded', function() {
     // URL 파라미터에서 message 확인
@@ -6,6 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (urlParams.has('message')) {
         const message = urlParams.get('message')
 
-        toastMessage.error(message)
+        ToastMessage.error(message)
     }
 })

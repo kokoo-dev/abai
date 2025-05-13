@@ -1,5 +1,3 @@
-// 홈 페이지 JavaScript
-
 document.addEventListener('DOMContentLoaded', function() {
     // 현재 페이지 활성화
     const currentPage = window.location.pathname;

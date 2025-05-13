@@ -1,13 +1,13 @@
-class ToastMessage {
-    success(message) {
+export default class ToastMessage {
+    static success(message) {
         this.#show(message, 'success')
     }
 
-    error(message) {
+    static error(message) {
         this.#show(message, 'error')
     }
 
-    #show(message, type = '') {
+    static #show(message, type = '') {
         // 기존 토스트 제거
         const existingToast = document.querySelector('.toast')
         if (existingToast) {
@@ -27,5 +27,3 @@ class ToastMessage {
         }, 3000)
     }
 }
-
-export default new ToastMessage()
