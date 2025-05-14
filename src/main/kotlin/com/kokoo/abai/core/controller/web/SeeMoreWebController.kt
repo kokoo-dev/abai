@@ -1,13 +1,17 @@
 package com.kokoo.abai.core.controller.web
 
+import com.kokoo.abai.core.service.FaqService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
 @RequestMapping("/see-more")
-class SeeMoreWebController {
+class SeeMoreWebController(
+    private val faqService: FaqService
+) {
 
     @GetMapping("")
     fun seeMore(model: Model): String {
@@ -31,5 +35,18 @@ class SeeMoreWebController {
     fun noticeWrite(model: Model): String {
 
         return "see-more/notice-write"
+    }
+
+    @GetMapping("/faq")
+    fun faq(model: Model): String {
+        model.addAttribute("faqs", faqService.getAll())
+
+        return "see-more/faq"
+    }
+
+    @PostMapping("/faq")
+    fun faqSave(model: Model): String {
+
+        return "see-more/faq-save"
     }
 }
