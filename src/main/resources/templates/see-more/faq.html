@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/faq.css}">
+</head>
+<body>
+    <main class="container">
+        <div class="page-header">
+            <h1>자주 묻는 질문 (FAQ)</h1>
+        </div>
+        
+        <div class="faq-container">
+            <div class="action-buttons">
+                <a href="#" class="btn btn-primary" id="faq-create">FAQ 등록</a>
+            </div>
+            <div th:if="${#lists.isEmpty(faqs)}" class="no-data">
+                <p>등록된 FAQ가 없습니다.</p>
+            </div>
+            
+            <div th:unless="${#lists.isEmpty(faqs)}" class="faq-list">
+                <div class="faq-categories">
+                    <button class="category-btn active" data-category="all">전체</button>
+                    <button class="category-btn" data-category="service">서비스</button>
+                    <button class="category-btn" data-category="account">계정</button>
+                    <button class="category-btn" data-category="other">기타</button>
+                </div>
+                
+                <div class="faq-items">
+                    <div th:each="faq : ${faqs}" class="faq-item" th:data-category="${faq.categoryId}">
+                        <div class="faq-question">
+                            <span class="category-tag" th:text="${faq.categoryId}">카테고리</span>
+                            <h3 th:text="${faq.question}">질문 제목</h3>
+                            <span class="arrow-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p th:text="${faq.answer}">답변 내용</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
+
+    <script type="module" th:src="@{/js/see-more/faq.js}" defer></script>
+</body>
+</html> 

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/faq-save.css}">
+</head>
+<body>
+    <div class="container">
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <!-- 뒤로가기 버튼 -->
+            <div class="back-button">
+                <a href="/see-more/faq" class="btn-text">
+                    <i class="fas fa-arrow-left"></i> FAQ 목록으로 돌아가기
+                </a>
+            </div>
+
+            <!-- 페이지 제목 -->
+            <div class="page-title">
+                <h1>FAQ 등록</h1>
+            </div>
+
+            <!-- FAQ 작성 폼 -->
+            <form class="faq-form">
+                <div class="form-group">
+                    <label for="faq-category">카테고리</label>
+                    <select id="faq-category" name="category" class="form-control">
+                        <option value="service">서비스</option>
+                        <option value="account">계정</option>
+                        <option value="other">기타</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="faq-question">질문</label>
+                    <input type="text" id="faq-question" name="question" class="form-control" placeholder="자주 묻는 질문을 입력하세요" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="faq-answer">답변</label>
+                    <textarea id="faq-answer" name="answer" class="form-control" rows="10" placeholder="FAQ 답변을 입력하세요" required></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn cancel-btn">취소</button>
+                    <button type="submit" class="btn submit-btn">등록 완료</button>
+                </div>
+            </form>
+        </main>
+
+        <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
+    </div>
+
+    <script th:src="@{/js/see-more/faq-save.js}" defer></script>
+</body>
+</html> 
