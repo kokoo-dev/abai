@@ -21,9 +21,8 @@
             <div th:unless="${#lists.isEmpty(faqs)}" class="faq-list">
                 <div class="faq-categories">
                     <button class="category-btn active" data-category="all">전체</button>
-                    <button class="category-btn" data-category="service">서비스</button>
-                    <button class="category-btn" data-category="account">계정</button>
-                    <button class="category-btn" data-category="other">기타</button>
+                    <button th:each="category : ${categories}" class="category-btn" th:data-category="${category.id}" th:text="${category.name}">
+                    </button>
                 </div>
                 
                 <div class="faq-items">

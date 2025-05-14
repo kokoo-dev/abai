@@ -51,6 +51,9 @@ dependencies {
 
     // thymeleaf
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+
+    // validation
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 
 kotlin {

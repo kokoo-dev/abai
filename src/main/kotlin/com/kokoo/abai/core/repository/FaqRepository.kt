@@ -10,20 +10,20 @@ import java.time.LocalDateTime
 
 @Repository
 class FaqRepository {
-    fun save(faq: FaqRow, id: Long? = null): FaqRow {
+    fun save(row: FaqRow, id: Long? = null): FaqRow {
         return if (id != null) {
             Faq.update({ Faq.id eq id }) {
-                it[categoryId] = faq.categoryId
-                it[question] = faq.question
-                it[answer] = faq.answer
+                it[categoryId] = row.categoryId
+                it[question] = row.question
+                it[answer] = row.answer
                 it[updatedAt] = LocalDateTime.now()
             }
             findById(id)!!
         } else {
             Faq.insert {
-                it[categoryId] = faq.categoryId
-                it[question] = faq.question
-                it[answer] = faq.answer
+                it[categoryId] = row.categoryId
+                it[question] = row.question
+                it[answer] = row.answer
             }.resultedValues!!.first().toFaqRow()
         }
     }

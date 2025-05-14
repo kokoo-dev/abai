@@ -5,12 +5,12 @@ import org.jetbrains.exposed.sql.ResultRow
 import java.time.LocalDateTime
 
 data class FaqRow(
-    val id: Long,
+    val id: Long? = null,
     val categoryId: Long,
     val question: String,
     val answer: String,
-    val createdAt: LocalDateTime = LocalDateTime.now(),
-    val updatedAt: LocalDateTime = LocalDateTime.now()
+    val createdAt: LocalDateTime? = LocalDateTime.now(),
+    val updatedAt: LocalDateTime? = LocalDateTime.now()
 )
 
 fun ResultRow.toFaqRow() = FaqRow(

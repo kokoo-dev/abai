@@ -1,5 +1,6 @@
 package com.kokoo.abai.core.controller.web
 
+import com.kokoo.abai.core.service.FaqCategoryService
 import com.kokoo.abai.core.service.FaqService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -10,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 @Controller
 @RequestMapping("/see-more")
 class SeeMoreWebController(
-    private val faqService: FaqService
+    private val faqService: FaqService,
+    private val faqCategoryService: FaqCategoryService
 ) {
 
     @GetMapping("")
@@ -39,6 +41,7 @@ class SeeMoreWebController(
 
     @GetMapping("/faq")
     fun faq(model: Model): String {
+        model.addAttribute("categories", faqCategoryService.getAll())
         model.addAttribute("faqs", faqService.getAll())
 
         return "see-more/faq"
@@ -46,6 +49,7 @@ class SeeMoreWebController(
 
     @PostMapping("/faq")
     fun faqSave(model: Model): String {
+        model.addAttribute("categories", faqCategoryService.getAll())
 
         return "see-more/faq-save"
     }

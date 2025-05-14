@@ -1,3 +1,5 @@
+import ToastMessage from "./ToastMessage.js"
+
 export default class ApiClient {
     static async request({
         url = '',
@@ -5,7 +7,7 @@ export default class ApiClient {
         headers = {},
         params = {},
         onSuccess = () => {},
-        onError = () => {},
+        onError = () => { ToastMessage.error('잠시 후 다시 시도해 주세요.') },
         onFinally = () => {}
     } = {}) {
         try {

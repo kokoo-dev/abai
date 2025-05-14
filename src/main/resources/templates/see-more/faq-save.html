@@ -21,13 +21,12 @@
             </div>
 
             <!-- FAQ 작성 폼 -->
-            <form class="faq-form">
+            <form class="faq-form" id="save-form">
                 <div class="form-group">
                     <label for="faq-category">카테고리</label>
                     <select id="faq-category" name="category" class="form-control">
-                        <option value="service">서비스</option>
-                        <option value="account">계정</option>
-                        <option value="other">기타</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">
+                        </option>
                     </select>
                 </div>
 
@@ -51,6 +50,6 @@
         <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
     </div>
 
-    <script th:src="@{/js/see-more/faq-save.js}" defer></script>
+    <script type="module" th:src="@{/js/see-more/faq-save.js}" defer></script>
 </body>
 </html> 
