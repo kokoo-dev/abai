@@ -51,6 +51,7 @@ dependencies {
 
     // thymeleaf
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 
     // validation
     implementation("org.springframework.boot:spring-boot-starter-validation")

@@ -1,10 +1,8 @@
 package com.kokoo.abai.common.config.security
 
-import com.kokoo.abai.core.domain.MemberRole
 import com.kokoo.abai.core.repository.MemberRepository
 import com.kokoo.abai.core.repository.MemberRoleRepository
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -22,9 +20,14 @@ class CustomUserDetailsService(
         val member = memberRepository.findByLoginId(username)
             ?: throw UsernameNotFoundException("User not found: $username")
 
-        val roles = memberRoleRepository.findByMemberId(member.id)
+        val roles = memberRoleRepository.findByMemberId(member.id!!)
             .map { SimpleGrantedAuthority(it.roleId.name) }
 
-        return User(member.loginId, member.password, roles)
+        return CustomUserDetails(
+            id = member.id,
+            username = member.loginId,
+            password = member.password,
+            authorities = roles
+        )
     }
 }

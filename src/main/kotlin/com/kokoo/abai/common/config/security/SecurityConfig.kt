@@ -29,7 +29,7 @@ class SecurityConfig(
 //                    .requestMatchers("/api/test").hasAnyAuthority(RoleName.TEAM_ADMIN.name)
                     .requestMatchers("/api/**").permitAll() // TODO 완료 후 권한 적용
                     .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // resource
-                    .requestMatchers("/health-check").permitAll() // health check
+                    .requestMatchers("/health-check").anonymous() // health check
                     .anyRequest().authenticated()
             }
             .csrf { csrf ->
@@ -38,7 +38,7 @@ class SecurityConfig(
             .formLogin { form ->
                 form
                     .loginPage("/login")
-                    .defaultSuccessUrl("/", true)
+                    .defaultSuccessUrl("/", false)
                     .failureUrl("/login?message=${URLEncoder().encode("접속 정보를 다시 확인해 주세요.", UTF_8)}")
                     .permitAll()
             }
@@ -59,7 +59,5 @@ class SecurityConfig(
     }
 
     @Bean
-    fun bCryptPasswordEncoder(): BCryptPasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+    fun bCryptPasswordEncoder(): BCryptPasswordEncoder = BCryptPasswordEncoder()
 }
