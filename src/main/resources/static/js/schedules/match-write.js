@@ -432,14 +432,6 @@ function applyPlayerPositions() {
 
 // 초기화 시 선수 데이터 수집
 document.addEventListener('DOMContentLoaded', function() {
-    // 모든 탭의 active 클래스 제거
-    document.querySelectorAll('.tab-container .tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-
-    // 일정 탭 활성화
-    document.querySelector('.tab-container .tab[href="/schedules"]').classList.add('active');
-
     // 기본 선수 데이터 설정
     allPlayers = [
         { id: '1', number: '1', name: '김골키퍼', position: 'GK' },

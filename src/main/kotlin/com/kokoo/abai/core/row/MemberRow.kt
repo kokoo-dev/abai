@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import java.time.LocalDate
 
 data class MemberRow(
-    val id: Long,
+    val id: Long? = null,
     val loginId: String,
     val password: String,
     val name: String,

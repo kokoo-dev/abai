@@ -1,19 +1,4 @@
-// 경기 상세 페이지 JavaScript
-
 document.addEventListener('DOMContentLoaded', function() {
-    // 탭 활성화
-    const currentPage = window.location.pathname;
-    const tabLinks = document.querySelectorAll('.tab');
-    
-    tabLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPage ||
-            (currentPage.includes('/match/') && link.getAttribute('href') === '/matches')) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-
     // 탭 전환 기능
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');

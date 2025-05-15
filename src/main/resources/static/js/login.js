@@ -8,4 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         ToastMessage.error(message)
     }
+
+    document.getElementById("login-id").focus()
 })

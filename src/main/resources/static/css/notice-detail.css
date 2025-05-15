@@ -47,9 +47,19 @@
     margin-bottom: 0.75rem;
 }
 
-.important-badge {
+.red-badge {
     background-color: rgba(231, 76, 60, 0.1);
     color: #e74c3c;
+}
+
+.blue-badge {
+    background-color: rgba(52, 152, 219, 0.1);
+    color: var(--primary-color);
+}
+
+.green-badge {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--secondary-color);
 }
 
 .notice-title {

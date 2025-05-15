@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
-    <link rel="stylesheet" th:href="@{/css/notice-write.css}">
+    <link rel="stylesheet" th:href="@{/css/notice-save.css}">
 </head>
 <body>
     <div class="container">
@@ -25,37 +26,20 @@
                 <div class="form-group">
                     <label for="notice-category">카테고리</label>
                     <select id="notice-category" name="category" class="form-control">
-                        <option value="general">일반</option>
-                        <option value="important">중요</option>
-                        <option value="event">이벤트</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}"
+                                th:text="${category.name}" th:selected="${category.id == notice?.categoryId}">
+                        </option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label for="notice-title">제목</label>
-                    <input type="text" id="notice-title" name="title" class="form-control" placeholder="공지사항 제목을 입력하세요" required>
+                    <input type="text" id="notice-title" name="title" class="form-control" placeholder="공지사항 제목을 입력하세요" required th:value="${notice?.title}">
                 </div>
 
                 <div class="form-group">
                     <label for="notice-content">내용</label>
-                    <textarea id="notice-content" name="content" class="form-control" rows="10" placeholder="공지사항 내용을 입력하세요" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>첨부파일</label>
-                    <div class="file-upload-container">
-                        <div class="file-upload-box">
-                            <input type="file" id="file-upload" class="file-input" multiple>
-                            <label for="file-upload" class="file-label">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                <span>파일 선택 또는 드래그하여 업로드</span>
-                            </label>
-                        </div>
-                        <div class="file-list">
-                            <p class="no-files">선택된 파일이 없습니다.</p>
-                            <ul class="uploaded-files"></ul>
-                        </div>
-                    </div>
+                    <textarea id="notice-content" name="content" class="form-control" rows="10" placeholder="공지사항 내용을 입력하세요" required th:text="${notice?.content}"></textarea>
                 </div>
 
                 <div class="form-actions">
@@ -65,9 +49,11 @@
             </form>
         </main>
 
+        <input type="hidden" id="notice-id" th:value="${notice?.id}">
+        <input type="hidden" id="is-new" th:value="${isNew}">
         <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
     </div>
 
-    <script th:src="@{/js/see-more/notice-write.js}" defer></script>
+    <script type="module" th:src="@{/js/see-more/notice-save.js}" defer></script>
 </body>
 </html> 

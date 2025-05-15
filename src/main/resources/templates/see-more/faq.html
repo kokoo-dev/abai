@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
     <link rel="stylesheet" th:href="@{/css/faq.css}">
@@ -11,7 +12,7 @@
         </div>
         
         <div class="faq-container">
-            <div class="action-buttons">
+            <div class="action-buttons" sec:authorize="hasAnyAuthority('SERVICE_ADMIN', 'TEAM_ADMIN')">
                 <a href="#" class="btn btn-primary" id="faq-create">FAQ 등록</a>
             </div>
             <div th:if="${#lists.isEmpty(faqs)}" class="no-data">

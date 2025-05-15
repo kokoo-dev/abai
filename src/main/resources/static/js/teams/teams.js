@@ -1,25 +1,6 @@
 // 개인 기록 페이지 JavaScript
 
 document.addEventListener('DOMContentLoaded', function() {
-    // 탭 활성화 - 홈과 팀 탭이 동시에 활성화되는 문제 수정
-    const currentPage = window.location.pathname;
-    const tabLinks = document.querySelectorAll('.tab');
-    
-    // 모든 탭의 active 클래스 제거
-    tabLinks.forEach(link => {
-        link.classList.remove('active');
-    });
-    
-    // 현재 페이지에 해당하는 탭만 활성화
-    // '/teams' 패턴에 정확히 일치하는 경우에만 탭 활성화
-    const teamPagePattern = /^\/teams(?:\/.*)?$/;
-    if (teamPagePattern.test(currentPage)) {
-        const teamTab = document.querySelector('.tab[href="/teams"]');
-        if (teamTab) {
-            teamTab.classList.add('active');
-        }
-    }
-
     // 서브 탭 전환 기능
     const recordsTab = document.getElementById('records-tab');
     const playersTab = document.getElementById('players-tab');
@@ -27,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const playersContent = document.getElementById('players-content');
 
     // URL 경로에 따라 초기 탭 활성화
+    const currentPage = window.location.pathname;
     const activateInitialTab = () => {
         if (currentPage.includes('/teams/players')) {
             switchTab('players');

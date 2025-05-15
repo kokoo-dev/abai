@@ -1,18 +1,6 @@
 // 설정 페이지 JavaScript
 
 document.addEventListener('DOMContentLoaded', function() {
-    // 탭 활성화
-    const currentPage = window.location.pathname;
-    const tabLinks = document.querySelectorAll('.tab');
-    
-    tabLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPage) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-
     // 프로필 이미지 변경
     const editProfilePicture = document.querySelector('.edit-profile-picture');
     if (editProfilePicture) {
@@ -78,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (viewLoginHistoryBtn) {
         viewLoginHistoryBtn.addEventListener('click', function() {
             // 실제로는 로그인 기록 페이지로 이동하거나 모달 표시
-            alert('로그인 기록 기능은 아직 구현되지 않았습니다.');
+            // alert('로그인 기록 기능은 아직 구현되지 않았습니다.');
         });
     }
 

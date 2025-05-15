@@ -350,10 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    // 네비게이션 바에서 현재 페이지에 해당하는 탭 활성화
-    activateNavTab();
-    
+
     // 초기 탭 활성화
     activateInitialTab();
 });
@@ -502,20 +499,3 @@ function updateEventsForCurrentMonth() {
     events = processEvents(sampleEvents);
     renderCalendar();
 }
-
-// 네비게이션 바에서 현재 페이지에 해당하는 탭 활성화
-function activateNavTab() {
-    // 먼저 모든 탭의 active 클래스 제거
-    document.querySelectorAll('.tab-container .tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // 현재 경로에 따라 해당 탭 활성화
-    const path = window.location.pathname;
-    if (path.includes('/schedules')) {
-        const scheduleTab = document.querySelector('.tab-container .tab[href="/schedules"]');
-        if (scheduleTab) {
-            scheduleTab.classList.add('active');
-        }
-    }
-} 
