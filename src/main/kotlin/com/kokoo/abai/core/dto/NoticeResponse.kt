@@ -1,7 +1,9 @@
 package com.kokoo.abai.core.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.kokoo.abai.core.row.NoticeRow
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 data class NoticeResponse(
     val id: Long,
@@ -12,11 +14,13 @@ data class NoticeResponse(
     val title: String,
     val content: String,
     val viewCount: Int,
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    val createdAt: OffsetDateTime = OffsetDateTime.now(),
 )
 
 fun NoticeRow.toResponse() = NoticeResponse(
-    id = this.id!!,
+    id = this.id,
     memberId = this.memberId,
     member = this.member?.toResponse(),
     categoryId = this.categoryId,
@@ -24,5 +28,5 @@ fun NoticeRow.toResponse() = NoticeResponse(
     title = this.title,
     content = this.content,
     viewCount = this.viewCount,
-    createdAt = this.createdAt!!
+    createdAt = this.createdAt!!.atOffset(ZoneOffset.UTC)
 )

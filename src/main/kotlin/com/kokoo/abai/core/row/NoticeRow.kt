@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import java.time.LocalDateTime
 
 data class NoticeRow(
-    val id: Long? = null,
+    val id: Long = 0,
     val memberId: Long,
     val member: MemberRow? = null,
     val categoryId: Long,

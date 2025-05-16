@@ -18,7 +18,7 @@ data class MemberResponse(
 )
 
 fun MemberRow.toResponse() = MemberResponse(
-    id = this.id!!,
+    id = this.id,
     loginId = this.loginId,
     name = this.name,
     birthday = this.birthday,

@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import java.time.LocalDateTime
 
 data class FaqRow(
-    val id: Long? = null,
+    val id: Long = 0,
     val categoryId: Long,
     val question: String,
     val answer: String,

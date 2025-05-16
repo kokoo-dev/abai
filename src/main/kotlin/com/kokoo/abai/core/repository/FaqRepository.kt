@@ -28,10 +28,10 @@ class FaqRepository {
         }
     }
 
-    fun delete(id: Long) = Faq.deleteWhere { Faq.id.eq(id) }
+    fun delete(id: Long) = Faq.deleteWhere { Faq.id eq id }
 
     fun findById(id: Long): FaqRow? = Faq.select(Faq.columns)
-        .where { Faq.id.eq(id) }
+        .where { Faq.id eq id }
         .singleOrNull()?.toFaqRow()
 
     fun findAll(): List<FaqRow> = Faq.selectAll()
@@ -39,7 +39,7 @@ class FaqRepository {
         .map { it.toFaqRow() }
 
     fun findByCategory(categoryId: Long): List<FaqRow> = Faq.select(Faq.columns)
-        .where { Faq.categoryId.eq(categoryId) }
+        .where { Faq.categoryId eq categoryId }
         .orderBy(Faq.id to SortOrder.DESC)
         .map { it.toFaqRow() }
 } 

@@ -40,12 +40,12 @@ class NoticeRepository {
         }
     }
 
-    fun delete(id: Long) = Notice.deleteWhere { Notice.id.eq(id) }
+    fun delete(id: Long) = Notice.deleteWhere { Notice.id eq id }
 
     fun findById(id: Long): NoticeRow? = Notice.innerJoin(Member)
         .innerJoin(NoticeCategory)
         .selectAll()
-        .where { Notice.id.eq(id) }
+        .where { Notice.id eq id }
         .singleOrNull()?.toNoticeRow()
 
     fun findAll(): List<NoticeRow> = Notice.innerJoin(Member)
@@ -55,7 +55,7 @@ class NoticeRepository {
         .map { it.toNoticeRow() }
 
     fun findByCategory(categoryId: Long): List<NoticeRow> = Notice.select(Notice.columns)
-        .where { Notice.categoryId.eq(categoryId) }
+        .where { Notice.categoryId eq categoryId }
         .orderBy(Notice.id to SortOrder.DESC)
         .map { it.toNoticeRow() }
 } 
