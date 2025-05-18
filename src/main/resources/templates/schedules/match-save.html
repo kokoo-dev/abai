@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
-    <link rel="stylesheet" th:href="@{/css/match-write.css}">
+    <link rel="stylesheet" th:href="@{/css/match-save.css}">
 </head>
 <body>
     <div class="container">
@@ -51,6 +51,24 @@
             </div>
         </div>
 
+        <!-- 선수 선택 영역 (새로 추가) -->
+        <div class="player-selection-section">
+            <div class="player-selection-header">
+                <h3>출전 선수 선택</h3>
+                <div class="player-actions">
+                    <button id="add-guest-player" class="btn guest-player-btn">용병 추가</button>
+                    <div class="player-count">
+                        <span id="selected-player-count">0</span> / <span id="total-player-count">0</span> 명 선택됨
+                    </div>
+                </div>
+            </div>
+            <div class="player-list-container">
+                <div class="player-list" id="player-list">
+                    <!-- 선수 목록은 JS로 동적 생성됨 -->
+                </div>
+            </div>
+        </div>
+
         <!-- 쿼터 선택 탭 -->
         <div class="quarter-tabs">
             <button class="quarter-tab active" data-quarter="1">1쿼터</button>
@@ -63,11 +81,13 @@
         <div class="formation-select-box">
             <label for="formation-select">포메이션</label>
             <select id="formation-select" class="formation-select">
-                <option value="433">4-3-3</option>
+                <option value="4231">4-2-3-1</option>
                 <option value="442">4-4-2</option>
                 <option value="4411">4-4-1-1</option>
-                <option value="352">3-5-2</option>
+                <option value="433">4-3-3</option>
+                <option value="424">4-2-4</option>
                 <option value="532">5-3-2</option>
+                <option value="352">3-5-2</option>
                 <option value="343">3-4-3</option>
             </select>
         </div>
@@ -96,7 +116,30 @@
                     <button class="close-modal">&times;</button>
                 </div>
                 <div class="modal-player-list">
-                    <!-- 선수 목록은 JS로 동적 생성됨 -->
+                    <!-- 선택된 선수 목록만 표시됨 (JS로 동적 생성) -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 용병 추가 모달 -->
+        <div class="guest-player-modal" id="guest-player-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>용병 추가</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="guest-player-name">이름</label>
+                        <input type="text" id="guest-player-name" class="form-control" placeholder="용병 이름 입력">
+                    </div>
+                    <div class="form-group">
+                        <label for="guest-player-number">등번호</label>
+                        <input type="number" id="guest-player-number" class="form-control" placeholder="등번호 입력">
+                    </div>
+                    <div class="form-group modal-actions">
+                        <button id="add-guest-player-btn" class="btn add-guest-btn">추가</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -105,6 +148,6 @@
     <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
 
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=33f6142573a63b0f99ad87db952a8186&libraries=services"></script>
-    <script th:src="@{/js/schedules/match-write.js}" defer></script>
+    <script type="module" th:src="@{/js/schedules/match-save.js}" defer></script>
 </body>
 </html> 

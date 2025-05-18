@@ -1,11 +1,11 @@
-// DOM 요소 참조
+import CommonUtils from "../common/CommonUtils.js";
+
 const matchesTab = document.getElementById('matches-tab');
 const calendarTab = document.getElementById('calendar-tab');
-const matchesContent = document.getElementById('matches-content');
-const calendarContent = document.getElementById('calendar-content');
+const matchCreateButton = document.getElementById('match-create-button')
 const filterButtons = document.querySelectorAll('.filter-btn');
-const prevMonthBtn = document.getElementById('prev-month');
-const nextMonthBtn = document.getElementById('next-month');
+const prevMonthButton = document.getElementById('prev-month');
+const nextMonthButton = document.getElementById('next-month');
 const currentMonthEl = document.getElementById('current-month');
 const calendarDaysEl = document.getElementById('calendar-days');
 
@@ -305,6 +305,12 @@ document.addEventListener('DOMContentLoaded', function() {
             history.pushState(null, '', '/schedules/calendar');
         });
     }
+
+    if (matchCreateButton) {
+        matchCreateButton.addEventListener('click', () => {
+            CommonUtils.postToUrl('/schedules/matches')
+        })
+    }
     
     // 브라우저 뒤로가기 이벤트 처리
     window.addEventListener('popstate', function() {
@@ -323,15 +329,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // 캘린더 네비게이션 이벤트 리스너
-    if (prevMonthBtn) {
-        prevMonthBtn.addEventListener('click', function() {
+    if (prevMonthButton) {
+        prevMonthButton.addEventListener('click', function() {
             currentDate.setMonth(currentDate.getMonth() - 1);
             renderCalendar();
         });
     }
     
-    if (nextMonthBtn) {
-        nextMonthBtn.addEventListener('click', function() {
+    if (nextMonthButton) {
+        nextMonthButton.addEventListener('click', function() {
             currentDate.setMonth(currentDate.getMonth() + 1);
             renderCalendar();
         });

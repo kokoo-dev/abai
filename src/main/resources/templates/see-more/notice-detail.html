@@ -27,7 +27,7 @@
                             <i class="fas fa-user"></i> [[${notice.member.name}]]
                         </span>
                         <span class="notice-date">
-                            <i class="far fa-calendar-alt"></i> [[${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}]]
+                            <i class="far fa-calendar-alt"></i> [[${#temporals.format(notice.createdAt.atZoneSameInstant(T(java.time.ZoneId).of('Asia/Seoul')), 'yyyy-MM-dd')}]]
                         </span>
                         <span class="notice-views">
                             <i class="far fa-eye"></i> 조회수 [[${#numbers.formatInteger(notice.viewCount, 1, 'COMMA')}]]

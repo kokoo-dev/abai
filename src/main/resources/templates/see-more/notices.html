@@ -42,7 +42,7 @@
                     <h3 class="notice-title" th:text="${notice.title}">제목을 불러오지 못했어요.</h3>
                     <p class="notice-summary" th:text="${notice.content}">내용을 불러오지 못했어요.</p>
                     <div class="notice-meta">
-                        <span class="notice-date"><i class="far fa-calendar-alt"></i> [[${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}]]</span>
+                        <span class="notice-date"><i class="far fa-calendar-alt"></i> [[${#temporals.format(notice.createdAt.atZoneSameInstant(T(java.time.ZoneId).of('Asia/Seoul')), 'yyyy-MM-dd')}]]</span>
                         <span class="notice-views"><i class="far fa-eye"></i> [[${#numbers.formatInteger(notice.viewCount, 1, 'COMMA')}]]</span>
                     </div>
                 </div>

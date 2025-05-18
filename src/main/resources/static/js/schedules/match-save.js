@@ -1,3 +1,5 @@
+import { Formation } from "./Formation.js";
+
 // DOM 요소 참조
 const formationSelect = document.getElementById('formation-select');
 const quarterTabs = document.querySelectorAll('.quarter-tab');
@@ -18,11 +20,27 @@ const mapElement = document.getElementById('map');
 const keywordInput = document.getElementById('keyword');
 const searchKeywordBtn = document.getElementById('search-keyword');
 
+// 선수 선택 관련 DOM 요소 참조
+const playerList = document.getElementById('player-list');
+const selectedPlayerCount = document.getElementById('selected-player-count');
+const totalPlayerCount = document.getElementById('total-player-count');
+
+// 용병 추가 관련 DOM 요소 참조
+const addGuestPlayerBtn = document.getElementById('add-guest-player');
+const guestPlayerModal = document.getElementById('guest-player-modal');
+const guestPlayerNameInput = document.getElementById('guest-player-name');
+const guestPlayerNumberInput = document.getElementById('guest-player-number');
+const addGuestSubmitBtn = document.getElementById('add-guest-player-btn');
+const guestModalCloseBtn = guestPlayerModal.querySelector('.close-modal');
+
 // 카카오맵 관련 전역 변수
 let map = null;
 let markers = [];
-let infowindow = null;
+let infoWindow = null;
 let ps = null;
+
+// 포메이션
+const formation = new Formation({ formations: Array.from(formationSelect.options).map(option => option.value) })
 
 // 전역 변수
 let currentQuarter = 1;
@@ -45,107 +63,6 @@ let matchInfo = {
     longitude: ''
 };
 
-// 포메이션별 포지션 정보
-const formationLayouts = {
-    '433': [
-        // 공격수 포지션 (3명)
-        { row: 1, col: 1 },
-        { row: 1, col: 2 },
-        { row: 1, col: 3 },
-        // 미드필더 포지션 (3명)
-        { row: 2, col: 1 },
-        { row: 2, col: 2 },
-        { row: 2, col: 3 },
-        // 수비수 포지션 (4명)
-        { row: 3, col: 1 },
-        { row: 3, col: 2 },
-        { row: 3, col: 3 },
-        { row: 3, col: 4 },
-        { row: 4, col: 1 }
-    ],
-    '442': [
-        // 공격수 포지션 (2명)
-        { row: 1, col: 1 },
-        { row: 1, col: 2 },
-        // 미드필더 포지션 (4명)
-        { row: 2, col: 1 },
-        { row: 2, col: 2 },
-        { row: 2, col: 3 },
-        { row: 2, col: 4 },
-        // 수비수 포지션 (4명)
-        { row: 3, col: 1 },
-        { row: 3, col: 2 },
-        { row: 3, col: 3 },
-        { row: 3, col: 4 },
-        { row: 4, col: 1 }
-    ],
-    '4411': [
-        // 공격수 포지션 (1명)
-        { row: 1, col: 1 },
-        // 공격형 미드필더 포지션 (1명)
-        { row: 2, col: 2 },
-        // 미드필더 포지션 (4명)
-        { row: 3, col: 1 },
-        { row: 3, col: 2 },
-        { row: 3, col: 3 },
-        { row: 3, col: 4 },
-        // 수비수 포지션 (4명)
-        { row: 4, col: 1 },
-        { row: 4, col: 2 },
-        { row: 4, col: 3 },
-        { row: 4, col: 4 },
-        { row: 5, col: 1 }
-    ],
-    '352': [
-        // 공격수 포지션 (2명)
-        { row: 1, col: 1 },
-        { row: 1, col: 2 },
-        // 미드필더 포지션 (5명)
-        { row: 2, col: 1 },
-        { row: 2, col: 2 },
-        { row: 2, col: 3 },
-        { row: 2, col: 4 },
-        { row: 2, col: 5 },
-        // 수비수 포지션 (3명)
-        { row: 3, col: 1 },
-        { row: 3, col: 2 },
-        { row: 3, col: 3 },
-        { row: 4, col: 1 }
-    ],
-    '532': [
-        // 공격수 포지션 (2명)
-        { row: 1, col: 1 },
-        { row: 1, col: 2 },
-        // 미드필더 포지션 (3명)
-        { row: 2, col: 1 },
-        { row: 2, col: 2 },
-        { row: 2, col: 3 },
-        // 수비수 포지션 (5명)
-        { row: 3, col: 1 },
-        { row: 3, col: 2 },
-        { row: 3, col: 3 },
-        { row: 3, col: 4 },
-        { row: 3, col: 5 },
-        { row: 4, col: 1 }
-    ],
-    '343': [
-        // 공격수 포지션 (3명)
-        { row: 1, col: 1 },
-        { row: 1, col: 2 },
-        { row: 1, col: 3 },
-        // 미드필더 포지션 (4명)
-        { row: 2, col: 1 },
-        { row: 2, col: 2 },
-        { row: 2, col: 3 },
-        { row: 2, col: 4 },
-        // 수비수 포지션 (3명)
-        { row: 3, col: 1 },
-        { row: 3, col: 2 },
-        { row: 3, col: 3 },
-        { row: 4, col: 1 }
-    ]
-};
-
 // DOM 요소 참조 (추가)
 const playerSelectModal = document.getElementById('player-select-modal');
 const modalPlayerList = document.querySelector('.modal-player-list');
@@ -154,6 +71,200 @@ const closeModalBtn = document.querySelector('.close-modal');
 // 전역 변수 (추가)
 let currentPosition = null; // 현재 선택된 포지션
 let allPlayers = []; // 모든 선수 데이터
+let selectedPlayers = new Set(); // 출전 선수 ID 집합
+let guestPlayerIdCounter = 1000; // 용병 ID 카운터 (기존 선수 ID와 겹치지 않게 1000부터 시작)
+let guestPlayers = []; // 용병 선수 배열
+
+// 더미 선수 데이터 (실제로는 API에서 가져와야 함)
+const dummyPlayers = [
+    { id: 1, number: 1, name: '김민수', position: 'GK' },
+    { id: 2, number: 2, name: '이지훈', position: 'DF' },
+    { id: 3, number: 3, name: '박상현', position: 'DF' },
+    { id: 4, number: 4, name: '최영호', position: 'DF' },
+    { id: 5, number: 5, name: '정민우', position: 'DF' },
+    { id: 6, number: 6, name: '강대현', position: 'MF' },
+    { id: 7, number: 7, name: '손흥민', position: 'MF' },
+    { id: 8, number: 8, name: '황인범', position: 'MF' },
+    { id: 9, number: 9, name: '황희찬', position: 'FW' },
+    { id: 10, number: 10, name: '이강인', position: 'FW' },
+    { id: 11, number: 11, name: '조규성', position: 'FW' },
+    { id: 12, number: 12, name: '김승규', position: 'GK' },
+    { id: 13, number: 13, name: '송범근', position: 'GK' },
+    { id: 14, number: 14, name: '김문환', position: 'DF' },
+    { id: 15, number: 15, name: '김진수', position: 'DF' },
+    { id: 16, number: 16, name: '이재성', position: 'MF' },
+    { id: 17, number: 17, name: '정우영', position: 'MF' },
+    { id: 18, number: 18, name: '백승호', position: 'MF' },
+    { id: 19, number: 19, name: '오현규', position: 'FW' },
+    { id: 20, number: 20, name: '오세훈', position: 'FW' },
+];
+
+// 페이지 로드 시 초기화
+document.addEventListener('DOMContentLoaded', function() {
+    // 포메이션 렌더링
+    renderFormation(formationSelect.value);
+    
+    // 선수 데이터 로드 (실제로는 API에서 가져와야 함)
+    loadPlayers();
+
+    // 용병 모달 관련 이벤트 리스너 등록
+    initGuestPlayerEvents();
+});
+
+// 용병 모달 관련 이벤트 리스너 초기화
+function initGuestPlayerEvents() {
+    // 용병 추가 버튼 클릭 시 모달 열기
+    addGuestPlayerBtn.addEventListener('click', function() {
+        guestPlayerModal.classList.add('active');
+        
+        // 모달 입력 필드 초기화
+        guestPlayerNameInput.value = '';
+        guestPlayerNumberInput.value = '';
+    });
+
+    // 모달 닫기 버튼 클릭 시
+    guestModalCloseBtn.addEventListener('click', function() {
+        guestPlayerModal.classList.remove('active');
+    });
+
+    // 용병 추가 버튼 클릭 시
+    addGuestSubmitBtn.addEventListener('click', function() {
+        addGuestPlayer();
+    });
+
+    // 엔터 키로 용병 추가 가능하게
+    guestPlayerNameInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addGuestPlayer();
+        }
+    });
+    
+    guestPlayerNumberInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addGuestPlayer();
+        }
+    });
+}
+
+// 용병 추가 함수
+function addGuestPlayer() {
+    const name = guestPlayerNameInput.value.trim();
+    const number = parseInt(guestPlayerNumberInput.value);
+
+    // 유효성 검사
+    if (!name) {
+        alert('용병 이름을 입력해주세요.');
+        return;
+    }
+    
+    if (isNaN(number) || number <= 0) {
+        alert('유효한 등번호를 입력해주세요.');
+        return;
+    }
+
+    // 등번호 중복 검사
+    const isDuplicateNumber = allPlayers.some(player => player.number === number) || 
+                             guestPlayers.some(player => player.number === number);
+    
+    if (isDuplicateNumber) {
+        alert('이미 사용 중인 등번호입니다. 다른 번호를 입력해주세요.');
+        return;
+    }
+
+    // 새 용병 선수 객체 생성
+    const newGuestPlayer = {
+        id: guestPlayerIdCounter++,
+        name: name,
+        number: number,
+        isGuest: true
+    };
+
+    // 용병 배열에 추가
+    guestPlayers.push(newGuestPlayer);
+    
+    // 전체 선수 목록에 추가
+    allPlayers.push(newGuestPlayer);
+    
+    // 자동으로 선택 처리
+    selectedPlayers.add(newGuestPlayer.id);
+
+    // 선택된 선수 수 업데이트
+    selectedPlayerCount.textContent = selectedPlayers.size;
+    totalPlayerCount.textContent = allPlayers.length;
+    
+    // 선수 목록 다시 렌더링
+    renderPlayerList();
+    
+    // 모달 닫기
+    guestPlayerModal.classList.remove('active');
+}
+
+// 선수 데이터 로드 함수
+function loadPlayers() {
+    // 실제로는 API 호출이 필요함
+    allPlayers = dummyPlayers;
+    
+    // 총 선수 수 표시
+    totalPlayerCount.textContent = allPlayers.length;
+    
+    // 선수 목록 렌더링
+    renderPlayerList();
+}
+
+// 선수 목록 렌더링 함수 (수정)
+function renderPlayerList() {
+    playerList.innerHTML = '';
+    
+    allPlayers.forEach(player => {
+        const playerCard = document.createElement('div');
+        playerCard.className = `player-card${selectedPlayers.has(player.id) ? ' selected' : ''}`;
+        
+        // 용병인 경우 스타일 클래스 추가
+        if (player.isGuest) {
+            playerCard.classList.add('guest-player');
+        }
+        
+        playerCard.dataset.playerId = player.id;
+        
+        const playerNumber = document.createElement('div');
+        playerNumber.className = 'player-card-number';
+        playerNumber.textContent = player.number;
+        
+        const playerName = document.createElement('div');
+        playerName.className = 'player-card-name';
+        playerName.textContent = player.name;
+        
+        playerCard.appendChild(playerNumber);
+        playerCard.appendChild(playerName);
+        
+        // 선수 카드 클릭 이벤트 - 선택/해제 토글
+        playerCard.addEventListener('click', function() {
+            togglePlayerSelection(player.id);
+        });
+        
+        playerList.appendChild(playerCard);
+    });
+}
+
+// 선수 선택/해제 토글 함수
+function togglePlayerSelection(playerId) {
+    if (selectedPlayers.has(playerId)) {
+        // 이미 선택된 선수라면 선택 해제
+        selectedPlayers.delete(playerId);
+    } else {
+        // 선택되지 않은 선수라면 선택 추가
+        selectedPlayers.add(playerId);
+    }
+    
+    // 선택된 선수 수 업데이트
+    selectedPlayerCount.textContent = selectedPlayers.size;
+    
+    // 선수 목록 UI 업데이트
+    const playerCard = playerList.querySelector(`[data-player-id="${playerId}"]`);
+    if (playerCard) {
+        playerCard.classList.toggle('selected');
+    }
+}
 
 // 포메이션 변경 시 이벤트 처리
 formationSelect.addEventListener('change', function() {
@@ -258,7 +369,6 @@ saveBtn.addEventListener('click', function() {
     };
     
     // 서버에 저장하는 API 호출 (향후 구현)
-    console.log('경기 데이터 저장:', matchData);
     alert('경기 정보가 저장되었습니다.');
     
     // 저장 후 경기 목록 페이지로 이동
@@ -283,7 +393,7 @@ function renderFormation(formationType) {
     positionsContainer.style.marginTop = '35px'; // 인라인 스타일로 마진 추가
     
     // 선택된 포메이션 레이아웃 가져오기
-    const layout = formationLayouts[formationType];
+    const layout = formation.getLayouts()[formationType]
     
     // 포지션을 행별로 그룹화
     const positionsByRow = {};
@@ -293,18 +403,6 @@ function renderFormation(formationType) {
         }
         positionsByRow[pos.row].push(pos);
     });
-    
-    // 행 개수 확인
-    const rowCount = Object.keys(positionsByRow).length;
-    
-    // 5행인 경우 특별 클래스 추가
-    if (rowCount >= 5) {
-        positionsContainer.classList.add('rows-5');
-    } else if (rowCount === 4) {
-        positionsContainer.classList.add('rows-4');
-    } else if (rowCount === 3) {
-        positionsContainer.classList.add('rows-3');
-    }
     
     // 각 행에 대해 포지션 요소 생성
     Object.keys(positionsByRow)
@@ -354,114 +452,95 @@ function renderFormation(formationType) {
     applyPlayerPositions();
 }
 
+// 저장된 선수 포지션 정보 적용
+function applyPlayerPositions() {
+    // 현재 쿼터에 저장된 선수 정보 가져오기
+    const currentPlayers = formations[currentQuarter].players;
+    
+    // 모든 포지션 요소 가져오기
+    const positionElements = document.querySelectorAll('.formation-position');
+    
+    // 각 포지션에 선수 정보 적용
+    positionElements.forEach(positionElement => {
+        const position = positionElement.dataset.position;
+        const playerId = currentPlayers[position];
+        
+        // 선수 ID가 있으면 해당 선수 정보 표시
+        if (playerId) {
+            const player = allPlayers.find(p => p.id === playerId);
+            if (player) {
+                const jersey = positionElement.querySelector('.jersey');
+                
+                // 빈 포지션 클래스 제거
+                jersey.classList.remove('empty-position');
+                
+                // 기존 번호와 이름 요소가 있으면 제거
+                const existingNumber = jersey.querySelector('.player-number');
+                if (existingNumber) existingNumber.remove();
+                
+                const existingName = positionElement.querySelector('.player-name-display');
+                if (existingName) existingName.remove();
+                
+                // 선수 번호 추가
+                const playerNumber = document.createElement('div');
+                playerNumber.className = 'player-number';
+                playerNumber.textContent = player.number;
+                jersey.appendChild(playerNumber);
+                
+                // 선수 이름 추가
+                const playerName = document.createElement('div');
+                playerName.className = 'player-name-display';
+                playerName.textContent = player.name;
+                positionElement.appendChild(playerName);
+            }
+        } else {
+            // 선수가 배정되지 않은 포지션은 빈 상태로 초기화
+            const jersey = positionElement.querySelector('.jersey');
+            jersey.classList.add('empty-position');
+            
+            // 기존 번호와 이름 요소 제거
+            const existingNumber = jersey.querySelector('.player-number');
+            if (existingNumber) existingNumber.remove();
+            
+            const existingName = positionElement.querySelector('.player-name-display');
+            if (existingName) existingName.remove();
+        }
+    });
+}
+
 // 선수를 포지션에 배치하는 함수
 function assignPlayerToPosition(position, player) {
     // 현재 쿼터의 포메이션 정보에 선수 저장
-    formations[currentQuarter].players[position] = player;
+    formations[currentQuarter].players[position] = player.id;
     
     // UI 업데이트
     const positionElement = document.querySelector(`.formation-position[data-position="${position}"]`);
     if (positionElement) {
-        // 이전에 이름 표시 요소가 있다면 제거
-        const oldNameDisplay = positionElement.querySelector('.player-name-display');
-        if (oldNameDisplay) {
-            oldNameDisplay.remove();
-        }
-        
         const jersey = positionElement.querySelector('.jersey');
         
-        // 비어있는 상태 클래스 제거
+        // 빈 포지션 클래스 제거
         jersey.classList.remove('empty-position');
         
-        // 내용 초기화
-        jersey.innerHTML = '';
+        // 기존 번호와 이름 요소가 있으면 제거
+        const existingNumber = jersey.querySelector('.player-number');
+        if (existingNumber) existingNumber.remove();
         
-        // 선수 번호 추가 - 중앙에 배치
-        const numberElement = document.createElement('div');
-        numberElement.className = 'player-number';
-        numberElement.textContent = player.number;
-        jersey.appendChild(numberElement);
+        const existingName = positionElement.querySelector('.player-name-display');
+        if (existingName) existingName.remove();
         
-        // 선수 이름 추가 - 유니폼 아래쪽에 배치
-        const nameElement = document.createElement('div');
-        nameElement.className = 'player-name-display';
-        nameElement.textContent = player.name;
+        // 선수 번호 추가
+        const playerNumber = document.createElement('div');
+        playerNumber.className = 'player-number';
+        playerNumber.textContent = player.number;
+        jersey.appendChild(playerNumber);
         
-        // 이름은 positionElement 내부에 직접 추가 (유니폼 외부)
-        positionElement.appendChild(nameElement);
-        
-        // 골키퍼 포지션의 경우 추가 스타일링
-        if (position === 'gk') {
-            if (positionElement.closest('.gk-position')) {
-                jersey.classList.add('gk-jersey');
-            }
-        }
+        // 선수 이름 추가
+        const playerName = document.createElement('div');
+        playerName.className = 'player-name-display';
+        playerName.textContent = player.name;
+        positionElement.appendChild(playerName);
     }
 }
-
-// 저장된 선수 포지션 정보 적용하는 함수
-function applyPlayerPositions() {
-    // 모든 포지션을 빈 상태로 초기화
-    document.querySelectorAll('.formation-position, .gk-position').forEach(posElement => {
-        const jersey = posElement.querySelector('.jersey');
-        if (jersey) {
-            // 기본 클래스 설정
-            if (posElement.classList.contains('gk-position')) {
-                jersey.className = 'jersey gk-jersey empty-position';
-            } else {
-                jersey.className = 'jersey empty-position';
-            }
-            
-            // 내용 초기화
-            jersey.innerHTML = '';
-        }
-        
-        // 이름 표시 제거
-        const nameDisplay = posElement.querySelector('.player-name-display');
-        if (nameDisplay) {
-            nameDisplay.remove();
-        }
-    });
-    
-    // 현재 쿼터에 저장된 선수 정보 적용
-    const currentPlayers = formations[currentQuarter].players;
-    for (const position in currentPlayers) {
-        assignPlayerToPosition(position, currentPlayers[position]);
-    }
-}
-
-// 초기화 시 선수 데이터 수집
-document.addEventListener('DOMContentLoaded', function() {
-    // 기본 선수 데이터 설정
-    allPlayers = [
-        { id: '1', number: '1', name: '김골키퍼', position: 'GK' },
-        { id: '2', number: '5', name: '박수비', position: 'DF' },
-        { id: '3', number: '6', name: '정센터백', position: 'DF' },
-        { id: '4', number: '3', name: '이왼쪽', position: 'DF' },
-        { id: '5', number: '2', name: '한오른쪽', position: 'DF' },
-        { id: '6', number: '8', name: '최미드필더', position: 'MF' },
-        { id: '7', number: '6', name: '오수비형', position: 'MF' },
-        { id: '8', number: '10', name: '윤공격형', position: 'MF' },
-        { id: '9', number: '7', name: '서왼쪽윙', position: 'FW' },
-        { id: '10', number: '9', name: '김스트라이커', position: 'FW' },
-        { id: '11', number: '11', name: '강오른쪽윙', position: 'FW' },
-        { id: '12', number: '14', name: '황공격수', position: 'FW' }
-    ];
-    
-    // 초기 경기 정보 설정
-    // 초기 경기 정보 폼에 오늘 날짜 설정
-    const today = new Date();
-    matchDateInput.value = today.toISOString().split('T')[0];
-    matchInfo.date = matchDateInput.value;
-
-    // 초기 시간 설정 (19:00)
-    matchTimeInput.value = '19:00';
-    matchInfo.time = matchTimeInput.value;
-
-    // 초기 포메이션 렌더링
-    const initialFormation = formationSelect.value;
-    renderFormation(initialFormation);
-});
 
 // 모달 닫기 버튼 이벤트
 closeModalBtn.addEventListener('click', function() {
@@ -475,46 +554,77 @@ playerSelectModal.addEventListener('click', function(e) {
     }
 });
 
-// 모달에 선수 목록 채우기
+// 모달에 선수 목록 채우기 (수정된 버전)
 function populateModalPlayerList(position) {
     modalPlayerList.innerHTML = '';
     
-    // 현재 배치된 선수 제외 또는 표시하기
-    const currentPlayers = Object.values(formations[currentQuarter].players)
-        .map(player => player.id);
+    // 선택된 선수들에 대한 목록 생성
+    let hasSelectedPlayers = false;
     
     allPlayers.forEach(player => {
-        const isAssigned = currentPlayers.includes(player.id);
-        const playerItem = document.createElement('div');
-        playerItem.className = `modal-player-item ${isAssigned ? 'assigned' : ''}`;
-        playerItem.dataset.playerId = player.id;
-        
-        // 이미 배치된 선수는 표시
-        const assignedInfo = isAssigned ? ' (배치됨)' : '';
-        
-        playerItem.innerHTML = `
-            <div class="player-number">${player.number}</div>
-            <div class="player-info">
-                <div class="player-name">${player.name}${assignedInfo}</div>
-                <div class="player-position">${player.position}</div>
-            </div>
-        `;
-        
-        // 모달에서 선수 선택 시 이벤트
-        playerItem.addEventListener('click', function() {
-            // 선수 정보로 포지션 배치
-            assignPlayerToPosition(currentPosition, {
-                id: player.id,
-                number: player.number,
-                name: player.name
+        if (selectedPlayers.has(player.id)) {
+            hasSelectedPlayers = true;
+            
+            const playerItem = document.createElement('div');
+            playerItem.className = 'modal-player-item';
+            playerItem.dataset.playerId = player.id;
+            
+            // 용병 선수는 표시
+            if (player.isGuest) {
+                playerItem.classList.add('guest-player-item');
+            }
+            
+            // 이미 포지션에 할당된 선수인지 확인
+            const isAssigned = isPlayerAssignedToAnyPosition(player.id);
+            if (isAssigned) {
+                playerItem.classList.add('assigned');
+            }
+            
+            // 내부 요소 생성
+            const playerNumber = document.createElement('div');
+            playerNumber.className = 'player-number';
+            playerNumber.textContent = player.number;
+            
+            const playerName = document.createElement('div');
+            playerName.className = 'player-name';
+            playerName.textContent = player.name;
+            
+            playerItem.appendChild(playerNumber);
+            playerItem.appendChild(playerName);
+            
+            // 클릭 이벤트 - 선수를 포지션에 할당
+            playerItem.addEventListener('click', function() {
+                if (!isAssigned || isPlayerAssignedToPosition(player.id, position)) {
+                    assignPlayerToPosition(position, player);
+                    playerSelectModal.classList.remove('active');
+                } else {
+                    alert('이미 다른 포지션에 배치된 선수입니다.');
+                }
             });
             
-            // 모달 닫기
-            playerSelectModal.classList.remove('active');
-        });
-        
-        modalPlayerList.appendChild(playerItem);
+            modalPlayerList.appendChild(playerItem);
+        }
     });
+    
+    // 선택된 선수가 없을 경우 메시지 표시
+    if (!hasSelectedPlayers) {
+        const noPlayersMsg = document.createElement('div');
+        noPlayersMsg.className = 'no-players-message';
+        noPlayersMsg.textContent = '선택된 선수가 없습니다. 먼저 선수를 선택해주세요.';
+        modalPlayerList.appendChild(noPlayersMsg);
+    }
+}
+
+// 선수가 이미 다른 포지션에 할당되어 있는지 확인
+function isPlayerAssignedToAnyPosition(playerId) {
+    const positionEntries = Object.entries(formations[currentQuarter].players);
+    return positionEntries.some(([pos, id]) => id && id === playerId);
+}
+
+// 선수가 특정 포지션에 할당되어 있는지 확인
+function isPlayerAssignedToPosition(playerId, position) {
+    const assignedPlayer = formations[currentQuarter].players[position];
+    return assignedPlayer && assignedPlayer.id === playerId;
 }
 
 // 카카오맵 초기화 함수
@@ -530,7 +640,7 @@ function initMap() {
     ps = new kakao.maps.services.Places();
     
     // 인포윈도우 객체 생성
-    infowindow = new kakao.maps.InfoWindow({zIndex: 1});
+    infoWindow = new kakao.maps.InfoWindow({zIndex: 1});
 }
 
 // 키워드로 장소 검색
@@ -592,7 +702,7 @@ function displayPlaces(places) {
             // 마커 클릭 시
             kakao.maps.event.addListener(marker, 'click', function() {
                 // 인포윈도우에 장소 정보 표시
-                displayInfowindow(marker, place);
+                displayInfoWindow(marker, place);
                 
                 // 선택한 장소 정보 저장
                 selectPlace(place);
@@ -600,19 +710,19 @@ function displayPlaces(places) {
             
             // 마커에 마우스 오버 시
             kakao.maps.event.addListener(marker, 'mouseover', function() {
-                displayInfowindow(marker, place);
+                displayInfoWindow(marker, place);
             });
             
             // 마커에 마우스 아웃 시
             kakao.maps.event.addListener(marker, 'mouseout', function() {
-                infowindow.close();
+                infoWindow.close();
             });
             
             // 목록 아이템 클릭 시
             itemEl.onclick = function() {
                 // 해당 마커를 클릭하여 마커 정보창 표시
                 map.panTo(position);
-                displayInfowindow(marker, place);
+                displayInfoWindow(marker, place);
                 
                 // 선택한 장소 정보 저장
                 selectPlace(place);
@@ -699,7 +809,7 @@ function removeAllMarkers() {
 }
 
 // 인포윈도우 표시 함수
-function displayInfowindow(marker, place) {
+function displayInfoWindow(marker, place) {
     const content = `
         <div class="place-info-window">
             <div class="place-info-name">${place.place_name}</div>
@@ -707,8 +817,8 @@ function displayInfowindow(marker, place) {
         </div>
     `;
     
-    infowindow.setContent(content);
-    infowindow.open(map, marker);
+    infoWindow.setContent(content);
+    infoWindow.open(map, marker);
 }
 
 // 장소 선택 함수

@@ -128,7 +128,7 @@
 
 @media (min-width: 992px) {
     .field-wrapper {
-        padding-top: 90%;
+        padding-top: 95%;
         max-width: 800px; /* 최대 너비 증가 */
     }
 }
@@ -180,28 +180,6 @@
     margin-top: 35px; /* 상단에 여백 추가하여 안내 메시지와 겹치지 않게 함 */
 }
 
-/* 행 수에 따른 스타일 조정 */
-.positions-container.rows-5 {
-    padding-top: 0.4rem;
-    padding-bottom: 0.4rem;
-}
-
-/* 5행에 맞게 행 패딩 조정 */
-.rows-5 .formation-row {
-    padding: 0.05rem 0;
-    margin-bottom: 0.2rem;
-}
-
-.rows-5 .formation-row:last-child {
-    margin-bottom: 0;
-}
-
-/* 플레이어 이름 디스플레이 - 5행에 최적화 */
-.rows-5 .player-name-display {
-    margin-top: 0.1rem;
-    font-size: 0.65rem;
-}
-
 /* 행 간격 균등 분배 */
 .formation-row {
     margin-bottom: 0.3rem;
@@ -241,19 +219,6 @@
     padding: 0.15rem 0; /* 상하 패딩 감소 */
 }
 
-/* 포메이션 포지션 스타일 */
-.formation-position {
-    flex: 0 0 auto;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-    padding: 0.5rem 0.5rem 1.2rem 0.5rem; /* 하단 패딩 추가하여 이름 공간 확보 */
-    height: auto; /* 높이 자동 조정 */
-}
-
 /* 행별 여백 조정 */
 .formation-row:first-child {
     margin-top: 0.5%; /* 여백 감소 */
@@ -261,12 +226,6 @@
 
 .formation-row:last-child {
     margin-bottom: 0.5%; /* 여백 감소 */
-}
-
-/* 행별 갭 조정 - 더 이상 필요 없음 (first-child, last-child로 대체) */
-.formation-row-1, .formation-row-2, .formation-row-3, .formation-row-4 {
-    margin-top: 0;
-    margin-bottom: 0;
 }
 
 /* 다양한 수의 선수 배치를 위한 스타일 */
@@ -288,36 +247,6 @@
 
 .formation-row[data-players="5"] .formation-position {
     margin: 0 2%;
-}
-
-/* 골키퍼 유니폼 스타일 */
-.gk-jersey {
-    background-color: var(--gk-jersey-color);
-}
-
-.gk-jersey::after {
-    background-color: var(--gk-jersey-shorts);
-}
-
-.gk-jersey .left-sleeve,
-.gk-jersey .right-sleeve {
-    background-color: var(--gk-jersey-color);
-}
-
-/* 골키퍼 유니폼 패턴 - 스트라이프 대신 체크 패턴 */
-.gk-jersey .stripes {
-    background: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 5px,
-        rgba(255, 255, 255, 0.15) 5px,
-        rgba(255, 255, 255, 0.15) 10px
-    );
-}
-
-/* 골키퍼 유니폼의 배지와 스폰서 색상 */
-.gk-jersey .sponsor-line {
-    background-color: rgba(255, 204, 0, 0.8);
 }
 
 /* 포지션별 스타일 */
@@ -375,68 +304,6 @@
     display: none;
 }
 
-/* 유니폼 팀 스트라이프 - 세로줄 패턴 */
-.jersey .stripes {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: repeating-linear-gradient(
-        to right,
-        transparent,
-        transparent 8px,
-        rgba(255, 255, 255, 0.1) 8px,
-        rgba(255, 255, 255, 0.1) 16px
-    );
-    z-index: 0;
-    clip-path: inherit;
-}
-
-/* 유니폼에 번호 배경 */
-.jersey .number-background {
-    position: absolute;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.1);
-    z-index: 1;
-}
-
-/* 유니폼 국가 배지 */
-.jersey::before {
-    content: '';
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    width: 8px;
-    height: 8px;
-    background-color: var(--team-accent);
-    border-radius: 50%;
-    z-index: 3;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-}
-
-.player-number {
-    font-size: 1.2rem;
-    font-weight: bold;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    z-index: 2;
-    color: var(--jersey-text);
-}
-
-/* 유니폼에 팀 스폰서 줄 */
-.jersey .sponsor-line {
-    position: absolute;
-    top: 36px;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background-color: var(--team-accent);
-    opacity: 0.8;
-    z-index: 2;
-}
-
 /* 빈 포지션 스타일 */
 .empty-position {
     background-color: var(--empty-jersey);
@@ -454,19 +321,6 @@
 .empty-position:hover {
     opacity: 0.9;
     transform: none; /* scale(1.1)에서 none으로 변경 */
-}
-
-/* 유니폼 무늬는 빈 포지션에는 보이지 않게 */
-.empty-position .stripes {
-    display: none;
-}
-
-.empty-position::before {
-    display: none;
-}
-
-.empty-position .sponsor-line {
-    display: none;
 }
 
 /* 선수 이름 표시 */
@@ -662,7 +516,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: bold;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     z-index: 2;
@@ -684,7 +538,7 @@
     display: none;
 }
 
-/* 포지션 타입별 스타일 제거 */
+/* 포지션 타입별 스타일 */
 .formation-position[data-pos-type="AM"] .player-name-display,
 .formation-position[data-pos-type="AM"] .jersey,
 .formation-position[data-pos-type="AM"] .jersey::before,
@@ -692,7 +546,9 @@
 .pos-type-fw,
 .pos-type-am,
 .pos-type-mf,
-.pos-type-df
+.pos-type-df {
+    /* 포지션 타입별 스타일 */
+}
 
 /* 애니메이션 제거 */
 @keyframes pulse {
@@ -700,12 +556,6 @@
         transform: none;
         opacity: 0;
     }
-}
-
-/* 4행일 때 선수 이름 표시 조정 */
-.rows-4 .player-name-display {
-    margin-top: 0.15rem;
-    font-size: 0.7rem;
 }
 
 /* 경기 정보 입력 폼 스타일 */
@@ -881,25 +731,57 @@ label {
 }
 
 .modal-player-list {
-    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    max-height: 300px;
     overflow-y: auto;
-    max-height: 60vh;
+    padding: 1rem;
 }
 
 .modal-player-item {
     display: flex;
     align-items: center;
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
     margin-bottom: 0.5rem;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background-color: #f8f8f8;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
 .modal-player-item:hover {
-    background-color: rgba(52, 152, 219, 0.05);
+    background-color: var(--primary-light-color);
+}
+
+.modal-player-item.assigned {
+    background-color: var(--primary-light-color);
+    border-left: 4px solid var(--primary-color);
+}
+
+.modal-player-item .player-number {
+    width: 28px;
+    height: 28px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+}
+
+.modal-player-item .player-name {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.no-players-message {
+    padding: 1.5rem;
+    text-align: center;
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
 }
 
 /* 포지션 일괄 할당 버튼 */
@@ -982,11 +864,6 @@ label {
     background: #e9ecef;
     border-radius: 3px;
     font-size: 0.85rem;
-}
-
-/* 빈 포지션 강조 - 모바일에서 선택이 쉽도록 */
-.formation-position {
-    padding: 0.75rem;
 }
 
 .empty-position {
@@ -1309,4 +1186,279 @@ label {
     background-color: #f0f7ff;
     color: #555;
     border-color: #a9c8e7;
+}
+
+/* 선수 선택 영역 */
+.player-selection-section {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.player-selection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.player-selection-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+.player-count {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #666;
+    background-color: white;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.player-list-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.player-list {
+    display: flex;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    gap: 0.8rem;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.player-list::-webkit-scrollbar {
+    height: 6px;
+}
+
+.player-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+}
+
+.player-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.player-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.player-card {
+    min-width: 80px;
+    width: 80px;
+    height: 110px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.player-card.selected {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.player-card.selected::after {
+    content: "✓";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    background-color: white;
+    color: var(--primary-color);
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+.player-card-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+
+.player-card.selected .player-card-number {
+    color: white;
+}
+
+.player-card-name {
+    font-size: 0.8rem;
+    text-align: center;
+    word-break: keep-all;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.player-card.selected .player-card-name {
+    color: white;
+}
+
+/* 선수 선택 섹션 헤더 수정 */
+.player-selection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.player-selection-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+/* 용병 추가 버튼과 선수 카운트를 가로로 배치 */
+.player-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 용병 추가 버튼 스타일 */
+.guest-player-btn {
+    padding: 0.4rem 0.8rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.guest-player-btn:hover {
+    background-color: #e67e22;
+    transform: translateY(-1px);
+}
+
+/* 선수 카운트 스타일 */
+.player-count {
+    font-size: 0.9rem;
+    color: #666;
+    white-space: nowrap;
+}
+
+/* 용병 추가 모달 스타일 */
+.guest-player-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.guest-player-modal.active {
+    display: flex;
+}
+
+.guest-player-modal .modal-content {
+    background-color: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.guest-player-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.guest-player-modal .modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+.guest-player-modal .modal-body {
+    padding: 1rem;
+}
+
+.guest-player-modal .form-group {
+    margin-bottom: 1rem;
+}
+
+.guest-player-modal .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.guest-player-modal label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.guest-player-modal .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.guest-player-modal .modal-actions {
+    margin-top: 1.5rem;
+    text-align: right;
+}
+
+.add-guest-btn {
+    padding: 0.6rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.add-guest-btn:hover {
+    background-color: #2980b9;
+}
+
+.player-card.guest-player::before {
+    content: "용병";
+    position: absolute;
+    top: 5px;
+    right: 45px;
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 600;
 } 
