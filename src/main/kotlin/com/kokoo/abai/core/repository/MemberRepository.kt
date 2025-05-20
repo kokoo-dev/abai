@@ -1,10 +1,13 @@
 package com.kokoo.abai.core.repository
 
 import com.kokoo.abai.core.domain.Member
+import com.kokoo.abai.core.enums.MemberStatus
 import com.kokoo.abai.core.row.MemberRow
 import com.kokoo.abai.core.row.toMemberRow
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -38,4 +41,9 @@ class MemberRepository {
     fun findByLoginId(loginId: String): MemberRow? = Member.select(Member.columns)
         .where { Member.loginId.eq(loginId) }
         .singleOrNull()?.toMemberRow()
+
+    fun findByStatus(status: MemberStatus): List<MemberRow> = Member.selectAll()
+        .where { Member.status eq MemberStatus.ACTIVATED }
+        .orderBy(Member.uniformNumber to SortOrder.ASC)
+        .map { it.toMemberRow() }
 }

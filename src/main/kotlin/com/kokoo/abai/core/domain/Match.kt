@@ -10,6 +10,8 @@ object Match : BaseTable("match") {
     val opponentName = varchar("opponent_name", 30)
     val location = varchar("location", 50)
     val address = varchar("address", 100)
+    val longitude = decimal("longitude", 9, 6)
+    val latitude = decimal("latitude", 9, 6)
     val status = enumerationByName("status", 30, MatchStatus::class).default(MatchStatus.READY)
     val result = enumerationByName("result", 30, MatchResult::class).default(MatchResult.READY)
     val goalsFor = integer("goals_for").default(0)

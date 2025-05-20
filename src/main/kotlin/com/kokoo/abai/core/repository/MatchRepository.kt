@@ -20,6 +20,8 @@ class MatchRepository {
                 it[opponentName] = row.opponentName
                 it[location] = row.location
                 it[address] = row.address
+                it[longitude] = row.longitude
+                it[latitude] = row.latitude
                 it[status] = row.status
                 it[result] = row.result
                 it[goalsFor] = row.goalsFor
@@ -33,6 +35,8 @@ class MatchRepository {
                 it[opponentName] = row.opponentName
                 it[location] = row.location
                 it[address] = row.address
+                it[longitude] = row.longitude
+                it[latitude] = row.latitude
                 it[status] = row.status
                 it[result] = row.result
                 it[goalsFor] = row.goalsFor

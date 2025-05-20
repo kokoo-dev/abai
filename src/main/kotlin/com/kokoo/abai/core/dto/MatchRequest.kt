@@ -5,6 +5,7 @@ import com.kokoo.abai.core.enums.MatchResult
 import com.kokoo.abai.core.enums.MatchStatus
 import com.kokoo.abai.core.row.MatchRow
 import jakarta.validation.constraints.NotEmpty
+import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 data class MatchRequest(
@@ -13,10 +14,12 @@ data class MatchRequest(
     val opponentName: String,
     val location: String,
     val address: String,
+    val longitude: BigDecimal,
+    val latitude: BigDecimal,
     val status: MatchStatus = MatchStatus.READY,
     val result: MatchResult = MatchResult.READY,
-    val goalsFor: Int,
-    val goalsAgainst: Int,
+    val goalsFor: Int = 0,
+    val goalsAgainst: Int = 0,
     val formations: List<MatchFormationRequest> = emptyList(),
 
     @field:NotEmpty
@@ -28,6 +31,8 @@ fun MatchRequest.toRow() = MatchRow(
     opponentName = this.opponentName,
     location = this.location,
     address = this.address,
+    longitude = this.longitude,
+    latitude = this.latitude,
     status = this.status,
     result = this.result,
     goalsFor = this.goalsFor,

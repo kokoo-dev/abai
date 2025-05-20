@@ -3,6 +3,7 @@ package com.kokoo.abai.core.dto
 import com.kokoo.abai.core.enums.MatchResult
 import com.kokoo.abai.core.enums.MatchStatus
 import com.kokoo.abai.core.row.MatchRow
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class MatchResponse(
@@ -11,6 +12,8 @@ data class MatchResponse(
     val opponentName: String,
     val location: String,
     val address: String,
+    val longitude: BigDecimal,
+    val latitude: BigDecimal,
     val status: MatchStatus,
     val result: MatchResult,
     val goalsFor: Int,
@@ -23,6 +26,8 @@ fun MatchRow.toResponse() = MatchResponse(
     opponentName = this.opponentName,
     location = this.location,
     address = this.address,
+    longitude = this.longitude,
+    latitude = this.latitude,
     status = this.status,
     result = this.result,
     goalsFor = this.goalsFor,

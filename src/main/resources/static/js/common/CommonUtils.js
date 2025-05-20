@@ -24,4 +24,9 @@ export default class CommonUtils {
         document.body.appendChild(form)
         form.submit()
     }
+
+    static getTemplateNode(templateId = '') {
+        const template = document.getElementById(templateId)
+        return template.content.cloneNode(true)
+    }
 }

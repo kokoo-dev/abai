@@ -616,25 +616,6 @@
     border-color: #0056b3;
 }
 
-/* 주소 선택 확인 메시지 */
-.address-selection-message {
-    margin-top: 0.5rem;
-    color: #28a745;
-    font-size: 0.9rem;
-    background-color: rgba(40, 167, 69, 0.1);
-    border-radius: 4px;
-    padding: 0.5rem;
-    text-align: center;
-    animation: fadeIn 0.3s ease;
-    font-weight: 500;
-}
-
-/* 메시지 페이드 아웃 효과 */
-.address-selection-message.fade-out {
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -993,19 +974,6 @@ label {
 .address-selected {
     background-color: #e8f4ff;
     border-color: #007bff;
-}
-
-/* 장소 선택 메시지 */
-.address-selection-message {
-    color: #28a745;
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-    opacity: 1;
-    transition: opacity 0.5s;
-}
-
-.address-selection-message.fade-out {
-    opacity: 0;
 }
 
 /* 검색 결과 목록 스타일 */

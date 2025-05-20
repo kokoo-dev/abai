@@ -43,7 +43,7 @@
                     <div id="map-container" style="display:none;">
                         <div id="map" style="width:100%;height:300px;"></div>
                         <div class="map-search-box">
-                            <input type="text" id="keyword" class="form-control" placeholder="축구장, 체육관 등 검색">
+                            <input type="text" id="keyword" class="form-control" placeholder="강서 개화 축구장 등 검색">
                             <button id="search-keyword" class="btn">검색</button>
                         </div>
                     </div>
@@ -133,10 +133,6 @@
                         <label for="guest-player-name">이름</label>
                         <input type="text" id="guest-player-name" class="form-control" placeholder="용병 이름 입력">
                     </div>
-                    <div class="form-group">
-                        <label for="guest-player-number">등번호</label>
-                        <input type="number" id="guest-player-number" class="form-control" placeholder="등번호 입력">
-                    </div>
                     <div class="form-group modal-actions">
                         <button id="add-guest-player-btn" class="btn add-guest-btn">추가</button>
                     </div>
@@ -146,6 +142,50 @@
     </div>
 
     <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
+
+    <template id="place-item-template">
+        <div class="place-item">
+            <div class="place-item-inner">
+                <div class="place-marker"></div>
+                <div class="place-info">
+                    <h5 class="place-name"></h5>
+                    <span class="place-category"></span>
+                    <span class="place-address"></span>
+                    <span class="place-road-address" style="display: none;"></span>
+                    <span class="place-phone" style="display: none;"></span>
+                </div>
+                <button class="select-place-btn">선택</button>
+            </div>
+        </div>
+    </template>
+
+    <template id="place-info-window-template">
+        <div class="place-info-window">
+            <div class="place-info-name"></div>
+            <div class="place-info-address"></div>
+        </div>
+    </template>
+
+    <template id="player-card-template">
+        <div class="player-card">
+            <div class="player-card-number"></div>
+            <div class="player-card-name"></div>
+        </div>
+    </template>
+
+    <template id="field-instruction-template">
+        <div class="field-instruction-inner">
+            <p>포지션을 터치하여 선수를 선택하세요</p>
+        </div>
+    </template>
+
+    <template id="player-number-template">
+        <div class="player-number"></div>
+    </template>
+
+    <template id="player-name-template">
+        <div class="player-name-display"></div>
+    </template>
 
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=33f6142573a63b0f99ad87db952a8186&libraries=services"></script>
     <script type="module" th:src="@{/js/schedules/match-save.js}" defer></script>
