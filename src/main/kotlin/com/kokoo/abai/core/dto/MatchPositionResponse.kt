@@ -6,6 +6,7 @@ import com.kokoo.abai.core.row.MatchPositionRow
 data class MatchPositionResponse(
     val id: Long,
     val memberId: Long?,
+    val guestId: String?,
     val matchFormationId: Long,
     val position: Int,
     val playerType: PlayerType,
@@ -15,6 +16,7 @@ data class MatchPositionResponse(
 fun MatchPositionRow.toResponse() = MatchPositionResponse(
     id = this.id,
     memberId = this.memberId,
+    guestId = this.guestId,
     matchFormationId = this.matchFormationId,
     position = this.position,
     playerType = this.playerType,

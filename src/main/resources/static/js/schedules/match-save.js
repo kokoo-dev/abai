@@ -60,7 +60,6 @@ const closeModalBtn = document.querySelector('.close-modal')
 let currentPosition = null // 현재 선택된 포지션
 let allPlayers = [] // 모든 선수 데이터
 let selectedPlayers = new Set() // 출전 선수 ID 집합
-let guestPlayerIdCounter = 1000 // 용병 ID 카운터 (기존 선수 ID와 겹치지 않게 1000부터 시작)
 let guestPlayers = [] // 용병 선수 배열
 
 // 페이지 로드 시 초기화
@@ -68,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 포메이션 렌더링
     renderFormation(formationSelect.value)
 
-    // 선수 데이터 로드 (실제로는 API에서 가져와야 함)
+    // 선수 데이터 로드
     loadPlayers()
 
     // 용병 모달 관련 이벤트 리스너 등록
@@ -195,6 +194,7 @@ saveBtn.addEventListener('click', function () {
             return {
                 position: position,
                 memberId: player.type === 'MEMBER' ? player.id : null,
+                guestId: player.type === 'GUEST' ? player.id : null,
                 playerType: player.type,
                 playerName: player.name
             }
@@ -203,8 +203,12 @@ saveBtn.addEventListener('click', function () {
         return formationResult
     })
 
-    const selectedPlayers = document.querySelectorAll('.player-card.selected')
-    const members = Array.from(selectedPlayers).map(el => el.dataset.playerId)
+    const selectedMembers = document.querySelectorAll('.player-card.selected:not(.guest-player)')
+    const members = Array.from(selectedMembers).map(el => el.dataset.playerId)
+
+    const selectedGuests = document.querySelectorAll('.player-card.selected.guest-player')
+    const guests = Array.from(selectedGuests).map(el => el.dataset.playerId)
+
     const matchAt = new Date(`${matchInfo.date}T${matchInfo.time}:00`)
 
     ApiClient.request({
@@ -218,6 +222,7 @@ saveBtn.addEventListener('click', function () {
             longitude: matchInfo.longitude,
             latitude: matchInfo.latitude,
             members,
+            guests,
             formations
         },
         onSuccess: (response) => {
@@ -802,32 +807,39 @@ const guestPlayer = {
             return
         }
 
-        // 새 용병 선수 객체 생성
-        const newGuestPlayer = {
-            id: guestPlayerIdCounter++,
-            name: name,
-            number: 0,
-            position: 'MF',
-            isGuest: true
-        }
+        ApiClient.request({
+            url: '/v1/guests',
+            method: 'POST',
+            params: { name },
+            onSuccess: (response) => {
+                // 새 용병 선수 객체 생성
+                const newGuestPlayer = {
+                    id: response.id,
+                    name: name,
+                    number: 0,
+                    position: 'MF',
+                    isGuest: true
+                }
 
-        // 용병 배열에 추가
-        guestPlayers.push(newGuestPlayer)
+                // 용병 배열에 추가
+                guestPlayers.push(newGuestPlayer)
 
-        // 전체 선수 목록에 추가
-        allPlayers.push(newGuestPlayer)
+                // 전체 선수 목록에 추가
+                allPlayers.push(newGuestPlayer)
 
-        // 자동으로 선택 처리
-        selectedPlayers.add(newGuestPlayer.id)
+                // 자동으로 선택 처리
+                selectedPlayers.add(newGuestPlayer.id)
 
-        // 선택된 선수 수 업데이트
-        selectedPlayerCount.textContent = selectedPlayers.size
-        totalPlayerCount.textContent = allPlayers.length
+                // 선택된 선수 수 업데이트
+                selectedPlayerCount.textContent = selectedPlayers.size
+                totalPlayerCount.textContent = allPlayers.length
 
-        // 선수 목록 다시 렌더링
-        renderPlayerList()
+                // 선수 목록 다시 렌더링
+                renderPlayerList()
 
-        // 모달 닫기
-        guestPlayerModal.classList.remove('active')
+                // 모달 닫기
+                guestPlayerModal.classList.remove('active')
+            }
+        })
     }
 }

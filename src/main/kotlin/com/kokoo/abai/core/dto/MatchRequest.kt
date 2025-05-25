@@ -23,7 +23,8 @@ data class MatchRequest(
     val formations: List<MatchFormationRequest> = emptyList(),
 
     @field:NotEmpty
-    val members: List<Long> = emptyList()
+    val members: List<Long> = emptyList(),
+    val guests: List<String> = emptyList()
 )
 
 fun MatchRequest.toRow() = MatchRow(

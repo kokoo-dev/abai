@@ -1,18 +1,19 @@
 package com.kokoo.abai.core.service
 
 import com.kokoo.abai.core.dto.*
-import com.kokoo.abai.core.repository.MatchFormationRepository
-import com.kokoo.abai.core.repository.MatchMemberRepository
-import com.kokoo.abai.core.repository.MatchPositionRepository
-import com.kokoo.abai.core.repository.MatchRepository
+import com.kokoo.abai.core.enums.MatchStatus
+import com.kokoo.abai.core.repository.*
+import com.kokoo.abai.core.row.MatchGuestRow
 import com.kokoo.abai.core.row.MatchMemberRow
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.ZoneOffset
 
 @Service
 class MatchService(
     private val matchRepository: MatchRepository,
     private val matchMemberRepository: MatchMemberRepository,
+    private val matchGuestRepository: MatchGuestRepository,
     private val matchFormationRepository: MatchFormationRepository,
     private val matchPositionRepository: MatchPositionRepository
 ) {
@@ -30,6 +31,15 @@ class MatchService(
             )
         }
         matchMemberRepository.saveAll(members)
+
+        // 용병
+        val guests = request.guests.map { id ->
+            MatchGuestRow(
+                matchId = matchId,
+                guestId = id
+            )
+        }
+        matchGuestRepository.saveAll(guests)
 
         // 포메이션 & 포지션
         val allPositions = request.formations.flatMap { formation ->
@@ -53,9 +63,17 @@ class MatchService(
     }
 
     @Transactional(readOnly = true)
-    fun getAll(request: CursorRequest<Long>): CursorResponse<MatchResponse, Long> {
-        val matches = matchRepository.findAll(request)
+    fun getAll(request: MatchCursorRequest<MatchCursorId>): CursorResponse<MatchResponse, MatchCursorId> {
+        val matches = matchRepository.findAll(
+            matchAt = request.lastId?.matchAt?.toLocalDateTime(),
+            id = request.lastId?.id,
+            status = request.status,
+            size = request.size
+        )
 
-        return CursorResponse.of(matches, matches.contents.lastOrNull()?.id) { it.toResponse() }
+        val lastId = matches.contents.lastOrNull()
+            ?.let { MatchCursorId(matchAt = it.matchAt.atOffset(ZoneOffset.UTC), id = it.id) }
+
+        return CursorResponse.of(matches, lastId) { it.toResponse() }
     }
 }

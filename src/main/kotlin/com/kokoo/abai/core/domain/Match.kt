@@ -18,4 +18,8 @@ object Match : BaseTable("match") {
     val goalsAgainst = integer("goals_against").default(0)
 
     override val primaryKey = PrimaryKey(id)
+
+    init {
+        index(isUnique = false, matchAt)
+    }
 }

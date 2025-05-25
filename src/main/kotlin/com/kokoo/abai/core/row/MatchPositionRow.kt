@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 data class MatchPositionRow(
     val id: Long = 0,
     val memberId: Long?,
+    val guestId: String?,
     val matchFormationId: Long,
     val position: Int,
     val playerType: PlayerType,
@@ -19,6 +20,7 @@ data class MatchPositionRow(
 fun ResultRow.toMatchPositionRow() = MatchPositionRow(
     id = this[MatchPosition.id],
     memberId = this[MatchPosition.memberId],
+    guestId = this[MatchPosition.guestId],
     matchFormationId = this[MatchPosition.matchFormationId],
     position = this[MatchPosition.position],
     playerType = this[MatchPosition.playerType],

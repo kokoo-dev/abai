@@ -39,48 +39,7 @@
                 </div>
 
                 <!-- 경기 목록 -->
-                <div class="match-list">
-                    <!-- 예정된 경기 -->
-                    <div class="match-item upcoming" data-match-id="1">
-                        <div class="match-date">
-                            <span class="day">15</span>
-                            <span class="month">8월</span>
-                        </div>
-                        <div class="match-details">
-                            <div class="match-teams">
-                                <span class="team home">우리팀</span>
-                                <span class="versus">VS</span>
-                                <span class="team away">상대팀A</span>
-                            </div>
-                            <div class="match-info">
-                                <span class="match-time"><i class="far fa-clock"></i> 19:00</span>
-                                <span class="match-location"><i class="fas fa-map-marker-alt"></i> 한강공원 잔디구장</span>
-                            </div>
-                        </div>
-                        <div class="match-status upcoming-badge">예정</div>
-                    </div>
-
-                    <!-- 완료된 경기 -->
-                    <div class="match-item completed" data-match-id="2">
-                        <div class="match-date">
-                            <span class="day">10</span>
-                            <span class="month">8월</span>
-                        </div>
-                        <div class="match-details">
-                            <div class="match-teams">
-                                <span class="team home">우리팀</span>
-                                <span class="score">3:1</span>
-                                <span class="team away">상대팀B</span>
-                            </div>
-                            <div class="match-info">
-                                <span class="match-result win">승리</span>
-                                <span class="match-location"><i class="fas fa-map-marker-alt"></i> 상암 월드컵 경기장</span>
-                            </div>
-                        </div>
-                        <div class="match-status completed-badge">완료</div>
-                    </div>
-
-                    <!-- 추가 경기 항목들 -->
+                <div class="match-list" id="match-list">
                 </div>
             </div>
 
@@ -137,6 +96,25 @@
             </div>
         </div>
     </div>
+
+    <template id="match-template">
+        <div class="match-item">
+            <div class="match-details">
+                <div class="match-teams">
+                    <span class="team home">ABAI</span>
+                    <span class="versus">VS</span>
+                    <span class="score">0:0</span>
+                    <span class="team away">상대팀</span>
+                </div>
+                <div class="match-info">
+                    <span class="match-time"><i class="far fa-clock"></i> <span class="time-text">12:00</span></span>
+                    <span class="match-result">승리</span>
+                    <span class="match-location"><i class="fas fa-map-marker-alt"></i> <span class="location-text">서울시청</span></span>
+                </div>
+            </div>
+            <div class="match-status">예정</div>
+        </div>
+    </template>
 
     <script type="module" th:src="@{/js/schedules/schedules.js}" defer></script>
 </body>

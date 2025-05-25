@@ -1,4 +1,6 @@
 import CommonUtils from "../common/CommonUtils.js";
+import ApiClient from "../common/ApiClient.js";
+import DateUtils from "../common/DateUtils.js";
 
 const matchesTab = document.getElementById('matches-tab');
 const calendarTab = document.getElementById('calendar-tab');
@@ -273,7 +275,8 @@ function renderCalendar() {
 // 경기 필터링 함수
 function filterMatches(filter) {
     const matchItems = document.querySelectorAll('.match-item');
-    
+
+    // TODO 필터
     matchItems.forEach(item => {
         if (filter === 'all') {
             item.style.display = 'flex';
@@ -289,6 +292,9 @@ function filterMatches(filter) {
 
 // 이벤트 리스너 및 초기화
 document.addEventListener('DOMContentLoaded', function() {
+    match.getList()
+    member.getList()
+
     // 탭 전환 이벤트 리스너
     if (matchesTab) {
         matchesTab.addEventListener('click', function(e) {
@@ -469,7 +475,7 @@ function processEvents(rawEvents) {
     const currentMonth = currentDate.getMonth() + 1; // 0-based to 1-based
     
     // 반복 이벤트 필터링 (생일 등)
-    const recurringEvents = rawEvents.filter(event => event.recurring === true);
+    const recurringEvents = rawEvents.filter(event => event.recurring);
     
     // 반복 이벤트 처리
     recurringEvents.forEach(event => {
@@ -500,8 +506,118 @@ function processEvents(rawEvents) {
     return processedEvents;
 }
 
-// 현재 월이 변경될 때 이벤트 다시 처리
-function updateEventsForCurrentMonth() {
-    events = processEvents(sampleEvents);
-    renderCalendar();
+const match = {
+    observer: new IntersectionObserver(
+        (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    match.getList()
+                }
+            });
+        },
+        {
+            root: null,
+            threshold: 1.0
+        }
+    ),
+    lastMatchAt: null,
+    lastId: null,
+    status: null,
+    hasNext: true,
+    getList() {
+        if (!match.hasNext) {
+            return
+        }
+
+        ApiClient.request({
+            url: '/v1/matches',
+            method: 'GET',
+            params: {
+                lastMatchAt: match.lastMatchAt,
+                lastId: match.lastId,
+                status: match.status
+            },
+            onSuccess: (response) => {
+                match.lastMatchAt = response.lastId.matchAt
+                match.lastId = response.lastId.id
+                match.hasNext = response.hasNext
+
+                match.drawList(response.contents)
+            }
+        })
+    },
+    drawList(items = []) {
+        const matchBody = document.getElementById('match-list')
+
+        items.forEach(item => {
+            const matchAt = new Date(item.matchAt)
+            const matchNode = CommonUtils.getTemplateNode('match-template')
+
+            let statusClass = 'upcoming'
+            let statusText = '예정'
+            if (item.status === 'READY') {
+                matchNode.querySelector('.score').remove()
+            } else if (item.status === 'COMPLETED') {
+                statusClass = 'completed'
+                statusText = '완료'
+                matchNode.querySelector('.versus').remove()
+                matchNode.querySelector('.score').textContent = `${item.goalsFor}:${item.goalsAgainst}`
+            }
+
+            let resultClass = 'win'
+            let resultText = '승리'
+            if (item.result === 'DRAW') {
+                resultClass = 'draw'
+                resultText = '무승부'
+            } else if (item.result === 'DEFEAT') {
+                resultClass = 'loss'
+                resultText = '패배'
+            }
+
+            const matchItem = matchNode.querySelector('.match-item')
+            matchItem.classList.add(statusClass)
+            matchItem.dataset.matchId = item.id
+
+            matchNode.querySelector('.time-text').textContent = DateUtils.formatDate(matchAt, 'yyyy-MM-dd HH:mm')
+            matchNode.querySelector('.team.away').textContent = item.opponentName
+
+            const matchResult = matchNode.querySelector('.match-result')
+            matchResult.classList.add(resultClass)
+            matchResult.textContent = resultText
+            if (item.result === 'READY') {
+                matchResult.remove()
+            }
+
+            const matchStatus = matchNode.querySelector('.match-status')
+            matchStatus.classList.add(`${statusClass}-badge`)
+            matchStatus.textContent = statusText
+
+            matchNode.querySelector('.location-text').textContent = item.location
+
+            matchBody.appendChild(matchNode)
+        })
+
+        match.observer.disconnect()
+        match.observeLastItem()
+    },
+    observeLastItem() {
+        const items = document.querySelectorAll('.match-item');
+        const lastItem = items[items.length - 1];
+
+        if (lastItem) {
+            match.observer.observe(lastItem);
+        }
+    }
+}
+
+const member = {
+    getList() {
+        ApiClient.request({
+            url: '/v1/members',
+            method: 'GET',
+            onSuccess: (response) => {
+                console.log(response)
+            }
+        })
+    }
 }

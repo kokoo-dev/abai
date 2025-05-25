@@ -18,6 +18,7 @@ class MatchPositionRepository {
         return if (id != null) {
             MatchPosition.update({ MatchPosition.id eq id }) {
                 it[memberId] = row.memberId
+                it[guestId] = row.guestId
                 it[matchFormationId] = row.matchFormationId
                 it[position] = row.position
                 it[playerType] = row.playerType
@@ -28,6 +29,7 @@ class MatchPositionRepository {
         } else {
             val result = MatchPosition.insert {
                 it[memberId] = row.memberId
+                it[guestId] = row.guestId
                 it[matchFormationId] = row.matchFormationId
                 it[position] = row.position
                 it[playerType] = row.playerType
@@ -39,6 +41,7 @@ class MatchPositionRepository {
 
     fun saveAll(rows: List<MatchPositionRow>) = MatchPosition.batchInsert(rows) {
         this[MatchPosition.memberId] = it.memberId
+        this[MatchPosition.guestId] = it.guestId
         this[MatchPosition.matchFormationId] = it.matchFormationId
         this[MatchPosition.position] = it.position
         this[MatchPosition.playerType] = it.playerType

@@ -3,6 +3,8 @@ package com.kokoo.abai.core.repository
 import com.kokoo.abai.common.pagination.Slice
 import com.kokoo.abai.core.domain.Match
 import com.kokoo.abai.core.dto.CursorRequest
+import com.kokoo.abai.core.dto.MatchCursorId
+import com.kokoo.abai.core.enums.MatchStatus
 import com.kokoo.abai.core.row.MatchRow
 import com.kokoo.abai.core.row.toMatchRow
 import org.jetbrains.exposed.sql.*
@@ -52,14 +54,20 @@ class MatchRepository {
         .where { Match.id eq id }
         .singleOrNull()?.toMatchRow()
 
-    fun findAll(request: CursorRequest<Long>): Slice<MatchRow> {
+    fun findAll(
+        matchAt: LocalDateTime?,
+        id: Long?,
+        status: MatchStatus?,
+        size: Int
+    ): Slice<MatchRow> {
         var contents = Match.selectAll()
-            .where { lessThanId(request.lastId) }
-            .orderBy(Match.id to SortOrder.DESC)
-            .limit(request.size + 1)
+            .where { lessThanMatchAndId(matchAt, id) }
+            .andWhere { equalStatus(status) }
+            .orderBy(Match.matchAt to SortOrder.DESC, Match.id to SortOrder.DESC)
+            .limit(size + 1)
             .map { it.toMatchRow() }
 
-        val hasNext: Boolean = contents.size > request.size
+        val hasNext: Boolean = contents.size > size
         if (hasNext) {
             contents = contents.dropLast(1)
         }
@@ -67,10 +75,18 @@ class MatchRepository {
         return Slice(contents, contents.size, hasNext)
     }
 
-    private fun lessThanId(id: Long?): Op<Boolean> {
-        return when (id) {
+    private fun lessThanMatchAndId(matchAt: LocalDateTime?, id: Long?): Op<Boolean> {
+        return when {
+            matchAt == null || id == null -> Op.TRUE
+            else -> Match.matchAt.less(matchAt)
+                .or { Match.matchAt.less(matchAt).and { Match.id.less(id) } }
+        }
+    }
+
+    private fun equalStatus(status: MatchStatus?): Op<Boolean> {
+        return when(status) {
             null -> Op.TRUE
-            else -> Match.id.less(id)
+            else -> Match.status eq status
         }
     }
 } 

@@ -26,6 +26,12 @@ export default class ApiClient {
             }
 
             if (['GET', 'DELETE'].includes(upperMethod) && params && Object.keys(params).length > 0) {
+                for (const key in params) {
+                    if (params[key] === null) {
+                        delete params[key]
+                    }
+                }
+
                 const queryString = new URLSearchParams(params).toString()
                 fullUrl += (url.includes('?') ? '&' : '?') + queryString
             }

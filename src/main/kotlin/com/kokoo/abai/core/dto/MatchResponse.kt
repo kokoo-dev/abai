@@ -1,14 +1,17 @@
 package com.kokoo.abai.core.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.kokoo.abai.core.enums.MatchResult
 import com.kokoo.abai.core.enums.MatchStatus
 import com.kokoo.abai.core.row.MatchRow
 import java.math.BigDecimal
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 data class MatchResponse(
     val id: Long,
-    val matchAt: LocalDateTime,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    val matchAt: OffsetDateTime,
     val opponentName: String,
     val location: String,
     val address: String,
@@ -22,7 +25,7 @@ data class MatchResponse(
 
 fun MatchRow.toResponse() = MatchResponse(
     id = this.id,
-    matchAt = this.matchAt,
+    matchAt = this.matchAt.atOffset(ZoneOffset.UTC),
     opponentName = this.opponentName,
     location = this.location,
     address = this.address,

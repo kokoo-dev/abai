@@ -1,6 +1,6 @@
 package com.kokoo.abai.core.dto
 
-data class CursorRequest<K>(
-    val lastId: K?,
-    val size: Int = 10
+open class CursorRequest<K>(
+    open val lastId: K?,
+    open val size: Int = 10
 )
