@@ -1,14 +1,15 @@
 package com.kokoo.abai.core.controller.api
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.kokoo.abai.common.constant.RequestPath
 import com.kokoo.abai.core.dto.*
 import com.kokoo.abai.core.enums.MatchStatus
 import com.kokoo.abai.core.service.MatchService
 import jakarta.validation.Valid
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 import java.time.OffsetDateTime
 
 @RestController
@@ -31,7 +32,7 @@ class MatchApiController(
 
     @GetMapping("")
     fun getMatchesByCursor(
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+        @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
         @RequestParam(name = "lastMatchAt", required = false) lastMatchAt: OffsetDateTime?,
         @RequestParam(name = "lastId", required = false) lastId: Long?,
         @RequestParam(name = "status", required = false) status: MatchStatus?,
@@ -49,5 +50,13 @@ class MatchApiController(
                 )
             )
         )
+    }
+
+    @GetMapping("/schedules")
+    fun getMatchSchedule(
+        @RequestParam(name = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") startDate: LocalDate,
+        @RequestParam(name = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") endDate: LocalDate
+    ): ResponseEntity<List<MatchResponse>> {
+        return ResponseEntity.ok(matchService.getMatchForSchedule(startDate, endDate))
     }
 }

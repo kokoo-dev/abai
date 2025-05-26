@@ -75,6 +75,10 @@ class MatchRepository {
         return Slice(contents, contents.size, hasNext)
     }
 
+    fun findByMatchAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): List<MatchRow> = Match.selectAll()
+        .where { Match.matchAt.between(startAt, endAt) }
+        .map { it.toMatchRow() }
+
     private fun lessThanMatchAndId(matchAt: LocalDateTime?, id: Long?): Op<Boolean> {
         return when {
             matchAt == null || id == null -> Op.TRUE
@@ -84,7 +88,7 @@ class MatchRepository {
     }
 
     private fun equalStatus(status: MatchStatus?): Op<Boolean> {
-        return when(status) {
+        return when (status) {
             null -> Op.TRUE
             else -> Match.status eq status
         }

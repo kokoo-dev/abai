@@ -262,121 +262,39 @@
     background-color: var(--secondary-color);
 }
 
-/* 캘린더 스타일 */
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* FullCalendar 커스텀 스타일 */
+.calendar {
     margin-bottom: 1rem;
-    padding: 0 0.5rem;
 }
 
-.month-nav {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    color: var(--primary-color);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s;
-}
-
-.month-nav:hover {
-    background-color: rgba(52, 152, 219, 0.1);
-}
-
-#current-month {
-    font-size: 1.3rem;
+.fc-toolbar-title {
+    font-size: 1.3rem !important;
     font-weight: 500;
     color: var(--secondary-color);
 }
 
-.calendar-container {
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    overflow: hidden;
+.fc-button-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
 }
 
-.calendar-weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background-color: #f5f5f5;
-    text-align: center;
-    font-weight: 500;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--border-color);
+.fc-button-primary:hover {
+    background-color: #2980b9 !important;
+    border-color: #2980b9 !important;
 }
 
-.calendar-weekdays div {
-    padding: 0.5rem;
+.fc-daygrid-day.fc-day-today {
+    background-color: rgba(52, 152, 219, 0.1) !important;
 }
 
-.calendar-days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 1px;
-    background-color: var(--border-color);
+.fc-event-match {
+    background-color: var(--match-color) !important;
+    border-color: var(--match-color) !important;
 }
 
-.calendar-day {
-    background-color: #fff;
-    min-height: 80px;
-    padding: 0.3rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.calendar-day:hover {
-    background-color: #f8f9fa;
-}
-
-.day-number {
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 0.3rem;
-}
-
-.today .day-number {
-    background-color: var(--primary-color);
-    color: white;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.inactive {
-    color: #ccc;
-    background-color: #f9f9f9;
-}
-
-.calendar-event {
-    font-size: 0.75rem;
-    padding: 0.2rem 0.3rem;
-    border-radius: 3px;
-    margin-bottom: 0.2rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
-}
-
-.calendar-event.match {
-    background-color: rgba(52, 152, 219, 0.2);
-    color: #2980b9;
-}
-
-.calendar-event.birthday {
-    background-color: rgba(231, 76, 60, 0.2);
-    color: #c0392b;
+.fc-event-birthday {
+    background-color: var(--birthday-color) !important;
+    border-color: var(--birthday-color) !important;
 }
 
 .calendar-legend {
@@ -419,77 +337,29 @@
         font-size: 0.9rem;
     }
     
-    /* 모바일에서 캘린더 최적화 */
-    .calendar-day {
-        min-height: 60px;
-        font-size: 0.8rem;
-        padding: 0.1rem;
+    .fc-toolbar-title {
+        font-size: 1.1rem !important;
     }
     
-    .day-number {
-        font-size: 0.7rem;
-        margin-bottom: 0.2rem;
-    }
-    
-    .calendar-event {
-        font-size: 0.65rem;
-        padding: 0.1rem 0.15rem;
-        margin-bottom: 0.1rem;
-        max-width: 100%;
-    }
-    
-    .calendar-weekdays div {
-        padding: 0.3rem 0;
-        font-size: 0.75rem;
-    }
-    
-    #current-month {
-        font-size: 1.1rem;
-    }
-    
-    .month-nav {
-        width: 30px;
-        height: 30px;
-        font-size: 1rem;
+    .fc-toolbar {
+        flex-direction: column;
+        gap: 0.5rem;
     }
 }
 
 /* 더 작은 모바일 화면 최적화 */
 @media (max-width: 480px) {
-    .calendar-day {
-        min-height: 50px;
+    .fc-toolbar {
+        flex-direction: column;
+        gap: 0.5rem;
     }
     
-    .day-number {
-        font-size: 0.65rem;
+    .fc-toolbar-title {
+        font-size: 1rem !important;
     }
     
-    .calendar-event {
-        font-size: 0.6rem;
-        padding: 0.05rem 0.1rem;
-        /* 좁은 화면에서는 이벤트명 줄임 */
-        max-width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    
-    /* 캘린더 셀이 너무 많은 이벤트를 포함할 경우 스크롤 추가 */
-    .calendar-day {
-        overflow-y: auto;
-        max-height: 50px;
-    }
-    
-    /* 모바일에서 너무 많은 이벤트가 있을 때 처리 */
-    .calendar-day.has-many-events::after {
-        content: "...";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        text-align: center;
-        background-color: rgba(255, 255, 255, 0.7);
-        font-size: 0.6rem;
+    .fc-daygrid-event {
+        font-size: 0.6rem !important;
     }
 }
 

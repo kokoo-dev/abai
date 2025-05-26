@@ -34,8 +34,10 @@
                 <!-- 필터 버튼 -->
                 <div class="item-filter">
                     <button class="filter-btn active" data-filter="all">전체</button>
-                    <button class="filter-btn" data-filter="upcoming">예정</button>
-                    <button class="filter-btn" data-filter="completed">결과</button>
+
+                    <button th:each="filter : ${matchStatusFilters}" th:data-filter="${filter.value}"
+                            class="filter-btn" th:text="${filter.name}">
+                    </button>
                 </div>
 
                 <!-- 경기 목록 -->
@@ -45,27 +47,9 @@
 
             <!-- 캘린더 탭 컨텐츠 -->
             <div id="calendar-content" class="content-section">
-                <div class="calendar-header">
-                    <button id="prev-month" class="month-nav"><i class="fas fa-chevron-left"></i></button>
-                    <h2 id="current-month">2023년 8월</h2>
-                    <button id="next-month" class="month-nav"><i class="fas fa-chevron-right"></i></button>
-                </div>
+                <!-- FullCalendar 컨테이너 -->
+                <div class="calendar" id="calendar"></div>
                 
-                <div class="calendar-container">
-                    <div class="calendar-weekdays">
-                        <div>일</div>
-                        <div>월</div>
-                        <div>화</div>
-                        <div>수</div>
-                        <div>목</div>
-                        <div>금</div>
-                        <div>토</div>
-                    </div>
-                    <div class="calendar-days" id="calendar-days">
-                        <!-- 캘린더 날짜는 JavaScript로 동적 생성됨 -->
-                    </div>
-                </div>
-
                 <div class="calendar-legend">
                     <div class="legend-item">
                         <span class="legend-color match-color"></span>
@@ -116,6 +100,7 @@
         </div>
     </template>
 
+    <script th:src="@{/js/library/fullcalendar-6.1.17.js}" defer></script>
     <script type="module" th:src="@{/js/schedules/schedules.js}" defer></script>
 </body>
 </html> 

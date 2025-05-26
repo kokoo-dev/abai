@@ -1,5 +1,7 @@
 package com.kokoo.abai.core.service
 
+import com.kokoo.abai.common.extension.toSearchEndDateTime
+import com.kokoo.abai.common.extension.toSearchStartDateTime
 import com.kokoo.abai.core.dto.*
 import com.kokoo.abai.core.enums.MatchStatus
 import com.kokoo.abai.core.repository.*
@@ -7,6 +9,7 @@ import com.kokoo.abai.core.row.MatchGuestRow
 import com.kokoo.abai.core.row.MatchMemberRow
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import java.time.ZoneOffset
 
 @Service
@@ -76,4 +79,14 @@ class MatchService(
 
         return CursorResponse.of(matches, lastId) { it.toResponse() }
     }
+
+    @Transactional(readOnly = true)
+    fun getMatchForSchedule(startDate: LocalDate, endDate: LocalDate): List<MatchResponse> =
+        matchRepository.findByMatchAtBetween(startDate.toSearchStartDateTime(), endDate.toSearchEndDateTime())
+            .map { it.toResponse() }
+
+    fun getMatchStatusForMemberViewFilter(): List<EnumResponse> =
+        MatchStatus.entries
+            .filter { it.useMemberViewFilter }
+            .map { EnumResponse(name = it.koreanName, value = it.name) }
 }

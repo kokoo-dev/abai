@@ -1,5 +1,6 @@
 package com.kokoo.abai.core.controller.web
 
+import com.kokoo.abai.core.service.MatchService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -9,10 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
 @RequestMapping("/schedules")
-class ScheduleWebController {
+class ScheduleWebController(
+    private val matchService: MatchService
+) {
 
     @GetMapping("")
     fun schedules(model: Model): String {
+        model.addAttribute("matchStatusFilters", matchService.getMatchStatusForMemberViewFilter())
 
         return "schedules/schedules"
     }
@@ -23,6 +27,7 @@ class ScheduleWebController {
         @PathVariable(name = "subTab") subTab: String
     ): String {
         model.addAttribute("subTab", subTab)
+        model.addAttribute("matchStatusFilters", matchService.getMatchStatusForMemberViewFilter())
 
         return "schedules/schedules"
     }

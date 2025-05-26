@@ -1,7 +1,10 @@
 package com.kokoo.abai.core.enums
 
-enum class MatchStatus {
-    READY,
-    CANCELED,
-    COMPLETED
+enum class MatchStatus(
+    val useMemberViewFilter: Boolean,
+    val koreanName: String
+) {
+    READY(true, "예정"),
+    CANCELED(false, "취소"),
+    COMPLETED(true, "완료")
 }
