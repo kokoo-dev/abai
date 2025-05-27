@@ -180,34 +180,6 @@
     margin-top: 35px; /* 상단에 여백 추가하여 안내 메시지와 겹치지 않게 함 */
 }
 
-/* 행 간격 균등 분배 */
-.formation-row {
-    margin-bottom: 0.3rem;
-}
-
-.formation-row:last-child {
-    margin-bottom: 0;
-}
-
-/* 골키퍼 포지션 */
-.gk-position {
-    position: relative;
-    width: 36px;
-    height: 44px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* 골키퍼 이름 표시 */
-.gk-position .player-name-display {
-    margin-top: 0.35rem;
-    font-size: 0.8rem;
-    color: #4CAF50;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.9);
-    font-weight: bold;
-}
-
 /* 포메이션 행 스타일 */
 .formation-row {
     display: flex;
@@ -521,33 +493,6 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     z-index: 2;
     color: var(--jersey-text);
-}
-
-/* 유니폼에 번호 배경 제거 */
-.jersey .number-background {
-    display: none;
-}
-
-/* 유니폼 배지 제거 */
-.jersey::before {
-    display: none;
-}
-
-/* 유니폼 스폰서 라인 제거 */
-.jersey .sponsor-line {
-    display: none;
-}
-
-/* 포지션 타입별 스타일 */
-.formation-position[data-pos-type="AM"] .player-name-display,
-.formation-position[data-pos-type="AM"] .jersey,
-.formation-position[data-pos-type="AM"] .jersey::before,
-.formation-position[data-pos-type="FW"] .jersey,
-.pos-type-fw,
-.pos-type-am,
-.pos-type-mf,
-.pos-type-df {
-    /* 포지션 타입별 스타일 */
 }
 
 /* 애니메이션 제거 */

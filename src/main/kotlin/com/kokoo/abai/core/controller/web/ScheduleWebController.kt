@@ -38,7 +38,7 @@ class ScheduleWebController(
         return "schedules/match-save"
     }
 
-    @GetMapping("/match/{id}")
+    @GetMapping("/matches/{id}")
     fun match(
         @PathVariable(name = "id") id: Long,
         model: Model

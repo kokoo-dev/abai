@@ -1,3 +1,16 @@
+:root {
+    --field-color: #3b7d3b;
+    --field-lines: #ffffff;
+    --jersey-color: rgba(255, 255, 255, 0.7);
+    --jersey-text: #000000;
+    --jersey-accent: rgba(240, 240, 240, 0.7);
+    --jersey-shorts: rgba(230, 230, 230, 0.7);
+    --empty-jersey: rgba(255, 255, 255, 0.3);
+    --gk-jersey-color: rgba(39, 174, 96, 0.7);
+    --gk-jersey-shorts: rgba(30, 132, 73, 0.7);
+    --team-accent: rgba(255, 152, 0, 0.7);
+}
+
 /* 경기 상세 페이지 스타일 */
 .back-button {
     font-size: 1.2rem;
@@ -46,18 +59,6 @@
     align-items: center;
     text-align: center;
     width: 40%;
-}
-
-.team-logo {
-    width: 60px;
-    height: 60px;
-    margin-bottom: 0.5rem;
-}
-
-.team-logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
 }
 
 .team-name {
@@ -252,66 +253,360 @@
     background-color: #e74c3c;
 }
 
-/* 라인업 스타일 */
-.team-lineup {
-    margin-bottom: 2rem;
-}
-
-.team-lineup:last-child {
-    margin-bottom: 0;
-}
-
-.team-lineup h4 {
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
+/* 쿼터 선택 탭 */
+.quarter-tabs {
+    display: flex;
     margin-bottom: 1rem;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    overflow: hidden;
 }
 
-.player-list {
+.quarter-tab {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem 0;
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    color: #666;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.quarter-tab.active {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+}
+
+.field-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 140%;
+    margin-bottom: 1.5rem; /* 하단 여백 추가 */
+    transition: padding-top 0.3s ease;
+}
+
+@media (min-width: 768px) {
+    .field-wrapper {
+        padding-top: 110%;
+        max-width: 700px; /* 최대 너비 증가 */
+        margin: 0 auto 1.5rem; /* 하단 여백 추가 */
+    }
+}
+
+@media (min-width: 992px) {
+    .field-wrapper {
+        padding-top: 95%;
+        max-width: 800px; /* 최대 너비 증가 */
+    }
+}
+
+/* 필드 영역 */
+.field {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--field-color);
+    border: 2px solid var(--field-lines);
+    border-radius: 10px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
 }
 
-.player {
+
+/* 포지션 컨테이너 */
+.positions-container {
+    width: 100%;
+    height: 90%; /* 80%에서 90%로 높이 증가 */
     display: flex;
+    flex-direction: column;
+    padding: 0.5rem 1rem;
+    justify-content: space-between;
+}
+
+/* 포메이션 행 스타일 */
+.formation-row {
+    display: flex;
+    justify-content: center;
     align-items: center;
+    width: 100%;
+    flex: 1;
+    position: relative;
+    padding: 0.15rem 0; /* 상하 패딩 감소 */
+    margin-bottom: 0.5rem;
+}
+
+/* 행별 여백 조정 */
+.formation-row:first-child {
+    margin-top: 0.5%; /* 여백 감소 */
+}
+
+.formation-row:last-child {
+    margin-bottom: 0.5%; /* 여백 감소 */
+}
+
+/* 다양한 수의 선수 배치를 위한 스타일 */
+.formation-row[data-players="1"] .formation-position {
+    margin: 0 2%;
+}
+
+.formation-row[data-players="2"] .formation-position {
+    margin: 0 8%;
+}
+
+.formation-row[data-players="3"] .formation-position {
+    margin: 0 5%;
+}
+
+.formation-row[data-players="4"] .formation-position {
+    margin: 0 4%;
+}
+
+.formation-row[data-players="5"] .formation-position {
+    margin: 0 2%;
+}
+
+/* 포지션별 스타일 */
+.player-position {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* 유니폼 크기 약간 줄임 */
+.jersey {
+    width: 36px; /* 약간 줄임 */
+    height: 44px; /* 약간 줄임 */
+    background-color: var(--jersey-color);
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--jersey-text);
+    font-weight: bold;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+    overflow: visible;
+    clip-path: polygon(
+        15% 0%,    /* 왼쪽 목 시작 */
+        85% 0%,    /* 오른쪽 목 끝 */
+        85% 0%,    /* 오른쪽 어깨 - 위쪽에 붙임 */
+        100% 0%,   /* 오른쪽 소매 시작 - 위쪽에 붙임 */
+        100% 40%,  /* 오른쪽 소매 끝 - 더 길게 */
+        85% 40%,   /* 오른쪽 소매 안쪽 - 더 길게 */
+        85% 100%,  /* 오른쪽 하단 */
+        15% 100%,  /* 왼쪽 하단 */
+        15% 40%,   /* 왼쪽 소매 안쪽 - 더 길게 */
+        0% 40%,    /* 왼쪽 소매 끝 - 더 길게 */
+        0% 0%,     /* 왼쪽 소매 시작 - 위쪽에 붙임 */
+        15% 0%     /* 왼쪽 어깨 - 위쪽에 붙임 */
+    );
+}
+
+/* 유니폼 목 부분 제거 (T자형 모양에 포함됨) */
+.jersey .collar {
+    display: none;
+}
+
+/* 유니폼 하단 부분 (바지) 제거 */
+.jersey::after {
+    display: none;
+}
+
+/* 소매 요소 제거 (T자형 모양에 포함됨) */
+.jersey .left-sleeve,
+.jersey .right-sleeve {
+    display: none;
+}
+
+/* 빈 포지션 스타일 */
+.empty-position {
+    background-color: var(--empty-jersey);
+    opacity: 0.6;
+}
+
+/* 빈 공간 처리 */
+.empty-space {
+    width: 40px;
+    height: 48px;
+    visibility: hidden;
+}
+
+/* 빈 포지션 호버 효과 */
+.empty-position:hover {
+    opacity: 0.9;
+    transform: none; /* scale(1.1)에서 none으로 변경 */
+}
+
+/* 선수 이름 표시 */
+.player-name-display {
+    position: absolute; /* 절대 위치로 변경 */
+    bottom: -16px; /* 유니폼 아래쪽에 위치 */
+    width: 100%; /* 너비 100%로 설정 */
+    font-size: 0.75rem;
+    color: white;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.9);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.position-name {
+    font-size: 0.8rem;
+}
+
+/* 우측: 선수 목록 */
+.players-container {
+    background-color: #f5f5f5;
+    border-radius: 6px;
     padding: 0.75rem;
-    background-color: #f9f9f9;
+    margin-top: -0.25rem; /* 음수 마진으로 더 위로 당김 */
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+}
+
+.players-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: var(--primary-color);
+}
+
+.players-search {
+    margin-bottom: 0.75rem;
+}
+
+.player-search-input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+/* 가로 스크롤 컨테이너 */
+.players-list {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem; /* 스크롤바 공간 확보 */
+    -webkit-overflow-scrolling: touch; /* iOS에서 부드러운 스크롤 */
+    scroll-snap-type: x mandatory; /* 스크롤 스냅 */
+    scrollbar-width: thin; /* Firefox에서 스크롤바 얇게 */
+}
+
+/* 스크롤바 스타일 */
+.players-list::-webkit-scrollbar {
+    height: 4px;
+}
+
+.players-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
     border-radius: 4px;
 }
 
-.player-number {
-    background-color: var(--primary-color);
-    color: white;
-    width: 25px;
-    height: 25px;
+.players-list::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 4px;
+}
+
+.players-list::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+/* 선수 아이템 */
+.player-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 200px; /* 너비 늘림 */
+    flex: 0 0 auto; /* 크기 고정, 늘어나지 않음 */
+    scroll-snap-align: start; /* 스크롤 스냅 위치 */
+    margin-right: 8px; /* 간격 추가 */
+    border-left: 3px solid transparent; /* 선택 효과를 위한 투명 테두리 */
+}
+
+.player-item:hover {
+    background-color: rgba(52, 152, 219, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.player-item.selected {
+    background-color: rgba(52, 152, 219, 0.2);
+    border-left: 3px solid var(--primary-color);
+}
+
+.player-item .player-number {
+    width: 36px;
+    height: 36px;
+    background-color: white;
+    color: black;
+    border: 1px solid #ddd;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 0.8rem;
     margin-right: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.player-info {
+    flex: 1;
 }
 
 .player-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+/* 포지션 요소 공통 스타일 */
+.formation-position {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-align: center;
+    padding: 0.5rem;
+    position: relative;
     flex: 1;
-    font-weight: 500;
+    max-width: 70px;
 }
 
-.player-position {
-    background-color: #eee;
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    color: #777;
-    margin-right: 0.5rem;
+/* 포지션 호버 효과 */
+.formation-position:hover .jersey {
+    transform: none; /* scale(1.1)에서 none으로 변경하여 호버 시 크기 변경 제거 */
 }
 
-.player-stats {
-    font-size: 0.85rem;
-    color: #666;
+/* 유니폼 번호 스타일 */
+.jersey .player-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+    color: var(--jersey-text);
 }
 
 .action-buttons {

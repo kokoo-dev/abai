@@ -331,9 +331,7 @@ function renderFormation(formationType) {
     }
 
     // 포지션 컨테이너 생성
-    const positionsContainer = document.createElement('div')
-    positionsContainer.className = 'positions-container'
-    positionsContainer.style.marginTop = '35px' // 인라인 스타일로 마진 추가
+    const positionsContainer = CommonUtils.getTemplateNode('positions-container-template').querySelector('.positions-container')
 
     // 선택된 포메이션 레이아웃 가져오기
     const layout = formation.getLayouts()[formationType]
@@ -354,25 +352,22 @@ function renderFormation(formationType) {
         const rowPositions = positionsByRow[row]
         const playerCount = rowPositions.length // 해당 행의 선수 수
 
-        // 행 컨테이너 생성
-        const rowElement = document.createElement('div')
-        rowElement.className = `formation-row formation-row-${row}`
-        rowElement.dataset.players = playerCount // 선수 수 데이터 속성 추가
+        const formationRow = CommonUtils.getTemplateNode('formation-row-template').querySelector('.formation-row')
+        formationRow.classList.add(`formation-row-${row}`)
+        formationRow.dataset.players = playerCount
 
         // 행의 포지션 요소 생성
         rowPositions.forEach(pos => {
-            const positionElement = document.createElement('div')
-            positionElement.className = 'formation-position'
-            positionElement.dataset.position = `${layout.indexOf(pos)}`
+            const formationPosition = CommonUtils.getTemplateNode('formation-position-template').querySelector('.formation-position')
+            formationPosition.dataset.position = `${layout.indexOf(pos)}`
 
-            const jersey = document.createElement('div')
-            jersey.className = 'jersey empty-position'
+            const emptyPosition = CommonUtils.getTemplateNode('empty-position-template')
 
-            positionElement.appendChild(jersey)
-            rowElement.appendChild(positionElement)
+            formationPosition.appendChild(emptyPosition)
+            formationRow.appendChild(formationPosition)
         })
 
-        positionsContainer.appendChild(rowElement)
+        positionsContainer.appendChild(formationRow)
     })
 
     // 필드에 구성요소 추가 (안내 메시지가 가장 위에 오도록)

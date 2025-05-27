@@ -6,7 +6,7 @@
     --background-color: #f8f9fa;
     --border-color: #e0e0e0;
     --text-color: #333;
-    --light-text: #777;
+    --light-color: #777;
     --match-color: #3498db;
     --birthday-color: #e74c3c;
     --win-color: #27ae60;
@@ -112,7 +112,7 @@
     background: none;
     border: none;
     font-size: 0.9rem;
-    color: var(--light-text);
+    color: var(--light-color);
     cursor: pointer;
     transition: all 0.3s;
     text-align: center;
@@ -141,6 +141,7 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     position: relative;
     transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
 }
 
 .match-item:hover {
@@ -165,7 +166,7 @@
 
 .match-date .month {
     font-size: 0.8rem;
-    color: var(--light-text);
+    color: var(--light-color);
 }
 
 .match-details {
@@ -198,7 +199,7 @@
 
 .versus {
     padding: 0 0.5rem;
-    color: var(--light-text);
+    color: var(--light-color);
     font-size: 0.8rem;
 }
 
@@ -213,7 +214,7 @@
     display: flex;
     justify-content: space-between;
     font-size: 0.8rem;
-    color: var(--light-text);
+    color: var(--light-color);
 }
 
 .match-time, .match-location, .match-result {
@@ -259,7 +260,7 @@
 }
 
 .completed-badge {
-    background-color: var(--secondary-color);
+    background-color: var(--light-color);
 }
 
 /* FullCalendar 커스텀 스타일 */

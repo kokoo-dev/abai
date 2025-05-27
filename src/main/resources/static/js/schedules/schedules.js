@@ -86,6 +86,15 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     }
 
+    // 아이템 동적 추가로 상위 요소에서 이벤트 위임
+    document.getElementById('match-list').addEventListener('click', function (e) {
+        const item = e.target.closest('[data-match-id]')
+        if (item) {
+            const matchId = item.dataset.matchId;
+            location.href = `/schedules/matches/${matchId}`
+        }
+    })
+
     // 초기 탭 활성화
     activateInitialTab()
 })
