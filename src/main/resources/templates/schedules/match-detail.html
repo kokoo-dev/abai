@@ -7,23 +7,33 @@
 <body>
     <div class="container">
         <div class="match-header">
-            <div class="match-date">2023년 8월 10일 (목) 15:30</div>
+            <div class="match-date" th:text="${#temporals.format(match.matchAt.atZoneSameInstant(T(java.time.ZoneId).of('Asia/Seoul')), 'yyyy년 M월 d일 (E) HH:mm', T(java.util.Locale).KOREAN)}">2023년 8월 10일 (목) 15:30</div>
             <div class="match-location">
-                <i class="fas fa-map-marker-alt"></i> 상암 월드컵 경기장
+                <i class="fas fa-map-marker-alt"></i> [[${match.location}]]
+            </div>
+            <div class="match-address-container">
+                <div class="match-address" th:text="${match.address}">상세 주소</div>
+                <button class="copy-address-btn">
+                    <i class="far fa-copy"></i> 주소 복사
+                </button>
             </div>
         </div>
 
         <div class="match-score-card">
             <div class="team-section home">
-                <div class="team-name">우리팀</div>
-                <div class="team-score">3</div>
+                <div class="team-name">ABAI FC</div>
+                <div class="team-score" th:text="${match.goalsFor}">0</div>
             </div>
             <div class="score-divider">
-                <div class="match-state">종료</div>
+                <div th:switch="${match.status}">
+                    <div th:case="${T(com.kokoo.abai.core.enums.MatchStatus).READY}" class="match-state ready">예정</div>
+                    <div th:case="${T(com.kokoo.abai.core.enums.MatchStatus).CANCELED}" class="match-state canceled">취소</div>
+                    <div th:case="${T(com.kokoo.abai.core.enums.MatchStatus).COMPLETED}" class="match-state completed">완료</div>
+                </div>
             </div>
             <div class="team-section away">
-                <div class="team-name">상대팀</div>
-                <div class="team-score">1</div>
+                <div class="team-name" th:text="${match.opponentName}">상대팀</div>
+                <div class="team-score" th:text="${match.goalsAgainst}">0</div>
             </div>
         </div>
 
@@ -41,6 +51,10 @@
                     <button class="quarter-tab" data-quarter="2">2쿼터</button>
                     <button class="quarter-tab" data-quarter="3">3쿼터</button>
                     <button class="quarter-tab" data-quarter="4">4쿼터</button>
+                </div>
+                <!-- 포메이션 표시 -->
+                <div class="formation-display">
+                    <span class="formation-text">4-3-3</span>
                 </div>
                 <!-- 축구장 영역 (넓게) -->
                 <div class="field-wrapper">
@@ -228,6 +242,8 @@
 
     <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
 
-    <script th:src="@{/js/schedules/match-detail.js}" defer></script>
+    <input type="hidden" id="match-id" name="match-id" th:value="${id}">
+
+    <script type="module" th:src="@{/js/schedules/match-detail.js}" defer></script>
 </body>
 </html> 

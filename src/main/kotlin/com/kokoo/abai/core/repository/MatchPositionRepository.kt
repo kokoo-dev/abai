@@ -71,6 +71,11 @@ class MatchPositionRepository {
         return Slice(contents, contents.size, hasNext)
     }
 
+    fun findByMatchFormationId(matchFormationId: Long): List<MatchPositionRow> =
+        MatchPosition.selectAll()
+            .where { MatchPosition.matchFormationId eq matchFormationId }
+            .map { it.toMatchPositionRow() }
+
     private fun lessThanId(id: Long?): Op<Boolean> {
         return when (id) {
             null -> Op.TRUE

@@ -39,7 +39,7 @@ class MatchApiController(
         @RequestParam(name = "size", required = false, defaultValue = "10") size: Int = 10,
     ): ResponseEntity<CursorResponse<MatchResponse, MatchCursorId>> {
         return ResponseEntity.ok(
-            matchService.getAll(
+            matchService.getAllMatches(
                 MatchCursorRequest(
                     lastId = MatchCursorId(
                         matchAt = lastMatchAt,
@@ -58,5 +58,20 @@ class MatchApiController(
         @RequestParam(name = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") endDate: LocalDate
     ): ResponseEntity<List<MatchResponse>> {
         return ResponseEntity.ok(matchService.getMatchForSchedule(startDate, endDate))
+    }
+
+    @GetMapping("/{id}")
+    fun getMatch(@PathVariable(name = "id") id: Long): ResponseEntity<MatchResponse> {
+        return ResponseEntity.ok(matchService.getMatch(id))
+    }
+
+    @GetMapping("/{id}/formations")
+    fun getMatchFormations(@PathVariable(name = "id") id: Long): ResponseEntity<List<MatchFormationResponse>> {
+        return ResponseEntity.ok(matchService.getMatchFormations(id))
+    }
+
+    @GetMapping("/{id}/members")
+    fun getMatchMembers(@PathVariable(name = "id") id: Long): ResponseEntity<List<MatchMemberResponse>> {
+        return ResponseEntity.ok(matchService.getMatchMembers(id))
     }
 }

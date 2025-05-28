@@ -1,5 +1,7 @@
 package com.kokoo.abai.core.service
 
+import com.kokoo.abai.common.error.ErrorCode
+import com.kokoo.abai.common.exception.BusinessException
 import com.kokoo.abai.common.extension.toSearchEndDateTime
 import com.kokoo.abai.common.extension.toSearchStartDateTime
 import com.kokoo.abai.core.dto.*
@@ -66,7 +68,7 @@ class MatchService(
     }
 
     @Transactional(readOnly = true)
-    fun getAll(request: MatchCursorRequest<MatchCursorId>): CursorResponse<MatchResponse, MatchCursorId> {
+    fun getAllMatches(request: MatchCursorRequest<MatchCursorId>): CursorResponse<MatchResponse, MatchCursorId> {
         val matches = matchRepository.findAll(
             matchAt = request.lastId?.matchAt?.toLocalDateTime(),
             id = request.lastId?.id,
@@ -81,8 +83,28 @@ class MatchService(
     }
 
     @Transactional(readOnly = true)
+    fun getMatch(id: Long): MatchResponse =
+        matchRepository.findById(id)?.toResponse() ?: throw BusinessException(ErrorCode.NOT_FOUND)
+
+    @Transactional(readOnly = true)
     fun getMatchForSchedule(startDate: LocalDate, endDate: LocalDate): List<MatchResponse> =
-        matchRepository.findByMatchAtBetween(startDate.toSearchStartDateTime(), endDate.toSearchEndDateTime())
+        matchRepository.findByMatchAtBetween(
+            startDate.toSearchStartDateTime(),
+            endDate.toSearchEndDateTime()
+        ).map { it.toResponse() }
+
+    @Transactional(readOnly = true)
+    fun getMatchFormations(matchId: Long): List<MatchFormationResponse> =
+        matchFormationRepository.findByMatchId(matchId).map { formation ->
+            formation.toResponse().apply {
+                positions = matchPositionRepository.findByMatchFormationId(formation.id)
+                    .map { position -> position.toResponse() }
+            }
+        }
+
+    @Transactional(readOnly = true)
+    fun getMatchMembers(matchId: Long): List<MatchMemberResponse> =
+        matchMemberRepository.findByMatchId(matchId)
             .map { it.toResponse() }
 
     fun getMatchStatusForMemberViewFilter(): List<EnumResponse> =

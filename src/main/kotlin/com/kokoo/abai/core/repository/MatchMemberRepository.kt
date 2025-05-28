@@ -2,6 +2,7 @@ package com.kokoo.abai.core.repository
 
 import com.kokoo.abai.common.pagination.Slice
 import com.kokoo.abai.core.domain.MatchMember
+import com.kokoo.abai.core.domain.Member
 import com.kokoo.abai.core.dto.CursorRequest
 import com.kokoo.abai.core.row.MatchMemberRow
 import com.kokoo.abai.core.row.toMatchMemberRow
@@ -59,6 +60,11 @@ class MatchMemberRepository {
 
         return Slice(contents, contents.size, hasNext)
     }
+
+    fun findByMatchId(matchId: Long): List<MatchMemberRow> =
+        MatchMember.innerJoin(Member).selectAll()
+            .where { MatchMember.matchId eq matchId }
+            .map{ it.toMatchMemberRow() }
 
     private fun lessThanId(id: Long?): Op<Boolean> {
         return when (id) {

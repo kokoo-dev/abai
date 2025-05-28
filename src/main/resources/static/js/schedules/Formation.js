@@ -7,7 +7,7 @@ export class Formation {
     #currentQuarter = 1
     #layouts = {}
 
-    constructor({ formations = [] }) {
+    constructor({ formations = [], isInitFormation = false }) {
         formations.forEach((formation) => {
             this.#layouts[formation] = []
             formation.split('').reverse().forEach((position, row) => {
@@ -22,11 +22,24 @@ export class Formation {
             this.#layouts[formation].push({ row: formation.length + 1, col: 1})
         })
 
-        this.#quarters = {
-            1: { formation: formations[0], players: {} },
-            2: { formation: formations[0], players: {} },
-            3: { formation: formations[0], players: {} },
-            4: { formation: formations[0], players: {} }
+        this.#initQuarters(formations, isInitFormation)
+    }
+
+    #initQuarters(formations, isInitFormation) {
+        if (isInitFormation) {
+            this.#quarters = {
+                1: { formation: formations[0], players: {} },
+                2: { formation: formations[1], players: {} },
+                3: { formation: formations[2], players: {} },
+                4: { formation: formations[3], players: {} }
+            }
+        } else {
+            this.#quarters = {
+                1: { formation: formations[0], players: {} },
+                2: { formation: formations[0], players: {} },
+                3: { formation: formations[0], players: {} },
+                4: { formation: formations[0], players: {} }
+            }
         }
     }
 

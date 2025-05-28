@@ -1,6 +1,7 @@
 package com.kokoo.abai.core.row
 
 import com.kokoo.abai.core.domain.MatchMember
+import com.kokoo.abai.core.domain.Member
 import org.jetbrains.exposed.sql.ResultRow
 import java.time.LocalDateTime
 
@@ -10,7 +11,8 @@ data class MatchMemberRow(
     val memberId: Long,
     val goalsFor: Int = 0,
     val createdAt: LocalDateTime? = LocalDateTime.now(),
-    val updatedAt: LocalDateTime? = LocalDateTime.now()
+    val updatedAt: LocalDateTime? = LocalDateTime.now(),
+    val member: MemberRow? = null
 )
 
 fun ResultRow.toMatchMemberRow() = MatchMemberRow(
@@ -19,5 +21,12 @@ fun ResultRow.toMatchMemberRow() = MatchMemberRow(
     memberId = this[MatchMember.memberId],
     goalsFor = this[MatchMember.goalsFor],
     createdAt = this[MatchMember.createdAt],
-    updatedAt = this[MatchMember.updatedAt]
+    updatedAt = this[MatchMember.updatedAt],
+    member = this.let {
+        if (this.hasValue(Member.id)) {
+            this.toMemberRow()
+        } else {
+            null
+        }
+    }
 ) 

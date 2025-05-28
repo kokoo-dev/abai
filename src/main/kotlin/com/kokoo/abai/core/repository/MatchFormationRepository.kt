@@ -59,7 +59,7 @@ class MatchFormationRepository {
     }
 
     fun findByMatchId(matchId: Long): List<MatchFormationRow> = MatchFormation.selectAll()
-        .where { MatchFormation.matchId.eq(matchId) }
+        .where { MatchFormation.matchId eq matchId }
         .map { it.toMatchFormationRow() }
 
     private fun lessThanId(id: Long?): Op<Boolean> {

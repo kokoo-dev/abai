@@ -9,6 +9,7 @@ data class MatchFormationResponse(
     val formation: String,
     val goalsFor: Int,
     val goalsAgainst: Int,
+    var positions: List<MatchPositionResponse> = emptyList()
 )
 
 fun MatchFormationRow.toResponse() = MatchFormationResponse(

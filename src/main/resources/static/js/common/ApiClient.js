@@ -56,6 +56,7 @@ export default class ApiClient {
                 onError({ status: result.status, response: response })
             }
         } catch (error) {
+            console.error(error)
             onError({ error })
         } finally {
             onFinally()

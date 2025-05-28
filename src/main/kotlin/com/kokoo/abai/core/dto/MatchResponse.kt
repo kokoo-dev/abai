@@ -20,7 +20,7 @@ data class MatchResponse(
     val status: MatchStatus,
     val result: MatchResult,
     val goalsFor: Int,
-    val goalsAgainst: Int,
+    val goalsAgainst: Int
 )
 
 fun MatchRow.toResponse() = MatchResponse(

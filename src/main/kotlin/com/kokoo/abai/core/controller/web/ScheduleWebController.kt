@@ -44,6 +44,7 @@ class ScheduleWebController(
         model: Model
     ): String {
         model.addAttribute("id", id)
+        model.addAttribute("match", matchService.getMatch(id))
 
         return "schedules/match-detail"
     }
