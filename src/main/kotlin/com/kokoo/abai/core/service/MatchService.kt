@@ -107,6 +107,11 @@ class MatchService(
         matchMemberRepository.findByMatchId(matchId)
             .map { it.toResponse() }
 
+    @Transactional(readOnly = true)
+    fun getMatchGuests(matchId: Long): List<MatchGuestResponse> =
+        matchGuestRepository.findByMatchId(matchId)
+            .map { it.toResponse() }
+
     fun getMatchStatusForMemberViewFilter(): List<EnumResponse> =
         MatchStatus.entries
             .filter { it.useMemberViewFilter }

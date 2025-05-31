@@ -20,7 +20,7 @@ class CustomUserDetailsService(
         val member = memberRepository.findByLoginId(username)
             ?: throw UsernameNotFoundException("User not found: $username")
 
-        val roles = memberRoleRepository.findByMemberId(member.id!!)
+        val roles = memberRoleRepository.findByMemberId(member.id)
             .map { SimpleGrantedAuthority(it.roleId.name) }
 
         return CustomUserDetails(

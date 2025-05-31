@@ -74,4 +74,9 @@ class MatchApiController(
     fun getMatchMembers(@PathVariable(name = "id") id: Long): ResponseEntity<List<MatchMemberResponse>> {
         return ResponseEntity.ok(matchService.getMatchMembers(id))
     }
+
+    @GetMapping("/{id}/guests")
+    fun getMatchGuests(@PathVariable(name = "id") id: Long): ResponseEntity<List<MatchGuestResponse>> {
+        return ResponseEntity.ok(matchService.getMatchGuests(id))
+    }
 }

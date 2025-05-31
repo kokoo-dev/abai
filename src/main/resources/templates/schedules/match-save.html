@@ -173,39 +173,7 @@
         </div>
     </template>
 
-    <template id="positions-container-template">
-        <div class="positions-container">
-        </div>
-    </template>
-
-    <template id="formation-row-template">
-        <div class="formation-row">
-        </div>
-    </template>
-
-    <template id="formation-position-template">
-        <div class="formation-position">
-        </div>
-    </template>
-
-    <template id="empty-position-template">
-        <div class="jersey empty-position">
-        </div>
-    </template>
-
-    <template id="field-instruction-template">
-        <div class="field-instruction-inner">
-            <p>포지션을 터치하여 선수를 선택하세요</p>
-        </div>
-    </template>
-
-    <template id="player-number-template">
-        <div class="player-number"></div>
-    </template>
-
-    <template id="player-name-template">
-        <div class="player-name-display"></div>
-    </template>
+    <th:block th:replace="~{schedules/position-template :: positionTemplateFragment}"></th:block>
 
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=33f6142573a63b0f99ad87db952a8186&libraries=services"></script>
     <script type="module" th:src="@{/js/schedules/match-save.js}" defer></script>
