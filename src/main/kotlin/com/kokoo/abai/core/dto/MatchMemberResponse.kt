@@ -7,6 +7,7 @@ data class MatchMemberResponse(
     val matchId: Long,
     val memberId: Long,
     val goalsFor: Int,
+    val assist: Int,
     val member: MemberResponse? = null,
 )
 
@@ -15,5 +16,6 @@ fun MatchMemberRow.toResponse() = MatchMemberResponse(
     matchId = this.matchId,
     memberId = this.memberId,
     goalsFor = this.goalsFor,
+    assist = this.assist,
     member = this.member?.toResponse()
 )

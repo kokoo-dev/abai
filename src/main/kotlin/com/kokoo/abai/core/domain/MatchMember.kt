@@ -5,6 +5,7 @@ object MatchMember : BaseTable("match_member") {
     val matchId = reference("match_id", Match.id)
     val memberId = reference("member_id", Member.id)
     val goalsFor = integer("goals_for").default(0)
+    val assist = integer("assist").default(0)
 
     override val primaryKey = PrimaryKey(id)
 

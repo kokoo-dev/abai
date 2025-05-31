@@ -20,6 +20,7 @@ class MatchGuestRepository {
                 it[matchId] = row.matchId
                 it[guestId] = row.guestId
                 it[goalsFor] = row.goalsFor
+                it[assist] = row.assist
                 it[updatedAt] = LocalDateTime.now()
             }
             findById(id)!!
@@ -28,6 +29,7 @@ class MatchGuestRepository {
                 it[matchId] = row.matchId
                 it[guestId] = row.guestId
                 it[goalsFor] = row.goalsFor
+                it[assist] = row.assist
             }.resultedValues!!.first()
             findById(result[MatchGuest.id])!!
         }
@@ -37,6 +39,7 @@ class MatchGuestRepository {
         this[MatchGuest.matchId] = it.matchId
         this[MatchGuest.guestId] = it.guestId
         this[MatchGuest.goalsFor] = it.goalsFor
+        this[MatchGuest.assist] = it.assist
     }.map { it.toMatchGuestRow() }
 
     fun delete(id: Long) = MatchGuest.deleteWhere { MatchGuest.id eq id }

@@ -16,6 +16,8 @@ object Match : BaseTable("match") {
     val result = enumerationByName("result", 30, MatchResult::class).default(MatchResult.READY)
     val goalsFor = integer("goals_for").default(0)
     val goalsAgainst = integer("goals_against").default(0)
+    val assist = integer("assist").default(0)
+    val deleted = bool("deleted").default(false)
 
     override val primaryKey = PrimaryKey(id)
 

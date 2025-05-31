@@ -28,6 +28,8 @@ class MatchRepository {
                 it[result] = row.result
                 it[goalsFor] = row.goalsFor
                 it[goalsAgainst] = row.goalsAgainst
+                it[assist] = row.assist
+                it[deleted] = row.deleted
                 it[updatedAt] = LocalDateTime.now()
             }
             findById(id)!!
@@ -43,15 +45,22 @@ class MatchRepository {
                 it[result] = row.result
                 it[goalsFor] = row.goalsFor
                 it[goalsAgainst] = row.goalsAgainst
+                it[assist] = row.assist
             }.resultedValues!!.first()
             findById(result[Match.id])!!
         }
     }
 
     fun delete(id: Long) = Match.deleteWhere { Match.id eq id }
+    fun deleteSoft(id: Long) {
+        Match.update({ Match.id eq id }) {
+            it[deleted] = true
+        }
+    }
 
     fun findById(id: Long): MatchRow? = Match.selectAll()
         .where { Match.id eq id }
+        .andWhere { Match.deleted eq false }
         .singleOrNull()?.toMatchRow()
 
     fun findAll(
@@ -63,6 +72,7 @@ class MatchRepository {
         var contents = Match.selectAll()
             .where { lessThanMatchAndId(matchAt, id) }
             .andWhere { equalStatus(status) }
+            .andWhere { Match.deleted eq false }
             .orderBy(Match.matchAt to SortOrder.DESC, Match.id to SortOrder.DESC)
             .limit(size + 1)
             .map { it.toMatchRow() }
@@ -77,6 +87,7 @@ class MatchRepository {
 
     fun findByMatchAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): List<MatchRow> = Match.selectAll()
         .where { Match.matchAt.between(startAt, endAt) }
+        .andWhere { Match.deleted eq false }
         .map { it.toMatchRow() }
 
     private fun lessThanMatchAndId(matchAt: LocalDateTime?, id: Long?): Op<Boolean> {

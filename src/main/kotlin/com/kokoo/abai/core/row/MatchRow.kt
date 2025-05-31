@@ -19,6 +19,8 @@ data class MatchRow(
     val result: MatchResult,
     val goalsFor: Int,
     val goalsAgainst: Int,
+    val assist: Int,
+    val deleted: Boolean = false,
     val createdAt: LocalDateTime? = LocalDateTime.now(),
     val updatedAt: LocalDateTime? = LocalDateTime.now()
 )
@@ -35,6 +37,7 @@ fun ResultRow.toMatchRow() = MatchRow(
     result = this[Match.result],
     goalsFor = this[Match.goalsFor],
     goalsAgainst = this[Match.goalsAgainst],
+    assist = this[Match.assist],
     createdAt = this[Match.createdAt],
     updatedAt = this[Match.updatedAt]
 ) 

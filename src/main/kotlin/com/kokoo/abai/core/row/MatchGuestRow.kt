@@ -10,6 +10,7 @@ data class MatchGuestRow(
     val matchId: Long,
     val guestId: String,
     val goalsFor: Int = 0,
+    val assist: Int = 0,
     val createdAt: LocalDateTime? = LocalDateTime.now(),
     val updatedAt: LocalDateTime? = LocalDateTime.now(),
     val guest: GuestRow? = null
@@ -20,6 +21,7 @@ fun ResultRow.toMatchGuestRow() = MatchGuestRow(
     matchId = this[MatchGuest.matchId],
     guestId = this[MatchGuest.guestId],
     goalsFor = this[MatchGuest.goalsFor],
+    assist = this[MatchGuest.assist],
     createdAt = this[MatchGuest.createdAt],
     updatedAt = this[MatchGuest.updatedAt],
     guest = this.let {

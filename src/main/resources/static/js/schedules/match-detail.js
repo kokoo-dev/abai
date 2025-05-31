@@ -7,6 +7,9 @@ import CommonUtils from "../common/CommonUtils.js"
 const tabButtons = document.querySelectorAll('.tab-btn')
 const tabContents = document.querySelectorAll('.tab-content')
 
+// 기록
+const recordWrapper = document.getElementById('record-wrapper')
+
 // 주소
 const copyAddressButton = document.querySelector('.copy-address-btn')
 
@@ -75,7 +78,7 @@ quarterTabs.forEach(tab => {
 const editButton = document.querySelector('.edit-btn')
 if (editButton) {
     editButton.addEventListener('click', function () {
-        // window.location.href = `/match-write?id=${matchId}`
+        CommonUtils.postToUrl('/schedules/matches')
     })
 }
 
@@ -83,26 +86,11 @@ if (editButton) {
 const deleteButton = document.querySelector('.delete-btn')
 if (deleteButton) {
     deleteButton.addEventListener('click', function () {
-        if (confirm('정말로 이 경기 기록을 삭제하시겠습니까?')) {
-            // API 호출 예시
-            // fetch(`/api/matches/${matchId}`, {
-            //     method: 'DELETE'
-            // })
-            // .then(response => {
-            //     if (response.ok) {
-            //         window.location.href = '/matches';
-            //     } else {
-            //         alert('경기 삭제 중 오류가 발생했습니다.');
-            //     }
-            // })
-            // .catch(error => {
-            //     console.error('경기 삭제 중 오류 발생:', error);
-            //     alert('경기 삭제 중 오류가 발생했습니다.');
-            // });
-
-            // 임시 코드 (실제로는 위의 API 호출이 사용됨)
-            window.location.href = '/matches'
+        if (!confirm('정말로 이 경기 기록을 삭제하시겠습니까?')) {
+            return
         }
+
+        match.delete()
     })
 }
 
@@ -250,14 +238,35 @@ function removePosition(positionElement) {
     }
 }
 
+function addRecord(name = '', goal = 0, assist = 0) {
+    if (goal === 0 && assist === 0) {
+        return
+    }
+
+    const recordCard = CommonUtils.getTemplateNode('record-card-template')
+    recordCard.querySelector('.record-name').textContent = name
+    recordCard.querySelector('.record-stat-value.goal').textContent = goal
+    recordCard.querySelector('.record-stat-value.assist').textContent = assist
+
+    recordWrapper.appendChild(recordCard)
+}
+
 const match = {
     id: document.getElementById('match-id').value,
+    delete() {
+        ApiClient.request({
+            url: `/v1/matches/${match.id}`,
+            method: 'DELETE',
+            onSuccess: (response) => {
+                location.replace('/schedules/matches')
+            }
+        })
+    },
     getMembersAndGuests() {
         Promise.all([
             new Promise((resolve, reject) => { match.getMembers(resolve, reject) }),
             new Promise((resolve, reject) => { match.getGuests(resolve, reject) })
         ]).then(([memberResponse, guestResponse]) => {
-
             memberResponse.forEach(it => {
                 memberPlayers.push({
                     id: it.member.id,
@@ -266,6 +275,8 @@ const match = {
                     position: it.member.preferredPosition,
                     isGuest: false
                 })
+
+                addRecord(it.member.name, it.goalsFor, it.assist)
             })
 
             guestResponse.forEach(it => {
@@ -276,6 +287,8 @@ const match = {
                     position: 'MF',
                     isGuest: true
                 })
+
+                addRecord(it.guest.name, it.goalsFor, it.assist)
             })
 
             match.getFormations()

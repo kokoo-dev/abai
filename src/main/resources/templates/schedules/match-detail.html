@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
     <link rel="stylesheet" th:href="@{/css/match-detail.css}">
@@ -39,7 +40,7 @@
 
         <div class="tabs">
             <button class="tab-btn active" data-tab="lineup">라인업</button>
-            <button class="tab-btn" data-tab="summary">요약</button>
+            <button class="tab-btn" data-tab="record">개인 기록</button>
             <button class="tab-btn" data-tab="stats">통계</button>
         </div>
 
@@ -54,7 +55,7 @@
                 </div>
                 <!-- 포메이션 표시 -->
                 <div class="formation-display">
-                    <span class="formation-text">4-3-3</span>
+                    <span class="formation-text">4-2-3-1</span>
                 </div>
                 <!-- 축구장 영역 (넓게) -->
                 <div class="field-wrapper">
@@ -64,74 +65,10 @@
             </div>
         </div>
 
-        <div class="tab-content" id="summary">
+        <div class="tab-content" id="record">
             <div class="card">
-                <h3 class="section-title">경기 이벤트</h3>
-                준비 중입니다..
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <span class="timeline-time">12'</span>
-                        <div class="timeline-content">
-                            <div class="event goal">
-                                <i class="fas fa-futbol"></i>
-                                <span class="event-text"><strong>골</strong> - 김축구 (우리팀)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <span class="timeline-time">34'</span>
-                        <div class="timeline-content">
-                            <div class="event yellow-card">
-                                <i class="fas fa-square"></i>
-                                <span class="event-text"><strong>옐로카드</strong> - 이수비 (상대팀)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <span class="timeline-time">45'</span>
-                        <div class="timeline-content">
-                            <div class="event half-time">
-                                <i class="fas fa-stopwatch"></i>
-                                <span class="event-text"><strong>하프타임</strong></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <span class="timeline-time">58'</span>
-                        <div class="timeline-content">
-                            <div class="event goal">
-                                <i class="fas fa-futbol"></i>
-                                <span class="event-text"><strong>골</strong> - 박공격 (우리팀)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <span class="timeline-time">67'</span>
-                        <div class="timeline-content">
-                            <div class="event goal">
-                                <i class="fas fa-futbol"></i>
-                                <span class="event-text"><strong>골</strong> - 정슈팅 (상대팀)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <span class="timeline-time">85'</span>
-                        <div class="timeline-content">
-                            <div class="event goal">
-                                <i class="fas fa-futbol"></i>
-                                <span class="event-text"><strong>골</strong> - 김축구 (우리팀)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <span class="timeline-time">90'</span>
-                        <div class="timeline-content">
-                            <div class="event full-time">
-                                <i class="fas fa-flag-checkered"></i>
-                                <span class="event-text"><strong>경기 종료</strong></span>
-                            </div>
-                        </div>
-                    </div>
+                <h3 class="section-title">개인 기록</h3>
+                <div class="record-stats-grid" id="record-wrapper">
                 </div>
             </div>
         </div>
@@ -147,38 +84,10 @@
 <!--                        <div class="stat-bar away" style="width: 40%">40%</div>-->
 <!--                    </div>-->
 <!--                </div>-->
-<!--                <div class="stat-item">-->
-<!--                    <div class="stat-label">슈팅</div>-->
-<!--                    <div class="stat-bars">-->
-<!--                        <div class="stat-bar home" style="width: 75%">15</div>-->
-<!--                        <div class="stat-bar away" style="width: 25%">5</div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="stat-item">-->
-<!--                    <div class="stat-label">유효 슈팅</div>-->
-<!--                    <div class="stat-bars">-->
-<!--                        <div class="stat-bar home" style="width: 66.7%">8</div>-->
-<!--                        <div class="stat-bar away" style="width: 33.3%">4</div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="stat-item">-->
-<!--                    <div class="stat-label">코너킥</div>-->
-<!--                    <div class="stat-bars">-->
-<!--                        <div class="stat-bar home" style="width: 71.4%">5</div>-->
-<!--                        <div class="stat-bar away" style="width: 28.6%">2</div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="stat-item">-->
-<!--                    <div class="stat-label">파울</div>-->
-<!--                    <div class="stat-bars">-->
-<!--                        <div class="stat-bar home" style="width: 37.5%">3</div>-->
-<!--                        <div class="stat-bar away" style="width: 62.5%">5</div>-->
-<!--                    </div>-->
-<!--                </div>-->
             </div>
         </div>
 
-        <div class="action-buttons">
+        <div class="action-buttons" sec:authorize="hasAnyAuthority('SERVICE_ADMIN', 'TEAM_ADMIN')">
             <button class="btn edit-btn">
                 <i class="fas fa-edit"></i> 경기 정보 수정
             </button>
@@ -187,6 +96,27 @@
             </button>
         </div>
     </div>
+
+    <template id="record-card-template">
+        <div class="record-card">
+            <div class="record-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="record-info">
+                <h4 class="record-name">이름</h4>
+            </div>
+            <div class="record-stats">
+                <div class="record-stat-box">
+                    <div class="record-stat-value goal">0</div>
+                    <div class="record-stat-label">골</div>
+                </div>
+                <div class="record-stat-box">
+                    <div class="record-stat-value assist">0</div>
+                    <div class="record-stat-label">어시스트</div>
+                </div>
+            </div>
+        </div>
+    </template>
 
     <th:block th:replace="~{schedules/position-template :: positionTemplateFragment}"></th:block>
 

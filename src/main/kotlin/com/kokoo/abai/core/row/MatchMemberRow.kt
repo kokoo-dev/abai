@@ -10,6 +10,7 @@ data class MatchMemberRow(
     val matchId: Long,
     val memberId: Long,
     val goalsFor: Int = 0,
+    val assist: Int = 0,
     val createdAt: LocalDateTime? = LocalDateTime.now(),
     val updatedAt: LocalDateTime? = LocalDateTime.now(),
     val member: MemberRow? = null
@@ -20,6 +21,7 @@ fun ResultRow.toMatchMemberRow() = MatchMemberRow(
     matchId = this[MatchMember.matchId],
     memberId = this[MatchMember.memberId],
     goalsFor = this[MatchMember.goalsFor],
+    assist = this[MatchMember.assist],
     createdAt = this[MatchMember.createdAt],
     updatedAt = this[MatchMember.updatedAt],
     member = this.let {

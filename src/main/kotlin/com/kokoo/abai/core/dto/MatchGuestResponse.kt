@@ -7,6 +7,7 @@ data class MatchGuestResponse(
     val matchId: Long,
     val guestId: String,
     val goalsFor: Int,
+    val assist: Int,
     val guest: GuestResponse? = null,
 )
 
@@ -15,5 +16,6 @@ fun MatchGuestRow.toResponse() = MatchGuestResponse(
     matchId = this.matchId,
     guestId = this.guestId,
     goalsFor = this.goalsFor,
+    assist = this.assist,
     guest = this.guest?.toResponse()
 )

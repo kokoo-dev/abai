@@ -32,7 +32,7 @@ class MatchService(
         val members = request.members.map { memberId ->
             MatchMemberRow(
                 matchId = matchId,
-                memberId = memberId,
+                memberId = memberId
             )
         }
         matchMemberRepository.saveAll(members)
@@ -57,15 +57,7 @@ class MatchService(
     }
 
     @Transactional
-    fun delete(matchId: Long) {
-        val formationIds = matchFormationRepository.findByMatchId(matchId)
-            .map { it.id }
-
-        matchPositionRepository.deleteByFormationIds(formationIds)
-        matchFormationRepository.deleteByMatchId(matchId)
-        matchMemberRepository.deleteByMatchId(matchId)
-        matchRepository.delete(matchId)
-    }
+    fun delete(matchId: Long) = matchRepository.deleteSoft(matchId)
 
     @Transactional(readOnly = true)
     fun getAllMatches(request: MatchCursorRequest<MatchCursorId>): CursorResponse<MatchResponse, MatchCursorId> {

@@ -6,10 +6,12 @@ data class MatchMemberRequest(
     val matchId: Long,
     val memberId: Long,
     val goalsFor: Int = 0,
+    val assist: Int = 0
 )
 
 fun MatchMemberRequest.toRow() = MatchMemberRow(
     matchId = this.matchId,
     memberId = this.memberId,
-    goalsFor = this.goalsFor
+    goalsFor = this.goalsFor,
+    assist = this.assist,
 )
