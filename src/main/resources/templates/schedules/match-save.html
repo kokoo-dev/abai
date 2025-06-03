@@ -15,29 +15,29 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="match-date">경기 일자</label>
-                    <input type="date" id="match-date" class="form-control">
+                    <input type="date" id="match-date" class="form-control" th:value="${saveMode eq 'update' ? #temporals.format(match.matchAt.atZoneSameInstant(T(java.time.ZoneId).of('Asia/Seoul')), 'yyyy-MM-dd', T(java.util.Locale).KOREAN) : ''}">
                 </div>
                 <div class="form-group">
                     <label for="match-time">경기 시간</label>
-                    <input type="time" id="match-time" class="form-control">
+                    <input type="time" id="match-time" class="form-control" th:value="${saveMode eq 'update' ? #temporals.format(match.matchAt.atZoneSameInstant(T(java.time.ZoneId).of('Asia/Seoul')), 'HH:mm', T(java.util.Locale).KOREAN) : ''}">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="opponent-team">상대팀 이름</label>
-                    <input type="text" id="opponent-team" class="form-control" placeholder="상대팀 이름 입력">
+                    <input type="text" id="opponent-team" class="form-control" placeholder="상대팀 이름 입력" th:value="${saveMode eq 'update' ? match.opponentName : ''}">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group location-group">
                     <label for="match-location">경기 장소</label>
                     <div class="location-input-container">
-                        <input type="text" id="match-location" class="form-control location-input" placeholder="경기 장소 입력" readonly>
+                        <input type="text" id="match-location" class="form-control location-input" placeholder="경기 장소 입력" th:value="${saveMode eq 'update' ? match.location : ''}" readonly>
                         <button id="search-location" class="btn map-search-btn">지도에서 검색</button>
                     </div>
                     <!-- 주소 표시 필드 추가 -->
                     <div class="location-address-container">
-                        <input type="text" id="match-address" class="form-control location-address" placeholder="주소" readonly>
+                        <input type="text" id="match-address" class="form-control location-address" placeholder="주소" th:value="${saveMode eq 'update' ? match.address : ''}" readonly>
                     </div>
                     <!-- 카카오맵 표시 영역 추가 -->
                     <div id="map-container" style="display:none;">
@@ -47,6 +47,9 @@
                             <button id="search-keyword" class="btn">검색</button>
                         </div>
                     </div>
+
+                    <input type="hidden" id="map-longitude" th:value="${saveMode eq 'update' ? match.longitude : ''}">
+                    <input type="hidden" id="map-latitude" th:value="${saveMode eq 'update' ? match.latitude : ''}">
                 </div>
             </div>
         </div>
@@ -174,6 +177,8 @@
     </template>
 
     <th:block th:replace="~{schedules/position-template :: positionTemplateFragment}"></th:block>
+
+    <input type="hidden" id="saveMode" name="saveMode" th:value="${saveMode}">
 
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=33f6142573a63b0f99ad87db952a8186&libraries=services"></script>
     <script type="module" th:src="@{/js/schedules/match-save.js}" defer></script>

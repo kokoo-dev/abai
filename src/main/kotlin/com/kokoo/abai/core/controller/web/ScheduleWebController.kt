@@ -33,7 +33,20 @@ class ScheduleWebController(
     }
 
     @PostMapping("/matches")
-    fun matchSave(model: Model): String {
+    fun matchCreate(model: Model): String {
+        model.addAttribute("saveMode", "create")
+
+        return "schedules/match-save"
+    }
+
+    @PostMapping("/matches/{id}")
+    fun matchUpdate(
+        @PathVariable(name = "id") id: Long,
+        model: Model
+    ): String {
+        model.addAttribute("saveMode", "update")
+        model.addAttribute("id", id)
+        model.addAttribute("match", matchService.getMatch(id))
 
         return "schedules/match-save"
     }

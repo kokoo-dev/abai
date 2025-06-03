@@ -42,13 +42,13 @@ const formation = new Formation({
 
 // 경기 정보
 let matchInfo = {
-    date: '',
-    time: '',
-    opponentTeam: '',
-    location: '',
-    address: '',
-    latitude: '',
-    longitude: ''
+    date: document.getElementById('match-date').value || '',
+    time: document.getElementById('match-time').value || '',
+    opponentTeam: document.getElementById('opponent-team').value || '',
+    location: document.getElementById('match-location').value || '',
+    address: document.getElementById('match-address').value || '',
+    latitude: document.getElementById('map-latitude').value || '',
+    longitude: document.getElementById('map-longitude').value || ''
 }
 
 // DOM 요소 참조 (추가)
@@ -563,9 +563,14 @@ const kakaoMap = {
     places: null,
     // 지도 초기화
     initMap() {
+
+        // default: 서울 시청
+        const longitude = parseFloat(document.getElementById('map-longitude').value) || 126.9786567
+        const latitude = parseFloat(document.getElementById('map-latitude').value) || 37.566826
+
         // 지도 객체 생성
         const options = {
-            center: new kakao.maps.LatLng(37.566826, 126.9786567), // 서울 시청
+            center: new kakao.maps.LatLng(latitude, longitude),
             level: 3
         }
         kakaoMap.map = new kakao.maps.Map(mapElement, options)

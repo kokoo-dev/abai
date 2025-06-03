@@ -78,7 +78,7 @@ quarterTabs.forEach(tab => {
 const editButton = document.querySelector('.edit-btn')
 if (editButton) {
     editButton.addEventListener('click', function () {
-        CommonUtils.postToUrl('/schedules/matches')
+        CommonUtils.postToUrl(`/schedules/matches/${match.id}`)
     })
 }
 
