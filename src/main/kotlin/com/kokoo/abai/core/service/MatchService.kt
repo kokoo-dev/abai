@@ -28,30 +28,23 @@ class MatchService(
         val savedMatch = matchRepository.save(request.toRow())
         val matchId = savedMatch.id
 
-        // 선수
-        val members = request.members.map { memberId ->
-            MatchMemberRow(
-                matchId = matchId,
-                memberId = memberId
-            )
-        }
-        matchMemberRepository.saveAll(members)
+        saveMatchDetails(matchId, request)
 
-        // 용병
-        val guests = request.guests.map { id ->
-            MatchGuestRow(
-                matchId = matchId,
-                guestId = id
-            )
-        }
-        matchGuestRepository.saveAll(guests)
+        return savedMatch.toResponse()
+    }
 
-        // 포메이션 & 포지션
-        val allPositions = request.formations.flatMap { formation ->
-            val savedFormation = matchFormationRepository.save(formation.toRow(matchId))
-            formation.positions.map { it.toRow(savedFormation.id) }
-        }
-        matchPositionRepository.saveAll(allPositions)
+    @Transactional
+    fun update(matchId: Long, request: MatchRequest): MatchResponse {
+        val savedMatch = matchRepository.save(request.toRow(), matchId)
+
+        matchMemberRepository.deleteByMatchId(matchId)
+        matchGuestRepository.deleteByMatchId(matchId)
+
+        val formations = matchFormationRepository.findByMatchId(matchId)
+        matchPositionRepository.deleteByFormationIds(formations.map { it.id })
+        matchFormationRepository.deleteByMatchId(matchId)
+
+        saveMatchDetails(matchId, request)
 
         return savedMatch.toResponse()
     }
@@ -108,4 +101,31 @@ class MatchService(
         MatchStatus.entries
             .filter { it.useMemberViewFilter }
             .map { EnumResponse(name = it.koreanName, value = it.name) }
+
+    private fun saveMatchDetails(matchId: Long, request: MatchRequest) {
+        // 선수
+        val members = request.members.map { memberId ->
+            MatchMemberRow(
+                matchId = matchId,
+                memberId = memberId
+            )
+        }
+        matchMemberRepository.saveAll(members)
+
+        // 용병
+        val guests = request.guests.map { id ->
+            MatchGuestRow(
+                matchId = matchId,
+                guestId = id
+            )
+        }
+        matchGuestRepository.saveAll(guests)
+
+        // 포메이션 & 포지션
+        val allPositions = request.formations.flatMap { formation ->
+            val savedFormation = matchFormationRepository.save(formation.toRow(matchId))
+            formation.positions.map { it.toRow(savedFormation.id) }
+        }
+        matchPositionRepository.saveAll(allPositions)
+    }
 }

@@ -410,8 +410,8 @@ const match = {
                 status: match.status
             },
             onSuccess: (response) => {
-                match.lastMatchAt = response.lastId.matchAt
-                match.lastId = response.lastId.id
+                match.lastMatchAt = response.lastId?.matchAt
+                match.lastId = response.lastId?.id
                 match.hasNext = response.hasNext
 
                 match.drawList(response.contents)

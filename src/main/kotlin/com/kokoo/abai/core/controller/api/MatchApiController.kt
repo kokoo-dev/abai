@@ -25,6 +25,14 @@ class MatchApiController(
             .body(matchService.create(request))
     }
 
+    @PutMapping("/{id}")
+    fun updateMatch(
+        @RequestBody @Valid request: MatchRequest,
+        @PathVariable(name = "id") id: Long
+    ): ResponseEntity<MatchResponse> {
+        return ResponseEntity.ok(matchService.update(id, request))
+    }
+
     @DeleteMapping("/{id}")
     fun deleteMatch(@PathVariable(name = "id") id: Long): ResponseEntity<Unit> {
         return ResponseEntity.ok(matchService.delete(id))

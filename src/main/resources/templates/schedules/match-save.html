@@ -178,7 +178,8 @@
 
     <th:block th:replace="~{schedules/position-template :: positionTemplateFragment}"></th:block>
 
-    <input type="hidden" id="saveMode" name="saveMode" th:value="${saveMode}">
+    <input type="hidden" id="save-mode" th:value="${saveMode}">
+    <input type="hidden" id="match-id" th:value="${saveMode eq 'update' ? match.id : ''}">
 
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=33f6142573a63b0f99ad87db952a8186&libraries=services"></script>
     <script type="module" th:src="@{/js/schedules/match-save.js}" defer></script>
