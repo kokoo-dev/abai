@@ -1,11 +1,21 @@
-// 개인 기록 페이지 JavaScript
+import ApiClient from "../common/ApiClient.js"
+import CommonUtils from "../common/CommonUtils.js"
+import DateUtils from "../common/DateUtils.js"
+
+// 서브 탭 전환 기능
+const recordsTab = document.getElementById('records-tab');
+const playersTab = document.getElementById('players-tab');
+const recordsContent = document.getElementById('records-content');
+const playersContent = document.getElementById('players-content');
+
+// 포지션 필터링
+const filterButtons = document.querySelectorAll('.position-filter .filter-btn');
+
+// 선수 상세 정보 모달
+const playerModal = document.getElementById('player-modal');
+const closeModalBtn = document.querySelector('.close-modal');
 
 document.addEventListener('DOMContentLoaded', function() {
-    // 서브 탭 전환 기능
-    const recordsTab = document.getElementById('records-tab');
-    const playersTab = document.getElementById('players-tab');
-    const recordsContent = document.getElementById('records-content');
-    const playersContent = document.getElementById('players-content');
 
     // URL 경로에 따라 초기 탭 활성화
     const currentPage = window.location.pathname;
@@ -17,50 +27,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // 탭 전환 함수
-    function switchTab(tabId) {
-        // 모든 탭 컨텐츠와 탭 버튼 비활성화
-        document.querySelectorAll('.content-section').forEach(content => {
-            content.classList.remove('active');
-        });
-        
-        document.querySelectorAll('.sub-tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        
-        // 선택한 탭 컨텐츠와 탭 버튼 활성화
-        document.getElementById(tabId + '-content').classList.add('active');
-        document.getElementById(tabId + '-tab').classList.add('active');
-    }
-
-    // 탭 클릭 이벤트 리스너
-    if (recordsTab) {
-        recordsTab.addEventListener('click', function(e) {
-            e.preventDefault();
-            switchTab('records');
-            history.pushState(null, '', '/teams/records');
-        });
-    }
-
-    if (playersTab) {
-        playersTab.addEventListener('click', function(e) {
-            e.preventDefault();
-            switchTab('players');
-            history.pushState(null, '', '/teams/players');
-        });
-    }
-
     // 초기 탭 활성화
     activateInitialTab();
 
-    // 포지션 필터링
-    const filterButtons = document.querySelectorAll('.position-filter .filter-btn');
-    
-    const filterElements = (selector, filter) => {
-        const elements = document.querySelectorAll(selector);
+    member.getList()
+
+    const positionElements = (selector, filter) => {
+        const elements = document.querySelectorAll(selector)
+        const positions = Array.from(document.querySelectorAll(`[name="position-filter-${filter}"]`))
+            .map(item => item.value)
+
         elements.forEach(element => {
-            const position = element.getAttribute('data-position');
-            if (filter === 'all' || filter === position) {
+            const playerPositions = Array.from(element.querySelectorAll('.player-position')).map(item => item.textContent)
+
+            if (filter === 'all' || playerPositions.some(item => positions.includes(item))) {
                 element.style.display = '';
             } else {
                 element.style.display = 'none';
@@ -74,21 +54,19 @@ document.addEventListener('DOMContentLoaded', function() {
             filterButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
 
-            const filter = this.getAttribute('data-filter');
-            
+            const positionGroup = this.getAttribute('data-filter');
+
             // 현재 활성화된 탭에 따라 다른 요소 필터링
             if (recordsContent.classList.contains('active')) {
-                // 기록 탭의 선수 테이블 필터링
-                filterElements('.player-table tbody tr', filter);
+                // TODO
             } else if (playersContent.classList.contains('active')) {
-                // 선수 탭의 선수 카드 필터링
-                filterElements('.player-card', filter);
+                positionElements('.player-card', positionGroup);
             }
         });
     });
 
     // 검색 기능
-    const implementSearch = (inputSelector, itemSelector, getTextFn) => {
+    const implementSearch = (inputSelector, itemSelector, textContent) => {
         const searchInput = document.querySelector(inputSelector);
         if (searchInput) {
             searchInput.addEventListener('input', function() {
@@ -96,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const items = document.querySelectorAll(itemSelector);
                 
                 items.forEach(item => {
-                    const text = getTextFn(item).toLowerCase();
+                    const text = textContent(item).toLowerCase();
                     if (text.includes(searchTerm)) {
                         item.style.display = '';
                     } else {
@@ -106,13 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     };
-
-    // 기록 탭의 검색 기능
-    implementSearch(
-        '#records-content .search-input', 
-        '.player-table tbody tr', 
-        row => row.querySelector('td:first-child').textContent
-    );
 
     // 선수 탭의 검색 기능
     implementSearch(
@@ -179,259 +150,56 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 선수 카드 클릭 이벤트 - 선수 상세 정보 모달 표시
-    const playerCards = document.querySelectorAll('.player-card');
-    const playerModal = document.getElementById('player-modal');
-    const closeModalBtn = document.querySelector('.close-modal');
-
-    // 샘플 선수 상세 데이터 (실제로는 서버에서 가져올 것)
-    const playerDetailsData = {
-        "1": {
-            name: "이골키퍼",
-            position: "GK",
-            number: "#1",
-            birth: "1995-02-10",
-            height: "192cm",
-            weight: "88kg",
-            stats: {
-                speed: 65,
-                shooting: 25,
-                passing: 70,
-                dribbling: 30,
-                defense: 25,
-                physical: 85
-            },
-            foot: {
-                left: 2,
-                right: 4
-            }
-        },
-        "2": {
-            name: "박수비",
-            position: "DF",
-            number: "#3",
-            birth: "1994-07-15",
-            height: "185cm",
-            weight: "82kg",
-            stats: {
-                speed: 75,
-                shooting: 55,
-                passing: 75,
-                dribbling: 65,
-                defense: 88,
-                physical: 85
-            },
-            foot: {
-                left: 4,
-                right: 3
-            }
-        },
-        "3": {
-            name: "정수비",
-            position: "DF",
-            number: "#4",
-            birth: "1996-05-22",
-            height: "187cm",
-            weight: "80kg",
-            stats: {
-                speed: 80,
-                shooting: 60,
-                passing: 78,
-                dribbling: 70,
-                defense: 86,
-                physical: 80
-            },
-            foot: {
-                left: 3,
-                right: 4
-            }
-        },
-        "4": {
-            name: "최미드필더",
-            position: "MF",
-            number: "#8",
-            birth: "1993-11-08",
-            height: "178cm",
-            weight: "72kg",
-            stats: {
-                speed: 82,
-                shooting: 78,
-                passing: 90,
-                dribbling: 85,
-                defense: 70,
-                physical: 75
-            },
-            foot: {
-                left: 5,
-                right: 4
-            }
-        },
-        "5": {
-            name: "김축구",
-            position: "FW",
-            number: "#10",
-            birth: "1995-05-15",
-            height: "180cm",
-            weight: "75kg",
-            stats: {
-                speed: 85,
-                shooting: 90,
-                passing: 80,
-                dribbling: 88,
-                defense: 45,
-                physical: 75
-            },
-            foot: {
-                left: 3,
-                right: 5
-            }
-        },
-        "6": {
-            name: "박공격",
-            position: "FW",
-            number: "#9",
-            birth: "1997-04-30",
-            height: "182cm",
-            weight: "77kg",
-            stats: {
-                speed: 88,
-                shooting: 87,
-                passing: 75,
-                dribbling: 82,
-                defense: 40,
-                physical: 78
-            },
-            foot: {
-                left: 4,
-                right: 4
-            }
-        }
-    };
-
-    // 선수 카드 클릭 시 모달 열기
-    playerCards.forEach(card => {
-        card.addEventListener('click', function() {
-            const playerId = this.getAttribute('data-player-id');
-            openPlayerModal(playerId);
-        });
-    });
-
     // 모달 닫기 버튼
     if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', closePlayerModal);
+        closeModalBtn.addEventListener('click', playerModalHandler.close);
     }
 
     // 모달 외부 클릭 시 닫기
     if (playerModal) {
         playerModal.addEventListener('click', function(e) {
             if (e.target === playerModal) {
-                closePlayerModal();
+                playerModalHandler.close();
             }
         });
     }
-
-    // 선수 모달 열기 함수
-    function openPlayerModal(playerId) {
-        const playerData = playerDetailsData[playerId];
-        if (!playerData) return;
-
-        // 모달에 선수 정보 채우기
-        const nameEl = document.getElementById('modal-player-name');
-        const imageEl = document.getElementById('modal-player-image');
-        const numberEl = document.getElementById('modal-player-number');
-        const positionEl = document.getElementById('modal-player-position');
-        const birthEl = document.getElementById('modal-player-birth');
-        const heightEl = document.getElementById('modal-player-height');
-        const weightEl = document.getElementById('modal-player-weight');
-
-        nameEl.textContent = playerData.name;
-        // 이미지는 선수 카드의 이미지를 재사용
-        const cardImage = document.querySelector(`.player-card[data-player-id="${playerId}"] img`);
-        if (cardImage) {
-            imageEl.src = cardImage.src;
-            imageEl.alt = playerData.name;
-        }
-        
-        numberEl.textContent = playerData.number;
-        positionEl.textContent = playerData.position;
-        birthEl.textContent = playerData.birth;
-        heightEl.textContent = playerData.height;
-        weightEl.textContent = playerData.weight;
-
-        // 능력치 바 업데이트
-        const statItems = {
-            "스피드": playerData.stats.speed,
-            "슈팅": playerData.stats.shooting,
-            "패스": playerData.stats.passing,
-            "드리블": playerData.stats.dribbling,
-            "수비": playerData.stats.defense,
-            "체력": playerData.stats.physical
-        };
-
-        Object.entries(statItems).forEach(([name, value], index) => {
-            const statBars = document.querySelectorAll('.stat-item');
-            if (statBars[index]) {
-                const nameEl = statBars[index].querySelector('.stat-name');
-                const fillEl = statBars[index].querySelector('.stat-fill');
-                const valueEl = statBars[index].querySelector('.stat-value');
-                
-                nameEl.textContent = name;
-                fillEl.style.width = `${value}%`;
-                valueEl.textContent = value;
-            }
-        });
-
-        // 발 기술 별점 업데이트
-        updateFootRating('왼발', playerData.foot.left);
-        updateFootRating('오른발', playerData.foot.right);
-
-        // 모달 표시
-        playerModal.style.display = 'flex';
-    }
-
-    // 발 기술 별점 업데이트 함수
-    function updateFootRating(foot, rating) {
-        const footItems = document.querySelectorAll('.foot-item');
-        const footItem = Array.from(footItems).find(item => 
-            item.querySelector('.foot-label').textContent.includes(foot)
-        );
-        
-        if (footItem) {
-            const stars = footItem.querySelectorAll('.star-rating i');
-            stars.forEach((star, index) => {
-                if (index < rating) {
-                    star.className = 'fas fa-star'; // 채워진 별
-                } else {
-                    star.className = 'far fa-star'; // 빈 별
-                }
-            });
-        }
-    }
-
-    // 선수 모달 닫기 함수
-    function closePlayerModal() {
-        playerModal.style.display = 'none';
-    }
-
-    // 데이터 로드 (실제로는 서버에서 가져올 것)
-    const loadStatsData = () => {
-        // API 호출 예시
-        // fetch('/api/stats')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         updateStatsData(data);
-        //     })
-        //     .catch(error => {
-        //         console.error('통계 데이터 로딩 중 오류 발생:', error);
-        //     });
-    };
-
-    // 초기 데이터 로드
-    loadStatsData();
     
     // 차트 초기화 (새로 추가)
     initCharts();
 });
+
+// 탭 전환 함수
+function switchTab(tabId) {
+    // 모든 탭 컨텐츠와 탭 버튼 비활성화
+    document.querySelectorAll('.content-section').forEach(content => {
+        content.classList.remove('active');
+    });
+
+    document.querySelectorAll('.sub-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    // 선택한 탭 컨텐츠와 탭 버튼 활성화
+    document.getElementById(tabId + '-content').classList.add('active');
+    document.getElementById(tabId + '-tab').classList.add('active');
+}
+
+// 탭 클릭 이벤트 리스너
+if (recordsTab) {
+    recordsTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab('records');
+        history.pushState(null, '', '/teams/records');
+    });
+}
+
+if (playersTab) {
+    playersTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab('players');
+        history.pushState(null, '', '/teams/players');
+    });
+}
 
 // 새로 추가된 차트 초기화 함수
 function initCharts() {
@@ -511,4 +279,117 @@ function createMatchGoalTrendChart() {
         data: data,
         options: options
     });
-} 
+}
+
+const member = {
+    getList() {
+        ApiClient.request({
+            url: '/v1/members/with-positions',
+            method: 'GET',
+            onSuccess: (response) => {
+                this.drawList(response)
+                const playerCards = document.querySelectorAll('.player-card')
+
+                playerCards.forEach(card => {
+                    card.addEventListener('click', function() {
+                        const playerId = this.getAttribute('data-player-id')
+                        member.getDetail(playerId)
+                    })
+                })
+            }
+        })
+    },
+    getDetail(memberId) {
+        ApiClient.request({
+            url: `/v1/members/${memberId}`,
+            method: 'GET',
+            onSuccess: (response) => {
+                playerModalHandler.open(response)
+            }
+        })
+    },
+    drawList(items = []) {
+        items.forEach(item => {
+            const playerCardNode = CommonUtils.getTemplateNode('player-card-template')
+            const playerCard = playerCardNode.querySelector('.player-card')
+            playerCard.dataset.playerId = item.id
+
+            playerCardNode.querySelector('.player-name').textContent = item.name
+
+            item.positions.forEach(position => {
+                const playerPositionNode = CommonUtils.getTemplateNode('player-position-template')
+                playerPositionNode.querySelector('.player-position').textContent = position.position
+                playerCard.querySelector('.player-basic-info').appendChild(playerPositionNode)
+            })
+
+            playerCardNode.querySelector('.player-number').textContent = `#${item.uniformNumber}`
+
+            document.getElementById('player-wrapper').appendChild(playerCardNode)
+        })
+    }
+}
+
+const playerModalHandler = {
+    open(playerData) {
+        // 모달에 선수 정보 채우기
+        document.getElementById('modal-player-name').textContent = playerData.name
+        document.getElementById('modal-player-number').textContent = playerData.uniformNumber
+        document.getElementById('modal-player-position').textContent =
+            Array.from(document.querySelectorAll(`[data-player-id="${playerData.id}"] .player-position`))
+                .map(item => item.textContent)
+                .join()
+        document.getElementById('modal-player-birth').textContent = DateUtils.formatDate(playerData.birthday, 'yyyy-MM-dd')
+        document.getElementById('modal-player-height').textContent = playerData.height
+        document.getElementById('modal-player-weight').textContent = playerData.weight
+
+        // 능력치 바 업데이트
+        const statItems = {
+            "스피드": playerData.attribute?.speed ?? 0,
+            "슈팅": playerData.attribute?.shooting ?? 0,
+            "패스": playerData.attribute?.pass ?? 0,
+            "드리블": playerData.attribute?.dribble ?? 0,
+            "수비": playerData.attribute?.defence ?? 0,
+            "체력": playerData.attribute?.stamina ?? 0
+        };
+
+        Object.entries(statItems).forEach(([name, value], index) => {
+            const statBars = document.querySelectorAll('.stat-item');
+            if (statBars[index]) {
+                const nameEl = statBars[index].querySelector('.stat-name');
+                const fillEl = statBars[index].querySelector('.stat-fill');
+                const valueEl = statBars[index].querySelector('.stat-value');
+
+                nameEl.textContent = name;
+                fillEl.style.width = `${value}%`;
+                valueEl.textContent = value;
+            }
+        });
+
+        // 발 기술 별점 업데이트
+        playerModalHandler.updateFootRating('왼발', playerData.leftFoot);
+        playerModalHandler.updateFootRating('오른발', playerData.rightFoot);
+
+        // 모달 표시
+        playerModal.style.display = 'flex';
+    },
+    updateFootRating(foot, rating) {
+        const footItems = document.querySelectorAll('.foot-item');
+        const footItem = Array.from(footItems).find(item =>
+            item.querySelector('.foot-label').textContent.includes(foot)
+        );
+
+        if (footItem) {
+            const stars = footItem.querySelectorAll('.star-rating i');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.className = 'fas fa-star'; // 채워진 별
+                } else {
+                    star.className = 'far fa-star'; // 빈 별
+                }
+            });
+        }
+    },
+    close() {
+        playerModal.style.display = 'none';
+    }
+}

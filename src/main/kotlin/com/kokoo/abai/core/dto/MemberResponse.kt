@@ -1,6 +1,5 @@
 package com.kokoo.abai.core.dto
 
-import com.kokoo.abai.core.enums.Position
 import com.kokoo.abai.core.row.MemberRow
 import java.time.LocalDate
 
@@ -14,10 +13,11 @@ data class MemberResponse(
     val uniformNumber: Int,
     val leftFoot: Int,
     val rightFoot: Int,
-    val preferredPosition: Position
+    val positions: List<MemberPositionResponse> = emptyList(),
+    var attribute: MemberAttributeResponse? = null
 )
 
-fun MemberRow.toResponse() = MemberResponse(
+fun MemberRow.toResponse(positions: List<MemberPositionResponse> = emptyList()) = MemberResponse(
     id = this.id,
     loginId = this.loginId,
     name = this.name,
@@ -27,5 +27,5 @@ fun MemberRow.toResponse() = MemberResponse(
     uniformNumber = this.uniformNumber,
     leftFoot = this.leftFoot,
     rightFoot = this.rightFoot,
-    preferredPosition = this.preferredPosition
+    positions = positions
 )
