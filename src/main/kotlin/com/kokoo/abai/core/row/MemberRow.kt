@@ -1,7 +1,6 @@
 package com.kokoo.abai.core.row
 
 import com.kokoo.abai.core.domain.Member
-import com.kokoo.abai.core.enums.Position
 import org.jetbrains.exposed.sql.ResultRow
 import java.time.LocalDate
 
@@ -15,8 +14,7 @@ data class MemberRow(
     val weight: Int,
     val uniformNumber: Int,
     val leftFoot: Int,
-    val rightFoot: Int,
-    val preferredPosition: Position
+    val rightFoot: Int
 )
 
 fun ResultRow.toMemberRow() = MemberRow(
@@ -29,6 +27,5 @@ fun ResultRow.toMemberRow() = MemberRow(
     weight = this[Member.weight],
     uniformNumber = this[Member.uniformNumber],
     leftFoot = this[Member.leftFoot],
-    rightFoot = this[Member.rightFoot],
-    preferredPosition = this[Member.preferredPosition],
+    rightFoot = this[Member.rightFoot]
 )

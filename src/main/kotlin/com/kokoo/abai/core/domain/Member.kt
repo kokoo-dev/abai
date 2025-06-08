@@ -1,7 +1,6 @@
 package com.kokoo.abai.core.domain
 
 import com.kokoo.abai.core.enums.MemberStatus
-import com.kokoo.abai.core.enums.Position
 import org.jetbrains.exposed.sql.javatime.date
 
 object Member : BaseTable("member") {
@@ -16,7 +15,6 @@ object Member : BaseTable("member") {
     val uniformNumber = integer("uniform_number")
     val leftFoot = integer("left_foot")
     val rightFoot = integer("right_foot")
-    val preferredPosition = enumerationByName("preferred_position", 30, Position::class)
 
     override val primaryKey = PrimaryKey(id)
 
