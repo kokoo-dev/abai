@@ -35,13 +35,18 @@ const guestPlayerNameInput = document.getElementById('guest-player-name')
 const addGuestSubmitBtn = document.getElementById('add-guest-player-btn')
 const guestModalCloseBtn = guestPlayerModal.querySelector('.close-modal')
 
+// 선수 선택 모달
+const playerSelectModal = document.getElementById('player-select-modal')
+const modalPlayerList = document.querySelector('.modal-player-list')
+const closeModalBtn = document.querySelector('.close-modal')
+
 // 포메이션
-const formation = new Formation({
+let formation = new Formation({
     formations: Array.from(formationSelect.options).map(option => option.value)
 })
 
 // 경기 정보
-let matchInfo = {
+const matchInfo = {
     date: document.getElementById('match-date').value || '',
     time: document.getElementById('match-time').value || '',
     opponentTeam: document.getElementById('opponent-team').value || '',
@@ -51,24 +56,184 @@ let matchInfo = {
     longitude: document.getElementById('map-longitude').value || ''
 }
 
-// DOM 요소 참조 (추가)
-const playerSelectModal = document.getElementById('player-select-modal')
-const modalPlayerList = document.querySelector('.modal-player-list')
-const closeModalBtn = document.querySelector('.close-modal')
-
 // 전역 변수 (추가)
 let currentPosition = null // 현재 선택된 포지션
 let allPlayers = [] // 모든 선수 데이터
 let selectedPlayers = new Set() // 출전 선수 ID 집합
 let guestPlayers = [] // 용병 선수 배열
+const saveMode = document.getElementById('save-mode').value ?? 'create'
+
+const match = {
+    id: document.getElementById('match-id').value,
+    getMembersAndGuests() {
+        Promise.all([
+            new Promise((resolve, reject) => { match.getMembers(resolve, reject) }),
+            new Promise((resolve, reject) => { match.getGuests(resolve, reject) })
+        ]).then(([memberResponse, guestResponse]) => {
+            memberResponse.forEach(it => {
+                selectedPlayers.add(it.member.id)
+            })
+
+            guestResponse.forEach(it => {
+                const newGuestPlayer = {
+                    id: it.guest.id,
+                    name: it.guest.name,
+                    number: 0,
+                    position: 'MF',
+                    isGuest: true
+                }
+
+                // 용병 목록에 추가
+                guestPlayers.push(newGuestPlayer)
+
+                // 선택된 선수 목록에 추가
+                selectedPlayers.add(newGuestPlayer.id)
+
+                // 전체 선수 목록에 추가
+                allPlayers.push(newGuestPlayer)
+            })
+
+            totalPlayerCount.textContent = allPlayers.length
+            selectedPlayerCount.textContent = selectedPlayers.size
+
+            // 선수 목록 렌더링
+            renderPlayerList()
+
+            match.getFormations()
+        })
+    },
+    getMembers(onSuccess, onError) {
+        ApiClient.request({
+            url: `/v1/matches/${match.id}/members`,
+            method: 'GET',
+            onSuccess: (response) => onSuccess(response),
+            onError: (error) => onError(error)
+        })
+    },
+    getGuests(onSuccess, onError) {
+        ApiClient.request({
+            url: `/v1/matches/${match.id}/guests`,
+            method: 'GET',
+            onSuccess: (response) => onSuccess(response),
+            onError: (error) => onError(error)
+        })
+    },
+    getFormations() {
+        ApiClient.request({
+            url: `/v1/matches/${match.id}/formations`,
+            method: 'GET',
+            onSuccess: (response) => {
+                formation.initQuarters(response.map(response => response.formation))
+
+                response.forEach((item, index) => {
+                    const quarter = index + 1
+                    formation.setCurrentQuarter(quarter)
+
+                    item.positions.forEach(position => {
+                        const isGuest = position.playerType === 'GUEST'
+
+                        formation.setPlayer(
+                            position.position,
+                            {
+                                id: isGuest ? position.guestId : position.memberId,
+                                type: position.playerType,
+                                name: position.playerName
+                            }
+                        )
+                    })
+                })
+
+                formation.setCurrentQuarter(1)
+                renderFormation(formation.getFormation())
+            }
+        })
+    }
+}
+
+const saveModeHandler = {
+    create: {
+        init() {
+            // 포메이션 렌더링
+            renderFormation(formationSelect.value)
+
+            // 선수 데이터 로드
+            this.loadPlayers()
+        },
+        loadPlayers() { // 선수 데이터 로드
+            ApiClient.request({
+                url: '/v1/members',
+                method: 'GET',
+                onSuccess: (response) => {
+                    allPlayers = response.map(it => {
+                        // default: 전체 선수 선택
+                        selectedPlayers.add(it.id)
+
+                        return {
+                            id: it.id,
+                            number: it.uniformNumber,
+                            name: it.name,
+                            position: it.preferredPosition,
+                            isGuest: false
+                        }
+                    })
+
+                    // 총 선수 수 표시
+                    totalPlayerCount.textContent = allPlayers.length
+                    selectedPlayerCount.textContent = selectedPlayers.size
+
+                    // 선수 목록 렌더링
+                    renderPlayerList()
+                }
+            })
+        },
+        api: {
+            url: '/v1/matches',
+            method: 'POST',
+            onSuccess(response) {
+                location.href = '/schedules/matches'
+            }
+        }
+    },
+    update: {
+        init() {
+            // 포메이션 렌더링
+            renderFormation(formationSelect.value)
+
+            // 선수 데이터 로드
+            this.loadPlayers()
+        },
+        loadPlayers() { // 선수 데이터 로드
+            ApiClient.request({
+                url: '/v1/members',
+                method: 'GET',
+                onSuccess: (response) => {
+                    allPlayers = response.map(it => {
+                        return {
+                            id: it.id,
+                            number: it.uniformNumber,
+                            name: it.name,
+                            position: it.preferredPosition,
+                            isGuest: false
+                        }
+                    })
+
+                    match.getMembersAndGuests()
+                }
+            })
+        },
+        api: {
+            url: `/v1/matches/${match.id}`,
+            method: 'PUT',
+            onSuccess(response) {
+                location.href = `/schedules/matches/${match.id}`
+            }
+        }
+    }
+}
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function () {
-    // 포메이션 렌더링
-    renderFormation(formationSelect.value)
-
-    // 선수 데이터 로드
-    loadPlayers()
+    saveModeHandler[saveMode].init()
 
     // 용병 모달 관련 이벤트 리스너 등록
     guestPlayer.initEvents()
@@ -212,8 +377,8 @@ saveBtn.addEventListener('click', function () {
     const matchAt = new Date(`${matchInfo.date}T${matchInfo.time}:00`)
 
     ApiClient.request({
-        url: '/v1/matches',
-        method: 'POST',
+        url: saveModeHandler[saveMode].api.url,
+        method: saveModeHandler[saveMode].api.method,
         params: {
             matchAt: matchAt.toISOString().split('.')[0] + 'Z',
             opponentName: matchInfo.opponentTeam,
@@ -225,9 +390,7 @@ saveBtn.addEventListener('click', function () {
             guests,
             formations
         },
-        onSuccess: (response) => {
-            window.location.href = '/schedules/matches'
-        }
+        onSuccess: (response) => saveModeHandler[saveMode].api.onSuccess(response)
     })
 })
 
@@ -242,29 +405,6 @@ playerSelectModal.addEventListener('click', function (e) {
         playerSelectModal.classList.remove('active')
     }
 })
-
-// 선수 데이터 로드 함수
-function loadPlayers() {
-    ApiClient.request({
-        url: '/v1/members',
-        method: 'GET',
-        onSuccess: (response) => {
-            allPlayers = response.map(it => ({
-                id: it.id,
-                number: it.uniformNumber,
-                name: it.name,
-                position: it.preferredPosition,
-                isGuest: false
-            }))
-
-            // 총 선수 수 표시
-            totalPlayerCount.textContent = allPlayers.length
-
-            // 선수 목록 렌더링
-            renderPlayerList()
-        }
-    })
-}
 
 // 선수 목록 렌더링 함수
 function renderPlayerList() {
@@ -298,6 +438,21 @@ function renderPlayerList() {
 // 선수 선택/해제 토글 함수
 function togglePlayerSelection(playerId) {
     if (selectedPlayers.has(playerId)) {
+        const existsPlayer = Object.keys(formation.getQuarters()).some(quarter => {
+            return Object.keys(formation.getQuarter(quarter).players).some(position => {
+                if (formation.getQuarter(quarter).players[position].id === playerId) {
+                    ToastMessage.error('해당 선수가 포지션에 배치되어 있습니다.')
+                    return true
+                }
+
+                return false
+            })
+        })
+
+        if (existsPlayer) {
+            return
+        }
+
         // 이미 선택된 선수라면 선택 해제
         selectedPlayers.delete(playerId)
     } else {

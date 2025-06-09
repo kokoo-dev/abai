@@ -315,10 +315,12 @@ const match = {
             url: `/v1/matches/${match.id}/formations`,
             method: 'GET',
             onSuccess: (response) => {
+                const formations = response.map(response => response.formation)
                 formation = new Formation({
-                    formations: response.map(response => response.formation),
-                    isInitFormation: true
+                    formations: formations
                 })
+
+                formation.initQuarters(formations)
 
                 response.forEach((item, index) => {
                     const quarter = index + 1
