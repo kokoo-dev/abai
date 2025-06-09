@@ -15,6 +15,15 @@ const filterButtons = document.querySelectorAll('.position-filter .filter-btn');
 const playerModal = document.getElementById('player-modal');
 const closeModalBtn = document.querySelector('.close-modal');
 
+// 날짜 필터링 관련 요소
+const filterTabButtons = document.querySelectorAll('.filter-tab-btn');
+const relativeFilter = document.getElementById('relative-filter');
+const absoluteFilter = document.getElementById('absolute-filter');
+const periodButtons = document.querySelectorAll('.period-btn');
+const startDateInput = document.getElementById('start-date');
+const endDateInput = document.getElementById('end-date');
+const applyDateFilterBtn = document.getElementById('apply-date-filter');
+
 document.addEventListener('DOMContentLoaded', function() {
 
     // URL 경로에 따라 초기 탭 활성화
@@ -65,6 +74,56 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // 날짜 필터 탭 전환 이벤트 (상대/절대)
+    if (filterTabButtons.length > 0) {
+        filterTabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // 모든 탭 버튼 비활성화
+                filterTabButtons.forEach(btn => btn.classList.remove('active'));
+                // 클릭한 탭 버튼 활성화
+                this.classList.add('active');
+                
+                const filterType = this.getAttribute('data-filter-type');
+                
+                // 상대/절대 필터 전환
+                if (filterType === 'relative') {
+                    relativeFilter.classList.add('active');
+                    absoluteFilter.classList.remove('active');
+                } else {
+                    relativeFilter.classList.remove('active');
+                    absoluteFilter.classList.add('active');
+                }
+            });
+        });
+    }
+
+    // 상대 기간 버튼 클릭 이벤트
+    if (periodButtons.length > 0) {
+        periodButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // 모든 기간 버튼 비활성화
+                periodButtons.forEach(btn => btn.classList.remove('active'));
+                // 클릭한 기간 버튼 활성화
+                this.classList.add('active');
+                
+                const period = this.getAttribute('data-period');
+                applyRelativeDateFilter(period);
+            });
+        });
+    }
+
+    // 절대 기간 적용 버튼 클릭 이벤트
+    if (applyDateFilterBtn) {
+        applyDateFilterBtn.addEventListener('click', function() {
+            applyAbsoluteDateFilter(startDateInput.value, endDateInput.value);
+        });
+    }
+
+    // 초기 날짜 필터 적용 (상대 기준 1일)
+    setTimeout(() => {
+        applyRelativeDateFilter('1d');
+    }, 100);
+    
     // 검색 기능
     const implementSearch = (inputSelector, itemSelector, textContent) => {
         const searchInput = document.querySelector(inputSelector);
@@ -167,6 +226,111 @@ document.addEventListener('DOMContentLoaded', function() {
     // 차트 초기화 (새로 추가)
     initCharts();
 });
+
+// 상대 날짜 필터 적용 함수
+function applyRelativeDateFilter(period) {
+    // 현재 날짜
+    const today = new Date();
+    let startDate = new Date();
+    
+    // 기간에 따라 시작 날짜 계산
+    switch(period) {
+        case '1d': // 1일
+            startDate.setDate(today.getDate() - 1);
+            break;
+        case '3d': // 3일
+            startDate.setDate(today.getDate() - 3);
+            break;
+        case '5d': // 5일
+            startDate.setDate(today.getDate() - 5);
+            break;
+        case '1w': // 1주
+            startDate.setDate(today.getDate() - 7);
+            break;
+        case '2w': // 2주
+            startDate.setDate(today.getDate() - 14);
+            break;
+        case '3w': // 3주
+            startDate.setDate(today.getDate() - 21);
+            break;
+        case '1m': // 1달
+            startDate.setMonth(today.getMonth() - 1);
+            break;
+        case '3m': // 3달
+            startDate.setMonth(today.getMonth() - 3);
+            break;
+        case '6m': // 6달
+            startDate.setMonth(today.getMonth() - 6);
+            break;
+        default:
+            startDate.setDate(today.getDate() - 1); // 기본값 1일
+    }
+    
+    // 날짜를 'yyyy-MM-dd' 형식으로 변환
+    const formattedStartDate = DateUtils.formatDate(startDate, 'yyyy-MM-dd');
+    const formattedEndDate = DateUtils.formatDate(today, 'yyyy-MM-dd');
+    
+    // 실제 데이터 필터링 적용
+    applyDateRangeToData(formattedStartDate, formattedEndDate);
+    
+    // 절대 날짜 필드에 반영 (사용자 편의를 위해)
+    if (startDateInput && endDateInput) {
+        startDateInput.value = formattedStartDate;
+        endDateInput.value = formattedEndDate;
+    }
+}
+
+// 절대 날짜 필터 적용 함수
+function applyAbsoluteDateFilter(startDate, endDate) {
+    // 입력 유효성 검사
+    if (!startDate || !endDate) {
+        alert('시작일과 종료일을 모두 입력해주세요.');
+        return;
+    }
+    
+    // 날짜 범위 유효성 검사
+    if (new Date(startDate) > new Date(endDate)) {
+        alert('시작일은 종료일보다 이전이어야 합니다.');
+        return;
+    }
+    
+    // 실제 데이터 필터링 적용
+    applyDateRangeToData(startDate, endDate);
+}
+
+// 데이터에 날짜 범위 필터 적용 함수
+function applyDateRangeToData(startDate, endDate) {
+    console.log(`필터링 적용: ${startDate} ~ ${endDate}`);
+    
+    // 여기에서 실제 API 호출 또는 데이터 필터링 로직 구현
+    // 예를 들어, 팀 통계, 차트, 득점 순위 등을 해당 날짜 범위로 새로 불러오기
+    // TODO: API 호출 및 데이터 업데이트 구현
+    
+    // 통계 데이터 업데이트 예시
+    updateTeamStats(startDate, endDate);
+    
+    // 차트 데이터 업데이트 예시
+    updateCharts(startDate, endDate);
+}
+
+// 팀 통계 업데이트 함수
+function updateTeamStats(startDate, endDate) {
+    // 예시 구현: 실제로는 API에서 데이터를 가져와야 함
+    // 여기서는 간단한 예시를 위해 고정 데이터 사용
+    
+    // TODO: API 연동 후 실제 구현
+}
+
+// 차트 업데이트 함수
+function updateCharts(startDate, endDate) {
+    // 예시 구현: 실제로는 API에서 데이터를 가져와야 함
+    // 여기서는 간단한 예시를 위해 고정 데이터 사용
+    
+    // TODO: API 연동 후 실제 구현
+    
+    // 기존 차트 업데이트
+    updateMatchGoalTrendChart(startDate, endDate);
+}
 
 // 탭 전환 함수
 function switchTab(tabId) {
@@ -274,11 +438,39 @@ function createMatchGoalTrendChart() {
         }
     };
     
-    new Chart(chartCanvas, {
+    window.goalChart = new Chart(chartCanvas, {
         type: 'line',
         data: data,
         options: options
     });
+}
+
+// 경기당 득점/실점 차트 업데이트
+function updateMatchGoalTrendChart(startDate, endDate) {
+    // 실제로는 API에서 새로운 데이터를 가져와야 함
+    // 여기서는 간단한 예시로 랜덤 데이터 생성
+    
+    if (!window.goalChart) return;
+    
+    // 기간에 따라 표시할 경기 수 조정 (실제로는 API에서 받아야 함)
+    const daysDiff = Math.round((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+    const matchCount = Math.min(15, Math.max(3, Math.floor(daysDiff / 2)));
+    
+    // 날짜 범위에 따라 다른 데이터 샘플 (실제로는 API에서 받아와야 함)
+    const newMatchLabels = Array.from({length: matchCount}, (_, i) => `${i+1}차전`);
+    const newScoredGoals = Array.from({length: matchCount}, () => Math.floor(Math.random() * 5));
+    const newConcededGoals = Array.from({length: matchCount}, () => Math.floor(Math.random() * 4));
+    
+    // 차트 데이터 업데이트
+    window.goalChart.data.labels = newMatchLabels;
+    window.goalChart.data.datasets[0].data = newScoredGoals;
+    window.goalChart.data.datasets[1].data = newConcededGoals;
+    
+    // 차트 타이틀 업데이트
+    window.goalChart.options.plugins.title.text = `경기당 득점/실점 추이 (${startDate} ~ ${endDate})`;
+    
+    // 차트 다시 그리기
+    window.goalChart.update();
 }
 
 const member = {

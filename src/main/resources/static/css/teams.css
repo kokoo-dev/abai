@@ -47,6 +47,131 @@
     display: block;
 }
 
+/* 날짜 필터 스타일 */
+.date-filter {
+    margin-bottom: 1.5rem;
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filter-tabs {
+    display: flex;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.filter-tab-btn {
+    padding: 0.5rem 1rem;
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+}
+
+.filter-tab-btn.active {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.filter-tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+}
+
+.relative-date-filter,
+.absolute-date-filter {
+    display: none;
+}
+
+.relative-date-filter.active,
+.absolute-date-filter.active {
+    display: block;
+}
+
+.period-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.period-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.period-group-title {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.period-group-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.period-btn {
+    padding: 0.4rem 0.8rem;
+    background-color: #f1f1f1;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #777;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.period-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.date-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.date-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.date-input-group label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.date-input {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.apply-btn {
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+/* 기존 필터 스타일 */
 .player-filter {
     margin-bottom: 1.5rem;
 }

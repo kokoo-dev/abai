@@ -25,12 +25,55 @@
         <div class="tab-content">
             <!-- 기록 탭 컨텐츠 -->
             <div id="records-content" class="content-section active">
-                <div class="player-filter">
-                    <div class="position-filter">
-                        <button class="filter-btn active" data-filter="all">전체</button>
-                        <button th:each="positionGroup : ${positionGroups}" th:data-filter="${positionGroup.group}"
-                                class="filter-btn" th:text="${positionGroup.group}">
-                        </button>
+                <div class="date-filter">
+                    <div class="filter-tabs">
+                        <button class="filter-tab-btn active" data-filter-type="relative">상대 기간</button>
+                        <button class="filter-tab-btn" data-filter-type="absolute">절대 기간</button>
+                    </div>
+                    
+                    <!-- 상대 기간 필터 (기본 표시) -->
+                    <div class="relative-date-filter active" id="relative-filter">
+                        <div class="period-buttons">
+                            <div class="period-group">
+                                <div class="period-group-title">일</div>
+                                <div class="period-group-buttons">
+                                    <button class="period-btn active" data-period="1d">1일</button>
+                                    <button class="period-btn" data-period="3d">3일</button>
+                                    <button class="period-btn" data-period="5d">5일</button>
+                                </div>
+                            </div>
+                            <div class="period-group">
+                                <div class="period-group-title">주</div>
+                                <div class="period-group-buttons">
+                                    <button class="period-btn" data-period="1w">1주</button>
+                                    <button class="period-btn" data-period="2w">2주</button>
+                                    <button class="period-btn" data-period="3w">3주</button>
+                                </div>
+                            </div>
+                            <div class="period-group">
+                                <div class="period-group-title">월</div>
+                                <div class="period-group-buttons">
+                                    <button class="period-btn" data-period="1m">1달</button>
+                                    <button class="period-btn" data-period="3m">3달</button>
+                                    <button class="period-btn" data-period="6m">6달</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 절대 기간 필터 (초기에는 숨김) -->
+                    <div class="absolute-date-filter" id="absolute-filter">
+                        <div class="date-inputs">
+                            <div class="date-input-group">
+                                <label for="start-date">시작일</label>
+                                <input type="date" id="start-date" class="date-input">
+                            </div>
+                            <div class="date-input-group">
+                                <label for="end-date">종료일</label>
+                                <input type="date" id="end-date" class="date-input">
+                            </div>
+                            <button id="apply-date-filter" class="apply-btn">적용</button>
+                        </div>
                     </div>
                 </div>
 
