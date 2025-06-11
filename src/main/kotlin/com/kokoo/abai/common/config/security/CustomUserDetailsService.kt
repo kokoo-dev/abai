@@ -1,7 +1,7 @@
 package com.kokoo.abai.common.config.security
 
-import com.kokoo.abai.core.repository.MemberRepository
-import com.kokoo.abai.core.repository.MemberRoleRepository
+import com.kokoo.abai.core.member.repository.MemberRepository
+import com.kokoo.abai.core.member.repository.MemberRoleRepository
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService

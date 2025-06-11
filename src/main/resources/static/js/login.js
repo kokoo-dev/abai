@@ -17,8 +17,6 @@ const loginForm = document.querySelector(".login-form")
 // 페이지 로드 시 저장된 아이디 복원
 loadSavedUsername()
 
-loginIdInput.focus()
-
 // 아이디 저장 체크박스 변경 이벤트
 rememberCheckbox.addEventListener('change', function() {
     if (!this.checked) {
@@ -45,6 +43,8 @@ function loadSavedUsername() {
     const savedUsername = localStorage.getItem('rememberedUsername')
     const loginIdInput = document.getElementById("login-id")
     const rememberCheckbox = document.getElementById("remember")
+
+    loginIdInput.focus()
     
     if (savedUsername) {
         loginIdInput.value = savedUsername

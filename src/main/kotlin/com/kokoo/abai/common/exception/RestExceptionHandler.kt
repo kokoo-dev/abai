@@ -14,7 +14,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException
 
 private val logger = KotlinLogging.logger {}
 
-@RestControllerAdvice(value = ["com.kokoo.abai.core.controller.api"])
+@RestControllerAdvice(value = ["com.kokoo.abai.core"])
 class RestExceptionHandler {
 
     @ExceptionHandler(Exception::class)

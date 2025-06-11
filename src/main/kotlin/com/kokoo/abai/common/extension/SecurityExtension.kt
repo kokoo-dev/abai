@@ -3,7 +3,7 @@ package com.kokoo.abai.common.extension
 import com.kokoo.abai.common.config.security.CustomUserDetails
 import com.kokoo.abai.common.error.ErrorCode
 import com.kokoo.abai.common.exception.BusinessException
-import com.kokoo.abai.core.enums.RoleId
+import com.kokoo.abai.core.member.enums.RoleId
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContext
 

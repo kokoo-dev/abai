@@ -1,6 +1,5 @@
 package com.kokoo.abai.common.config.security
 
-import com.kokoo.abai.core.enums.RoleId
 import org.apache.catalina.util.URLEncoder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
