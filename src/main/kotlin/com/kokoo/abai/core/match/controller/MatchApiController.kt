@@ -102,4 +102,9 @@ class MatchApiController(
     fun getMatchGuests(@PathVariable(name = "id") id: Long): ResponseEntity<List<MatchGuestResponse>> {
         return ResponseEntity.ok(matchService.getMatchGuests(id))
     }
+
+    @GetMapping("/upcoming")
+    fun getUpcomingMatch(): ResponseEntity<MatchResponse> {
+        return ResponseEntity.ok(matchService.getUpcomingMatch())
+    }
 }

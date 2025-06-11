@@ -43,6 +43,9 @@ class MemberService(
         }
     }
 
+    @Transactional(readOnly = true)
+    fun getUpcomingBirthdays() = memberRepository.findUpcomingBirthdays().map { it.toResponse() }
+
     fun getPositionGroups(): List<PositionGroupResponse> =
         PositionGroup.entries
             .map { PositionGroupResponse(group = it.name, positions = it.positions.map { position -> position.name }) }

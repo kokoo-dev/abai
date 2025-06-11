@@ -70,7 +70,7 @@ class MatchRepository {
         size: Int
     ): Slice<MatchRow> {
         var contents = Match.selectAll()
-            .where { lessThanMatchAndId(matchAt, id) }
+            .where { lessThanMatchAtAndId(matchAt, id) }
             .andWhere { equalStatus(status) }
             .andWhere { Match.deleted eq false }
             .orderBy(Match.matchAt to SortOrder.DESC, Match.id to SortOrder.DESC)
@@ -101,8 +101,15 @@ class MatchRepository {
         .andWhere { Match.deleted eq false }
         .single()
         .toMatchSummaryRow()
+    
+    fun findByStatusAndMatchAtGraterThan(matchAt: LocalDateTime): MatchRow? = Match.selectAll()
+        .where { Match.matchAt greater matchAt }
+        .andWhere { Match.status eq MatchStatus.READY }
+        .orderBy(Match.matchAt to SortOrder.ASC)
+        .limit(1)
+        .singleOrNull()?.toMatchRow()
 
-    private fun lessThanMatchAndId(matchAt: LocalDateTime?, id: Long?): Op<Boolean> {
+    private fun lessThanMatchAtAndId(matchAt: LocalDateTime?, id: Long?): Op<Boolean> {
         return when {
             matchAt == null || id == null -> Op.TRUE
             else -> Match.matchAt.less(matchAt)

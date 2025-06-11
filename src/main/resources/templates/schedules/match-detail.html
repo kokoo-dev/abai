@@ -27,9 +27,9 @@
             </div>
             <div class="score-divider">
                 <div th:switch="${match.status}">
-                    <div th:case="${T(com.kokoo.abai.core.enums.MatchStatus).READY}" class="match-state ready">예정</div>
-                    <div th:case="${T(com.kokoo.abai.core.enums.MatchStatus).CANCELED}" class="match-state canceled">취소</div>
-                    <div th:case="${T(com.kokoo.abai.core.enums.MatchStatus).COMPLETED}" class="match-state completed">완료</div>
+                    <div th:case="${T(com.kokoo.abai.core.match.enums.MatchStatus).READY}" class="match-state ready">예정</div>
+                    <div th:case="${T(com.kokoo.abai.core.match.enums.MatchStatus).CANCELED}" class="match-state canceled">취소</div>
+                    <div th:case="${T(com.kokoo.abai.core.match.enums.MatchStatus).COMPLETED}" class="match-state completed">완료</div>
                 </div>
             </div>
             <div class="team-section away">

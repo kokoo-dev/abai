@@ -6,12 +6,19 @@ import com.kokoo.abai.core.member.enums.MemberStatus
 import com.kokoo.abai.core.member.enums.Position
 import com.kokoo.abai.core.member.row.MemberRow
 import com.kokoo.abai.core.member.row.toMemberRow
+import org.jetbrains.exposed.sql.CustomFunction
+import org.jetbrains.exposed.sql.Expression
+import org.jetbrains.exposed.sql.QueryBuilder
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.TextColumnType
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.javatime.CurrentDate
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.stringLiteral
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 
 @Repository
 class MemberRepository {
@@ -52,11 +59,30 @@ class MemberRepository {
         .orderBy(Member.uniformNumber to SortOrder.ASC)
         .map { it.toMemberRow() }
 
-    fun findByPositionIn(positions: List<Position>): List<MemberRow> = Member.innerJoin(MemberPosition)
-        .select(Member.columns)
-        .where { Member.status eq MemberStatus.ACTIVATED }
-        .andWhere { MemberPosition.position inList positions }
-        .groupBy(Member.id)
-        .orderBy(Member.uniformNumber to SortOrder.ASC)
-        .map { it.toMemberRow() }
+    fun findByPositionIn(positions: List<Position>): List<MemberRow> =
+        Member.innerJoin(MemberPosition)
+            .select(Member.columns)
+            .where { Member.status eq MemberStatus.ACTIVATED }
+            .andWhere { MemberPosition.position inList positions }
+            .groupBy(Member.id)
+            .orderBy(Member.uniformNumber to SortOrder.ASC)
+            .map { it.toMemberRow() }
+
+    fun findUpcomingBirthdays(): List<MemberRow> {
+        val sevenDaysLater = object : Expression<LocalDate>() {
+            override fun toQueryBuilder(queryBuilder: QueryBuilder) {
+                queryBuilder.append("CURRENT_DATE + 7")
+            }
+        }
+
+        val birthdayMMDD = CustomFunction("TO_CHAR", TextColumnType(), Member.birthday, stringLiteral("MM-DD"))
+        val todayMMDD = CustomFunction("TO_CHAR", TextColumnType(), CurrentDate, stringLiteral("MM-DD"))
+        val futureMMDD = CustomFunction("TO_CHAR", TextColumnType(), sevenDaysLater, stringLiteral("MM-DD"))
+
+        return Member.selectAll()
+            .where { Member.status eq MemberStatus.ACTIVATED }
+            .andWhere { birthdayMMDD greaterEq todayMMDD }
+            .andWhere { birthdayMMDD lessEq futureMMDD }
+            .map { it.toMemberRow() }
+    }
 }

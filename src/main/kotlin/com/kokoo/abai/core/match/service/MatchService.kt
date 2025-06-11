@@ -26,6 +26,7 @@ import com.kokoo.abai.core.match.row.MatchMemberRow
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 @Service
@@ -142,4 +143,9 @@ class MatchService(
         }
         matchPositionRepository.saveAll(allPositions)
     }
+
+    @Transactional(readOnly = true)
+    fun getUpcomingMatch(): MatchResponse =
+        matchRepository.findByStatusAndMatchAtGraterThan(LocalDateTime.now())?.toResponse()
+            ?: throw BusinessException(ErrorCode.NOT_FOUND)
 }

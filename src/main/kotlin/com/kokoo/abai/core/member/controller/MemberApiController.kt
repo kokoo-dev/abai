@@ -34,4 +34,9 @@ class MemberApiController(
     ): ResponseEntity<MemberResponse> {
         return ResponseEntity.ok(memberService.getMember(id))
     }
+
+    @GetMapping("/upcoming-birthday")
+    fun getUpcomingBirthdayMembers(): ResponseEntity<List<MemberResponse>> {
+        return ResponseEntity.ok(memberService.getUpcomingBirthdays())
+    }
 }

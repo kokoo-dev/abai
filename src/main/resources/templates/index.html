@@ -13,40 +13,10 @@
             </div>
         </div>
 
-        <!-- 생일 알림 배너 추가 -->
-        <div class="birthday-banner" th:if="${upcomingBirthdays != null && !upcomingBirthdays.isEmpty()}">
-            <div class="birthday-icon">
-                <i class="fas fa-birthday-cake"></i>
-            </div>
-            <div class="birthday-content">
-                <span class="birthday-text">
-                    <span th:text="${upcomingBirthdays[0].name}">홍길동</span>
-                    <span th:if="${upcomingBirthdays.size() > 1}" th:text="' 외 ' + (${upcomingBirthdays.size()} - 1) + '명'"> 외 2명</span>
-                    <span>생일이 다가옵니다</span>
-                </span>
-            </div>
-            <a href="/schedules/calendar" class="birthday-arrow">
-                <i class="fas fa-chevron-right"></i>
-            </a>
-        </div>
+        <div id="birthday-banner-wrapper"></div>
 
-        <div class="card upcoming-match highlight-match">
-            <h2 class="section-title">다가오는 경기</h2>
-            <div class="match-info">
-                <div class="match-date"><span class="countdown-badge">곧 시작!</span> 2023년 8월 15일 (화) 19:00</div>
-                <div class="match-teams">
-                    <span class="team">우리팀</span>
-                    <span class="versus">VS</span>
-                    <span class="team">상대팀</span>
-                </div>
-                <div class="match-location">
-                    <i class="fas fa-map-marker-alt"></i> 한강공원 잔디구장
-                </div>
-            </div>
-            <div class="match-cta">
-                <button class="attend-btn">경기 내용 보러 가기</button>
-            </div>
-        </div>
+        <div id="upcoming-match-wrapper"></div>
+
 
         <div class="card quick-stats">
             <h2 class="section-title">최근 기록</h2>
@@ -102,6 +72,45 @@
             </a>
         </div>
     </div>
+
+    <template id="birthday-banner-template">
+        <div class="birthday-banner">
+            <div class="birthday-icon">
+                <i class="fas fa-birthday-cake"></i>
+            </div>
+            <div class="birthday-content">
+                <span class="birthday-text">
+                </span>
+            </div>
+            <a href="/schedules/calendar" class="birthday-arrow">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+    </template>
+
+    <template id="upcoming-match-template">
+        <div class="card upcoming-match highlight-match">
+            <h2 class="section-title">다가오는 경기</h2>
+            <div class="match-info">
+                <div class="match-date">
+                    <span class="countdown-badge">곧 시작!</span>
+                    <span id="matchAt">2023년 8월 15일 (화) 19:00</span>
+                </div>
+                <div class="match-teams">
+                    <span class="team">ABAI FC</span>
+                    <span class="versus">VS</span>
+                    <span class="team" id="opponentName">상대팀</span>
+                </div>
+                <div class="match-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="location">한강공원 잔디구장</span>
+                </div>
+            </div>
+            <div class="match-cta">
+                <button class="attend-btn">경기 내용 보러 가기</button>
+            </div>
+        </div>
+    </template>
 
     <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
 
