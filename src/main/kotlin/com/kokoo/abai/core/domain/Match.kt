@@ -2,7 +2,10 @@ package com.kokoo.abai.core.domain
 
 import com.kokoo.abai.core.enums.MatchResult
 import com.kokoo.abai.core.enums.MatchStatus
+import org.jetbrains.exposed.sql.alias
+import org.jetbrains.exposed.sql.count
 import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.sql.sum
 
 object Match : BaseTable("match") {
     val id = long("id").autoIncrement()
@@ -24,4 +27,9 @@ object Match : BaseTable("match") {
     init {
         index(isUnique = false, matchAt)
     }
+
+    val idCount = id.count().alias("id_count")
+    val goalsForSum = goalsFor.sum().alias("goals_for")
+    val goalsAgainstSum = goalsAgainst.sum().alias("goals_against")
+    val assistSum = assist.sum().alias("assist")
 }

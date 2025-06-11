@@ -600,27 +600,3 @@
         margin-right: 0.5rem;
     }
 }
-
-/* 차트 스타일 */
-.team-charts {
-    margin-bottom: 1.5rem;
-}
-
-.charts-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-}
-
-.chart-container {
-    width: 100%;
-    padding: 0.5rem;
-    position: relative;
-    min-height: 300px;
-}
-
-@media (min-width: 768px) {
-    .chart-container {
-        min-height: 350px;
-    }
-}

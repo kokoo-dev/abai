@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 // URL 경로에 따라 초기 탭 활성화
-const activateInitialTab = () => {
+function activateInitialTab() {
     const currentPage = window.location.pathname
     if (currentPage.includes('/schedules/calendar')) {
         switchTab('calendar')

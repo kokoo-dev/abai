@@ -2,11 +2,11 @@ package com.kokoo.abai.core.repository
 
 import com.kokoo.abai.common.pagination.Slice
 import com.kokoo.abai.core.domain.Match
-import com.kokoo.abai.core.dto.CursorRequest
-import com.kokoo.abai.core.dto.MatchCursorId
 import com.kokoo.abai.core.enums.MatchStatus
 import com.kokoo.abai.core.row.MatchRow
+import com.kokoo.abai.core.row.MatchSummaryRow
 import com.kokoo.abai.core.row.toMatchRow
+import com.kokoo.abai.core.row.toMatchSummaryRow
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
@@ -89,6 +89,18 @@ class MatchRepository {
         .where { Match.matchAt.between(startAt, endAt) }
         .andWhere { Match.deleted eq false }
         .map { it.toMatchRow() }
+
+    fun sumByMatchAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): MatchSummaryRow = Match
+        .select(
+            Match.idCount,
+            Match.goalsForSum,
+            Match.goalsAgainstSum,
+            Match.assistSum
+        )
+        .where { Match.matchAt.between(startAt, endAt) }
+        .andWhere { Match.deleted eq false }
+        .single()
+        .toMatchSummaryRow()
 
     private fun lessThanMatchAndId(matchAt: LocalDateTime?, id: Long?): Op<Boolean> {
         return when {

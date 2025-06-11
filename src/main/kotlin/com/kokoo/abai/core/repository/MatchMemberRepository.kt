@@ -1,13 +1,14 @@
 package com.kokoo.abai.core.repository
 
 import com.kokoo.abai.common.pagination.Slice
+import com.kokoo.abai.core.domain.Match
 import com.kokoo.abai.core.domain.MatchMember
 import com.kokoo.abai.core.domain.Member
 import com.kokoo.abai.core.dto.CursorRequest
-import com.kokoo.abai.core.row.MatchMemberRow
-import com.kokoo.abai.core.row.toMatchMemberRow
+import com.kokoo.abai.core.row.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
@@ -67,7 +68,113 @@ class MatchMemberRepository {
     fun findByMatchId(matchId: Long): List<MatchMemberRow> =
         MatchMember.innerJoin(Member).selectAll()
             .where { MatchMember.matchId eq matchId }
-            .map{ it.toMatchMemberRow() }
+            .map { it.toMatchMemberRow() }
+
+    fun topGoalsByMatchAtBetween(
+        startAt: LocalDateTime,
+        endAt: LocalDateTime,
+        limit: Int = 1
+    ): List<GoalRankRow> {
+        val topGoal = topGoalsOrAssistsSubQuery(startAt, endAt)
+
+        return Member
+            .join(
+                otherTable = topGoal,
+                joinType = JoinType.LEFT,
+                onColumn = Member.id,
+                otherColumn = topGoal[MatchMember.memberId]
+            )
+            .select(
+                Member.id,
+                Member.name,
+                topGoal[MatchMember.goalsForSum],
+                topGoal[MatchMember.assistSum]
+            )
+            .orderBy(
+                topGoal[MatchMember.goalsForSum].isNull() to SortOrder.ASC,
+                MatchMember.goalsForSum to SortOrder.DESC,
+                MatchMember.assistSum to SortOrder.DESC
+            )
+            .limit(limit)
+            .map { it.toGoalRankRow(topGoal) }
+    }
+
+    fun topAssistsByMatchAtBetween(
+        startAt: LocalDateTime,
+        endAt: LocalDateTime,
+        limit: Int = 1
+    ): List<AssistRankRow> {
+        val topAssist = topGoalsOrAssistsSubQuery(startAt, endAt)
+
+        return Member
+            .join(
+                otherTable = topAssist,
+                joinType = JoinType.LEFT,
+                onColumn = Member.id,
+                otherColumn = topAssist[MatchMember.memberId]
+            )
+            .select(
+                Member.id,
+                Member.name,
+                topAssist[MatchMember.goalsForSum],
+                topAssist[MatchMember.assistSum]
+            )
+            .orderBy(
+                topAssist[MatchMember.assistSum].isNull() to SortOrder.ASC,
+                MatchMember.assistSum to SortOrder.DESC,
+                MatchMember.goalsForSum to SortOrder.DESC
+            )
+            .limit(limit)
+            .map { it.toAssistRankRow(topAssist) }
+    }
+
+    fun findAllByMatchAtBetween(
+        startAt: LocalDateTime,
+        endAt: LocalDateTime
+    ): List<MemberRecordRow> {
+        val record = MatchMember.innerJoin(Match)
+            .select(
+                MatchMember.memberId,
+                MatchMember.idCount,
+                MatchMember.goalsForSum,
+                MatchMember.assistSum
+            )
+            .where { Match.matchAt.between(startAt, endAt) }
+            .andWhere { Match.deleted eq false }
+            .groupBy(MatchMember.memberId)
+            .alias("record")
+
+        return Member
+            .join(
+                otherTable = record,
+                joinType = JoinType.LEFT,
+                onColumn = Member.id,
+                otherColumn = record[MatchMember.memberId]
+            )
+            .select(
+                Member.id,
+                Member.name,
+                Member.uniformNumber,
+                record[MatchMember.idCount],
+                record[MatchMember.goalsForSum],
+                record[MatchMember.assistSum]
+            )
+            .map { it.toMemberRecordRow(record) }
+    }
+
+    private fun topGoalsOrAssistsSubQuery(
+        startAt: LocalDateTime,
+        endAt: LocalDateTime
+    ): QueryAlias = MatchMember.innerJoin(Match)
+        .select(
+            MatchMember.memberId,
+            MatchMember.goalsForSum,
+            MatchMember.assistSum
+        )
+        .where { Match.matchAt.between(startAt, endAt) }
+        .andWhere { Match.deleted eq false }
+        .groupBy(MatchMember.memberId)
+        .alias("top")
 
     private fun lessThanId(id: Long?): Op<Boolean> {
         return when (id) {

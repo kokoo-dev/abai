@@ -1,5 +1,9 @@
 package com.kokoo.abai.core.domain
 
+import org.jetbrains.exposed.sql.alias
+import org.jetbrains.exposed.sql.count
+import org.jetbrains.exposed.sql.sum
+
 object MatchMember : BaseTable("match_member") {
     val id = long("id").autoIncrement()
     val matchId = reference("match_id", Match.id)
@@ -12,4 +16,8 @@ object MatchMember : BaseTable("match_member") {
     init {
         uniqueIndex(matchId, memberId)
     }
+
+    val idCount = id.count().alias("id_count")
+    val goalsForSum = goalsFor.sum().alias("goals_for")
+    val assistSum = assist.sum().alias("assist")
 }

@@ -1,6 +1,7 @@
 import ApiClient from "../common/ApiClient.js"
 import CommonUtils from "../common/CommonUtils.js"
 import DateUtils from "../common/DateUtils.js"
+import ToastMessage from "../common/ToastMessage.js"
 
 // 서브 탭 전환 기능
 const recordsTab = document.getElementById('records-tab');
@@ -25,17 +26,6 @@ const endDateInput = document.getElementById('end-date');
 const applyDateFilterBtn = document.getElementById('apply-date-filter');
 
 document.addEventListener('DOMContentLoaded', function() {
-
-    // URL 경로에 따라 초기 탭 활성화
-    const currentPage = window.location.pathname;
-    const activateInitialTab = () => {
-        if (currentPage.includes('/teams/players')) {
-            switchTab('players');
-        } else {
-            switchTab('records');
-        }
-    };
-
     // 초기 탭 활성화
     activateInitialTab();
 
@@ -119,10 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 초기 날짜 필터 적용 (상대 기준 1일)
-    setTimeout(() => {
-        applyRelativeDateFilter('1d');
-    }, 100);
+    applyRelativeDateFilter('1m')
     
     // 검색 기능
     const implementSearch = (inputSelector, itemSelector, textContent) => {
@@ -172,43 +159,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 테이블 정렬 함수
-    function sortTable(key, direction) {
-        const tbody = document.querySelector('.player-table tbody');
-        const rows = Array.from(tbody.querySelectorAll('tr'));
-        
-        rows.sort((a, b) => {
-            let valueA, valueB;
-            
-            if (key === 'name') {
-                valueA = a.querySelector('td:nth-child(1)').textContent;
-                valueB = b.querySelector('td:nth-child(1)').textContent;
-                return direction === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
-            } else if (key === 'position') {
-                valueA = a.querySelector('td:nth-child(2)').textContent;
-                valueB = b.querySelector('td:nth-child(2)').textContent;
-                return direction === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
-            } else {
-                let columnIndex;
-                switch (key) {
-                    case 'games': columnIndex = 3; break;
-                    case 'goals': columnIndex = 4; break;
-                    case 'assists': columnIndex = 5; break;
-                    default: columnIndex = 1;
-                }
-                
-                valueA = parseInt(a.querySelector(`td:nth-child(${columnIndex})`).textContent);
-                valueB = parseInt(b.querySelector(`td:nth-child(${columnIndex})`).textContent);
-                return direction === 'asc' ? valueA - valueB : valueB - valueA;
-            }
-        });
-        
-        // 정렬된 행을 테이블에 다시 추가
-        rows.forEach(row => {
-            tbody.appendChild(row);
-        });
-    }
-
     // 모달 닫기 버튼
     if (closeModalBtn) {
         closeModalBtn.addEventListener('click', playerModalHandler.close);
@@ -222,10 +172,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    // 차트 초기화 (새로 추가)
-    initCharts();
 });
+
+// 탭 클릭 이벤트 리스너
+if (recordsTab) {
+    recordsTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab('records');
+        history.pushState(null, '', '/teams/records');
+    });
+}
+
+if (playersTab) {
+    playersTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab('players');
+        history.pushState(null, '', '/teams/players');
+    });
+}
 
 // 상대 날짜 필터 적용 함수
 function applyRelativeDateFilter(period) {
@@ -284,14 +248,14 @@ function applyRelativeDateFilter(period) {
 function applyAbsoluteDateFilter(startDate, endDate) {
     // 입력 유효성 검사
     if (!startDate || !endDate) {
-        alert('시작일과 종료일을 모두 입력해주세요.');
-        return;
+        ToastMessage.error('시작일과 종료일을 모두 입력해주세요.')
+        return
     }
     
     // 날짜 범위 유효성 검사
     if (new Date(startDate) > new Date(endDate)) {
-        alert('시작일은 종료일보다 이전이어야 합니다.');
-        return;
+        ToastMessage.error('시작일은 종료일보다 이전이어야 합니다.')
+        return
     }
     
     // 실제 데이터 필터링 적용
@@ -300,36 +264,20 @@ function applyAbsoluteDateFilter(startDate, endDate) {
 
 // 데이터에 날짜 범위 필터 적용 함수
 function applyDateRangeToData(startDate, endDate) {
-    console.log(`필터링 적용: ${startDate} ~ ${endDate}`);
-    
-    // 여기에서 실제 API 호출 또는 데이터 필터링 로직 구현
-    // 예를 들어, 팀 통계, 차트, 득점 순위 등을 해당 날짜 범위로 새로 불러오기
-    // TODO: API 호출 및 데이터 업데이트 구현
-    
-    // 통계 데이터 업데이트 예시
-    updateTeamStats(startDate, endDate);
-    
-    // 차트 데이터 업데이트 예시
-    updateCharts(startDate, endDate);
+    record.getSummary(startDate, endDate)
+    record.getGoalRanks(startDate, endDate)
+    record.getAssistRanks(startDate, endDate)
+    record.getAllPlayers(startDate, endDate)
 }
 
-// 팀 통계 업데이트 함수
-function updateTeamStats(startDate, endDate) {
-    // 예시 구현: 실제로는 API에서 데이터를 가져와야 함
-    // 여기서는 간단한 예시를 위해 고정 데이터 사용
-    
-    // TODO: API 연동 후 실제 구현
-}
-
-// 차트 업데이트 함수
-function updateCharts(startDate, endDate) {
-    // 예시 구현: 실제로는 API에서 데이터를 가져와야 함
-    // 여기서는 간단한 예시를 위해 고정 데이터 사용
-    
-    // TODO: API 연동 후 실제 구현
-    
-    // 기존 차트 업데이트
-    updateMatchGoalTrendChart(startDate, endDate);
+function activateInitialTab() {
+    // URL 경로에 따라 초기 탭 활성화
+    const currentPage = window.location.pathname;
+    if (currentPage.includes('/teams/players')) {
+        switchTab('players');
+    } else {
+        switchTab('records');
+    }
 }
 
 // 탭 전환 함수
@@ -348,129 +296,38 @@ function switchTab(tabId) {
     document.getElementById(tabId + '-tab').classList.add('active');
 }
 
-// 탭 클릭 이벤트 리스너
-if (recordsTab) {
-    recordsTab.addEventListener('click', function(e) {
-        e.preventDefault();
-        switchTab('records');
-        history.pushState(null, '', '/teams/records');
-    });
-}
+// 테이블 정렬 함수
+function sortTable(key, direction) {
+    const tbody = document.querySelector('.player-table tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
 
-if (playersTab) {
-    playersTab.addEventListener('click', function(e) {
-        e.preventDefault();
-        switchTab('players');
-        history.pushState(null, '', '/teams/players');
-    });
-}
+    rows.sort((a, b) => {
+        let valueA, valueB;
 
-// 새로 추가된 차트 초기화 함수
-function initCharts() {
-    // 경기당 득점/실점 추이 라인 차트 생성
-    createMatchGoalTrendChart();
-}
+        if (key === 'name') {
+            valueA = a.querySelector('td:nth-child(1)').textContent;
+            valueB = b.querySelector('td:nth-child(1)').textContent;
+            return direction === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+        } else {
+            let columnIndex;
+            switch (key) {
+                case 'number': columnIndex = 2; break;
+                case 'games': columnIndex = 3; break;
+                case 'goals': columnIndex = 4; break;
+                case 'assists': columnIndex = 5; break;
+                default: columnIndex = 1;
+            }
 
-// 경기당 득점/실점 추이 차트 생성 함수
-function createMatchGoalTrendChart() {
-    const chartCanvas = document.getElementById('match-goal-trend-chart');
-    if (!chartCanvas) return;
-    
-    // 경기 데이터 (실제로는 API에서 가져와야 함)
-    const matchLabels = [
-        '1차전', '2차전', '3차전', '4차전', '5차전', 
-        '6차전', '7차전', '8차전', '9차전', '10차전',
-        '11차전', '12차전', '13차전', '14차전', '15차전'
-    ];
-    
-    const scoredGoals = [2, 1, 3, 4, 0, 2, 3, 5, 3, 2, 4, 1, 3, 2, 3]; // 득점
-    const concededGoals = [0, 1, 2, 1, 2, 1, 0, 2, 2, 3, 1, 2, 3, 0, 2]; // 실점
-    
-    const data = {
-        labels: matchLabels,
-        datasets: [
-            {
-                label: '득점',
-                data: scoredGoals,
-                borderColor: 'rgba(54, 162, 235, 1)',
-                backgroundColor: 'rgba(54, 162, 235, 0.1)',
-                fill: true,
-                tension: 0.3
-            },
-            {
-                label: '실점',
-                data: concededGoals,
-                borderColor: 'rgba(255, 99, 132, 1)',
-                backgroundColor: 'rgba(255, 99, 132, 0.1)',
-                fill: true,
-                tension: 0.3
-            }
-        ]
-    };
-    
-    const options = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-                labels: {
-                    boxWidth: 12,
-                    font: {
-                        size: 11
-                    }
-                }
-            },
-            title: {
-                display: true,
-                text: '경기당 득점/실점 추이',
-                font: {
-                    size: 14
-                }
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    stepSize: 1
-                }
-            }
+            valueA = parseInt(a.querySelector(`td:nth-child(${columnIndex})`).textContent);
+            valueB = parseInt(b.querySelector(`td:nth-child(${columnIndex})`).textContent);
+            return direction === 'asc' ? valueA - valueB : valueB - valueA;
         }
-    };
-    
-    window.goalChart = new Chart(chartCanvas, {
-        type: 'line',
-        data: data,
-        options: options
     });
-}
 
-// 경기당 득점/실점 차트 업데이트
-function updateMatchGoalTrendChart(startDate, endDate) {
-    // 실제로는 API에서 새로운 데이터를 가져와야 함
-    // 여기서는 간단한 예시로 랜덤 데이터 생성
-    
-    if (!window.goalChart) return;
-    
-    // 기간에 따라 표시할 경기 수 조정 (실제로는 API에서 받아야 함)
-    const daysDiff = Math.round((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
-    const matchCount = Math.min(15, Math.max(3, Math.floor(daysDiff / 2)));
-    
-    // 날짜 범위에 따라 다른 데이터 샘플 (실제로는 API에서 받아와야 함)
-    const newMatchLabels = Array.from({length: matchCount}, (_, i) => `${i+1}차전`);
-    const newScoredGoals = Array.from({length: matchCount}, () => Math.floor(Math.random() * 5));
-    const newConcededGoals = Array.from({length: matchCount}, () => Math.floor(Math.random() * 4));
-    
-    // 차트 데이터 업데이트
-    window.goalChart.data.labels = newMatchLabels;
-    window.goalChart.data.datasets[0].data = newScoredGoals;
-    window.goalChart.data.datasets[1].data = newConcededGoals;
-    
-    // 차트 타이틀 업데이트
-    window.goalChart.options.plugins.title.text = `경기당 득점/실점 추이 (${startDate} ~ ${endDate})`;
-    
-    // 차트 다시 그리기
-    window.goalChart.update();
+    // 정렬된 행을 테이블에 다시 추가
+    rows.forEach(row => {
+        tbody.appendChild(row);
+    });
 }
 
 const member = {
@@ -583,5 +440,84 @@ const playerModalHandler = {
     },
     close() {
         playerModal.style.display = 'none';
+    }
+}
+
+const record = {
+    getSummary(startDate, endDate) {
+        ApiClient.request({
+            url: '/v1/records/summary',
+            method: 'GET',
+            params: { startDate, endDate },
+            onSuccess: (response) => {
+                document.getElementById('summary-match-count').textContent = response.matchCount
+                document.getElementById('summary-goals-for').textContent = response.goalsFor
+                document.getElementById('summary-goals-against').textContent = response.goalsAgainst
+                document.getElementById('summary-assist').textContent = response.assist
+            }
+        })
+    },
+    getGoalRanks(startDate, endDate) {
+        ApiClient.request({
+            url: '/v1/records/goal-ranks',
+            method: 'GET',
+            params: { startDate, endDate },
+            onSuccess: (response) => {
+                const goalRankWrapper = document.getElementById('goal-rank-wrapper')
+                goalRankWrapper.innerHTML = ''
+
+                response.forEach((item, index) => {
+                    const rankItemNode = CommonUtils.getTemplateNode('rank-item-template')
+                    rankItemNode.querySelector('.rank-position').textContent = index + 1
+                    rankItemNode.querySelector('.player-name').textContent = item.name
+                    rankItemNode.querySelector('.stat-value').textContent = `${item.goalsFor}골`
+
+                    goalRankWrapper.appendChild(rankItemNode)
+                })
+            }
+        })
+    },
+    getAssistRanks(startDate, endDate) {
+        ApiClient.request({
+            url: '/v1/records/assist-ranks',
+            method: 'GET',
+            params: { startDate, endDate },
+            onSuccess: (response) => {
+                const assistRankWrapper = document.getElementById('assist-rank-wrapper')
+                assistRankWrapper.innerHTML = ''
+
+                response.forEach((item, index) => {
+                    const rankItemNode = CommonUtils.getTemplateNode('rank-item-template')
+                    rankItemNode.querySelector('.rank-position').textContent = index + 1
+                    rankItemNode.querySelector('.player-name').textContent = item.name
+                    rankItemNode.querySelector('.stat-value').textContent = `${item.assist}어시`
+
+                    assistRankWrapper.appendChild(rankItemNode)
+                })
+            }
+        })
+    },
+    getAllPlayers(startDate, endDate) {
+        ApiClient.request({
+            url: '/v1/records/all-players',
+            method: 'GET',
+            params: { startDate, endDate },
+            onSuccess: (response) => {
+                const playerRecordWrapper = document.getElementById('player-record-wrapper')
+                playerRecordWrapper.innerHTML = ''
+
+                response.forEach((item, index) => {
+                    const playerRecordNode = CommonUtils.getTemplateNode('player-record-template')
+                    const tds = playerRecordNode.querySelectorAll('tr td')
+                    tds[0].textContent = item.name
+                    tds[1].textContent = item.uniformNumber
+                    tds[2].textContent = item.matchCount
+                    tds[3].textContent = item.goalsFor
+                    tds[4].textContent = item.assist
+
+                    playerRecordWrapper.appendChild(playerRecordNode)
+                })
+            }
+        })
     }
 }
