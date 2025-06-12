@@ -98,6 +98,7 @@ class MatchRepository {
             Match.assistSum
         )
         .where { Match.matchAt.between(startAt, endAt) }
+        .andWhere { Match.status eq MatchStatus.COMPLETED }
         .andWhere { Match.deleted eq false }
         .single()
         .toMatchSummaryRow()

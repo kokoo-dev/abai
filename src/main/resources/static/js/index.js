@@ -1,9 +1,12 @@
 import ApiClient from "./common/ApiClient.js"
 import CommonUtils from "./common/CommonUtils.js"
+import DateUtils from "./common/DateUtils.js"
 
 document.addEventListener('DOMContentLoaded', function () {
     member.getUpcomingBirthday()
     match.getUpcoming()
+    record.getSummary()
+    notice.getList()
 })
 
 const member = {
@@ -63,6 +66,64 @@ const match = {
             },
             onError: (error) => {
                 // ignore
+            }
+        })
+    }
+}
+
+const record = {
+    getSummary() {
+        const today = new Date();
+        let startDate = new Date();
+        startDate.setMonth(today.getMonth() - 3)
+
+        const formattedStartDate = DateUtils.formatDate(startDate, 'yyyy-MM-dd')
+        const formattedEndDate = DateUtils.formatDate(today, 'yyyy-MM-dd')
+
+        document.getElementById('record-start-date').textContent = `${formattedStartDate} - ${formattedEndDate}`
+
+        ApiClient.request({
+            url: '/v1/matches/results',
+            method: 'GET',
+            params: {
+                startDate: formattedStartDate,
+                endDate: formattedEndDate
+            },
+            onSuccess: (response) => {
+                document.getElementById('result-match-count').textContent = response.VICTORY + response.DRAW + response.DEFEAT
+                document.getElementById('result-victory-count').textContent = response.VICTORY
+                document.getElementById('result-draw-count').textContent = response.DRAW
+                document.getElementById('result-defeat-count').textContent = response.DEFEAT
+            }
+        })
+    }
+}
+
+const notice = {
+    getList() {
+        ApiClient.request({
+            url: '/v1/notices',
+            method: 'GET',
+            params: {
+                size: 3
+            },
+            onSuccess: (response) => {
+                response.forEach(item => {
+                    const noticeNode = CommonUtils.getTemplateNode('notice-template')
+
+                    const noticeBadge = noticeNode.querySelector('.notice-badge')
+                    noticeBadge.classList.add(`${item.category.markColor.toLowerCase()}-badge`)
+                    noticeBadge.textContent = item.category.name
+
+                    const noticeTitle = noticeNode.querySelector('.notice-title')
+                    noticeTitle.href = `/see-more/notices/${item.id}`
+                    noticeTitle.textContent = item.title
+
+                    noticeNode.querySelector('.notice-date').textContent =
+                        DateUtils.formatDate(item.createdAt, 'yyyy-MM-dd')
+
+                    document.getElementById('notice-wrap').appendChild(noticeNode)
+                })
             }
         })
     }

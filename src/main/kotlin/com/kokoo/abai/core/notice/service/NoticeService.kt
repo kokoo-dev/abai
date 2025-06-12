@@ -44,7 +44,7 @@ class NoticeService(
     fun increaseViewCount(id: Long) = noticeRepository.increaseViewCount(id)
 
     @Transactional(readOnly = true)
-    fun getAll(): List<NoticeResponse> = noticeRepository.findAll().map { it.toResponse() }
+    fun getAll(size: Int? = null): List<NoticeResponse> = noticeRepository.findAll(size).map { it.toResponse() }
 
     @Transactional(readOnly = true)
     fun getAndCheckPermission(id: Long): NoticeResponse {

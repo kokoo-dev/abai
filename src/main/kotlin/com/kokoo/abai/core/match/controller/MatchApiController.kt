@@ -9,6 +9,7 @@ import com.kokoo.abai.core.match.dto.MatchGuestResponse
 import com.kokoo.abai.core.match.dto.MatchMemberResponse
 import com.kokoo.abai.core.match.dto.MatchRequest
 import com.kokoo.abai.core.match.dto.MatchResponse
+import com.kokoo.abai.core.match.enums.MatchResult
 import com.kokoo.abai.core.match.enums.MatchStatus
 import com.kokoo.abai.core.match.service.MatchService
 import jakarta.validation.Valid
@@ -106,5 +107,13 @@ class MatchApiController(
     @GetMapping("/upcoming")
     fun getUpcomingMatch(): ResponseEntity<MatchResponse> {
         return ResponseEntity.ok(matchService.getUpcomingMatch())
+    }
+
+    @GetMapping("/results")
+    fun getGroupByResult(
+        @RequestParam(name = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") startDate: LocalDate,
+        @RequestParam(name = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") endDate: LocalDate
+    ): ResponseEntity<Map<MatchResult, Int>> {
+        return ResponseEntity.ok(matchService.getGroupByResult(startDate, endDate))
     }
 }

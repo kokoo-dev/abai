@@ -48,10 +48,15 @@ class NoticeRepository {
         .where { Notice.id eq id }
         .singleOrNull()?.toNoticeRow()
 
-    fun findAll(): List<NoticeRow> = Notice.innerJoin(Member)
+    fun findAll(size: Int? = null): List<NoticeRow> = Notice.innerJoin(Member)
         .innerJoin(NoticeCategory)
         .selectAll()
         .orderBy(Notice.id to SortOrder.DESC)
+        .apply {
+            if (size != null) {
+                limit(size)
+            }
+        }
         .map { it.toNoticeRow() }
 
     fun findByCategory(categoryId: Long): List<NoticeRow> = Notice.select(Notice.columns)

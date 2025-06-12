@@ -54,6 +54,14 @@
     margin-top: 0.25rem;
 }
 
+/* 최근 기록 날짜 스타일 */
+.stats-date {
+    font-size: 0.75rem;
+    font-weight: normal;
+    color: #999;
+    margin-left: 0.5rem;
+}
+
 /* 공지사항 미리보기 스타일 */
 .notice-preview {
     margin-bottom: 1rem;
@@ -79,7 +87,7 @@
 .notice-badge {
     display: inline-block;
     font-size: 0.7rem;
-    padding: 0.2rem 0.5rem;
+    padding: 0.2rem 0.1rem;
     border-radius: 4px;
     font-weight: 500;
     margin-right: 0.75rem;
@@ -88,17 +96,17 @@
     text-align: center;
 }
 
-.notice-badge.important {
+.notice-badge.red-badge {
     background-color: rgba(231, 76, 60, 0.1);
     color: #e74c3c;
 }
 
-.notice-badge.general {
+.notice-badge.blue-badge {
     background-color: rgba(52, 152, 219, 0.1);
     color: var(--primary-color);
 }
 
-.notice-badge.event {
+.notice-badge.green-badge {
     background-color: rgba(46, 204, 113, 0.1);
     color: var(--secondary-color);
 }

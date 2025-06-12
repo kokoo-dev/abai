@@ -19,22 +19,24 @@
 
 
         <div class="card quick-stats">
-            <h2 class="section-title">최근 기록</h2>
+            <h2 class="section-title">최근 기록
+                <span class="stats-date" id="record-start-date">2024-01-01</span>
+            </h2>
             <div class="stats-grid">
                 <div class="stat-item">
-                    <span class="stat-value">12</span>
+                    <span class="stat-value" id="result-match-count">0</span>
                     <span class="stat-label">경기 수</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-value">8</span>
+                    <span class="stat-value" id="result-victory-count">0</span>
                     <span class="stat-label">승리</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-value">3</span>
+                    <span class="stat-value" id="result-draw-count">0</span>
                     <span class="stat-label">무승부</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-value">1</span>
+                    <span class="stat-value" id="result-defeat-count">0</span>
                     <span class="stat-label">패배</span>
                 </div>
             </div>
@@ -43,30 +45,9 @@
         <!-- 공지사항 미리보기 섹션 -->
         <div class="card notice-preview">
             <h2 class="section-title">공지사항</h2>
-            <ul class="notice-list">
-                <li class="notice-item">
-                    <span class="notice-badge important">중요</span>
-                    <div class="notice-content">
-                        <a href="/notice-detail?id=1" class="notice-title">2024년 상반기 팀비 납부 안내</a>
-                        <span class="notice-date">2024.01.15</span>
-                    </div>
-                </li>
-                <li class="notice-item">
-                    <span class="notice-badge general">일반</span>
-                    <div class="notice-content">
-                        <a href="/notice-detail?id=2" class="notice-title">정기 모임 일정 안내</a>
-                        <span class="notice-date">2024.01.10</span>
-                    </div>
-                </li>
-                <li class="notice-item">
-                    <span class="notice-badge event">이벤트</span>
-                    <div class="notice-content">
-                        <a href="/notice-detail?id=3" class="notice-title">여름 친선경기 참가 모집</a>
-                        <span class="notice-date">2024.01.05</span>
-                    </div>
-                </li>
+            <ul class="notice-list" id="notice-wrap">
             </ul>
-            <a href="/notices" class="view-all-btn">
+            <a href="/see-more/notices" class="view-all-btn">
                 <span>전체 공지사항 보기</span>
                 <i class="fas fa-chevron-right"></i>
             </a>
@@ -110,6 +91,16 @@
                 <button class="attend-btn">경기 내용 보러 가기</button>
             </div>
         </div>
+    </template>
+
+    <template id="notice-template">
+        <li class="notice-item">
+            <span class="notice-badge">중요</span>
+            <div class="notice-content">
+                <a href="/see-more/notices/1" class="notice-title">2024년 상반기 팀비 납부 안내</a>
+                <span class="notice-date">2024.01.15</span>
+            </div>
+        </li>
     </template>
 
     <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>

@@ -15,6 +15,7 @@ import com.kokoo.abai.core.match.dto.MatchRequest
 import com.kokoo.abai.core.match.dto.MatchResponse
 import com.kokoo.abai.core.match.dto.toResponse
 import com.kokoo.abai.core.match.dto.toRow
+import com.kokoo.abai.core.match.enums.MatchResult
 import com.kokoo.abai.core.match.enums.MatchStatus
 import com.kokoo.abai.core.match.repository.MatchFormationRepository
 import com.kokoo.abai.core.match.repository.MatchGuestRepository
@@ -111,6 +112,15 @@ class MatchService(
     fun getMatchGuests(matchId: Long): List<MatchGuestResponse> =
         matchGuestRepository.findByMatchId(matchId)
             .map { it.toResponse() }
+
+    @Transactional(readOnly = true)
+    fun getGroupByResult(startDate: LocalDate, endDate: LocalDate): Map<MatchResult, Int> {
+        return matchRepository.findByMatchAtBetween(startDate.toSearchStartDateTime(), endDate.toSearchEndDateTime())
+            .filterNot { it.result == MatchResult.READY }
+            .map { it.toResponse() }
+            .groupBy { it.result }
+            .mapValues { it.value.size }
+    }
 
     fun getMatchStatusForMemberViewFilter(): List<EnumResponse> =
         MatchStatus.entries
