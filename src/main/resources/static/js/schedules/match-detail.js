@@ -16,6 +16,17 @@ const copyAddressButton = document.querySelector('.copy-address-btn')
 // 쿼터
 const quarterTabs = document.querySelectorAll('.quarter-tab')
 
+// 편집, 삭제 버튼
+const editButton = document.querySelector('.edit-btn')
+const deleteButton = document.querySelector('.delete-btn')
+
+// 경기 종료 모달 관련 코드
+const completeMatchBtn = document.getElementById('complete-match-btn')
+const completeMatchModal = document.getElementById('complete-match-modal')
+const closeModalBtn = completeMatchModal.querySelector('.close-modal')
+const confirmBtn = completeMatchModal.querySelector('.confirm-btn')
+const playerStatsContainer = document.getElementById('player-stats-container')
+
 let formation = null
 const memberPlayers = []
 const guestPlayers = []
@@ -75,7 +86,6 @@ quarterTabs.forEach(tab => {
 })
 
 // 편집 버튼 이벤트
-const editButton = document.querySelector('.edit-btn')
 if (editButton) {
     editButton.addEventListener('click', function () {
         CommonUtils.postToUrl(`/schedules/matches/${match.id}`)
@@ -83,7 +93,6 @@ if (editButton) {
 }
 
 // 삭제 버튼 이벤트
-const deleteButton = document.querySelector('.delete-btn')
 if (deleteButton) {
     deleteButton.addEventListener('click', function () {
         if (!confirm('정말로 이 경기 기록을 삭제하시겠습니까?')) {
@@ -93,6 +102,37 @@ if (deleteButton) {
         match.delete()
     })
 }
+
+// 모달 열기
+completeMatchBtn.addEventListener('click', () => {
+    playerStatsContainer.innerHTML = ''
+
+    memberPlayers.forEach(item => addModalPlayer(item))
+    guestPlayers.forEach(item => addModalPlayer(item))
+
+    document.getElementById('goals-for').value = sumGoalOrAssist('.goal-input')
+    document.getElementById('goals-against').value = document.getElementById('goals-against-text').textContent
+
+    completeMatchModal.classList.add('active')
+})
+
+closeModalBtn.addEventListener('click', closeModal)
+
+// 모달 외부 클릭 시 닫기
+completeMatchModal.addEventListener('click', (e) => {
+    if (e.target === completeMatchModal) {
+        closeModal()
+    }
+})
+
+// 경기 종료 확인
+confirmBtn.addEventListener('click', async () => {
+    if (!confirm('저장하시겠습니까?')) {
+        return
+    }
+
+    match.saveResult()
+})
 
 // 포메이션 렌더링 함수
 function renderFormation(formationType) {
@@ -251,6 +291,37 @@ function addRecord(name = '', goal = 0, assist = 0) {
     recordWrapper.appendChild(recordCard)
 }
 
+// 모달 닫기
+function closeModal() {
+    completeMatchModal.classList.remove('active')
+}
+
+// 모달 선수 추가
+function addModalPlayer(player) {
+    const playerStatsNode = CommonUtils.getTemplateNode('player-stats-template')
+    const playerItem = playerStatsNode.querySelector('.player-stats-item')
+    playerItem.dataset.id = player.id
+    playerItem.dataset.isGuest = player.isGuest
+
+    playerStatsNode.querySelector('.player-name').textContent = player.name
+    playerStatsNode.querySelector('.player-number').textContent = `#${player.number}`
+
+    playerStatsNode.querySelector('.goal-input').value = player.goalsFor
+    playerStatsNode.querySelector('.assist-input').value = player.assist
+
+    playerStatsNode.querySelector('.goal-input').addEventListener('input', function() {
+        document.getElementById('goals-for').value = sumGoalOrAssist('.goal-input')
+    })
+
+    playerStatsContainer.appendChild(playerStatsNode)
+}
+
+function sumGoalOrAssist(selector) {
+    return Array.from(document.querySelectorAll(selector))
+        .map(input => parseInt(input.value, 10) || 0)
+        .reduce((previous, current) => previous + current, 0)
+}
+
 const match = {
     id: document.getElementById('match-id').value,
     delete() {
@@ -267,28 +338,49 @@ const match = {
             new Promise((resolve, reject) => { match.getMembers(resolve, reject) }),
             new Promise((resolve, reject) => { match.getGuests(resolve, reject) })
         ]).then(([memberResponse, guestResponse]) => {
-            memberResponse.forEach(it => {
+            memberResponse.sort((a, b) => a.number - b.number).forEach(it => {
                 memberPlayers.push({
                     id: it.member.id,
                     name: it.member.name,
                     number: it.member.uniformNumber,
                     position: it.member.preferredPosition,
-                    isGuest: false
+                    isGuest: false,
+                    goalsFor: it.goalsFor,
+                    assist: it.assist
                 })
 
                 addRecord(it.member.name, it.goalsFor, it.assist)
+
+                // addModalPlayer({
+                //     id: it.member.id,
+                //     name: it.member.name,
+                //     number: it.member.uniformNumber,
+                //     isGuest: false,
+                //     goalsFor: it.goalsFor,
+                //     assist: it.assist
+                // })
             })
 
-            guestResponse.forEach(it => {
+            guestResponse.sort((a, b) => a.number - b.number).forEach(it => {
                 guestPlayers.push({
                     id: it.guest.id,
                     name: it.guest.name,
                     number: 0,
                     position: 'MF',
-                    isGuest: true
+                    isGuest: true,
+                    goalsFor: it.goalsFor,
+                    assist: it.assist
                 })
 
                 addRecord(it.guest.name, it.goalsFor, it.assist)
+                // addModalPlayer({
+                //     id: it.guest.id,
+                //     name: it.guest.name,
+                //     number: 0,
+                //     isGuest: true,
+                //     goalsFor: it.goalsFor,
+                //     assist: it.assist
+                // })
             })
 
             match.getFormations()
@@ -342,6 +434,45 @@ const match = {
 
                 formation.setCurrentQuarter(1)
                 renderFormation(formation.getFormation())
+            }
+        })
+    },
+    saveResult() {
+        const goalsFor = document.getElementById('goals-for').value
+        const goalsAgainst = document.getElementById('goals-against').value
+        const assist = Array.from(document.querySelectorAll('.assist-input'))
+            .map(input => parseInt(input.value, 10) || 0)
+            .reduce((previous, current) => previous + current, 0)
+
+        const groupedPlayers = Array.from(document.querySelectorAll('.player-stats-item'))
+        .reduce((previous, current) => {
+            const isGuest = current.dataset.isGuest
+            const key = isGuest === 'true' ? 'GUEST' : 'MEMBER'
+            if (!previous[key]) {
+                previous[key] = []
+            }
+
+            previous[key].push({
+                id: current.dataset.id,
+                goalsFor: current.querySelector('.goal-input').value,
+                assist: current.querySelector('.assist-input').value
+            })
+
+            return previous
+        }, {})
+
+        ApiClient.request({
+            url: `/v1/matches/${match.id}/results`,
+            method: 'POST',
+            params: {
+                goalsFor,
+                goalsAgainst,
+                assist,
+                members: groupedPlayers['MEMBER'],
+                guests: groupedPlayers['GUEST']
+            },
+            onSuccess: (response) => {
+                location.reload()
             }
         })
     }

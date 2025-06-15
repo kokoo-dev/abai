@@ -10,6 +10,7 @@ enum class ErrorCode(
     // 400
     BAD_REQUEST(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.name, "입력값을 다시 확인해주세요."),
     EXCEED_RANGE_ONE_YEAR(HttpStatus.BAD_REQUEST.value(), "EXCEED_RANGE_ONE_YEAR", "검색 범위는 최대 1년입니다."),
+    ALREADY_ENDED_MATCH(HttpStatus.BAD_REQUEST.value(), "ALREADY_ENDED_MATCH", "이미 종료된 경기입니다."),
 
     // 401
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.name, "인증되지 않은 요청입니다."),

@@ -34,7 +34,7 @@
             </div>
             <div class="team-section away">
                 <div class="team-name" th:text="${match.opponentName}">상대팀</div>
-                <div class="team-score" th:text="${match.goalsAgainst}">0</div>
+                <div class="team-score" id="goals-against-text" th:text="${match.goalsAgainst}">0</div>
             </div>
         </div>
 
@@ -94,6 +94,45 @@
             <button class="btn delete-btn">
                 <i class="fas fa-trash"></i> 경기 삭제
             </button>
+            <button class="btn complete-btn" id="complete-match-btn">
+                <i class="fas fa-flag-checkered"></i> 점수 입력
+            </button>
+        </div>
+    </div>
+
+    <!-- 경기 종료 모달 -->
+    <div class="modal" id="complete-match-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>점수 입력</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="score-input-section">
+                    <h3>최종 스코어</h3>
+                    <div class="score-input-container">
+                        <div class="team-score-input">
+                            <label>ABAI FC</label>
+                            <input type="number" id="goals-for" min="0" value="0" readonly>
+                        </div>
+                        <div class="score-separator">:</div>
+                        <div class="team-score-input">
+                            <label th:text="${match.opponentName}">상대팀</label>
+                            <input type="number" id="goals-against" min="0" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="player-stats-section">
+                    <h3>선수 기록</h3>
+                    <div class="player-stats-container" id="player-stats-container">
+                        <!-- 선수 기록이 동적으로 추가될 영역 -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn confirm-btn">저장</button>
+            </div>
         </div>
     </div>
 
@@ -113,6 +152,25 @@
                 <div class="record-stat-box">
                     <div class="record-stat-value assist">0</div>
                     <div class="record-stat-label">어시스트</div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="player-stats-template">
+        <div class="player-stats-item">
+            <div class="player-info">
+                <span class="player-name"></span>
+                <span class="player-number"></span>
+            </div>
+            <div class="player-stats-inputs">
+                <div class="stat-input">
+                    <label>골</label>
+                    <input type="number" class="goal-input" min="0" value="0">
+                </div>
+                <div class="stat-input">
+                    <label>어시스트</label>
+                    <input type="number" class="assist-input" min="0" value="0">
                 </div>
             </div>
         </div>

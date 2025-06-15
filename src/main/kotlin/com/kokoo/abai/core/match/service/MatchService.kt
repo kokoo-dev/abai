@@ -6,15 +6,7 @@ import com.kokoo.abai.common.extension.toSearchEndDateTime
 import com.kokoo.abai.common.extension.toSearchStartDateTime
 import com.kokoo.abai.core.common.dto.CursorResponse
 import com.kokoo.abai.core.common.dto.EnumResponse
-import com.kokoo.abai.core.match.dto.MatchCursorId
-import com.kokoo.abai.core.match.dto.MatchCursorRequest
-import com.kokoo.abai.core.match.dto.MatchFormationResponse
-import com.kokoo.abai.core.match.dto.MatchGuestResponse
-import com.kokoo.abai.core.match.dto.MatchMemberResponse
-import com.kokoo.abai.core.match.dto.MatchRequest
-import com.kokoo.abai.core.match.dto.MatchResponse
-import com.kokoo.abai.core.match.dto.toResponse
-import com.kokoo.abai.core.match.dto.toRow
+import com.kokoo.abai.core.match.dto.*
 import com.kokoo.abai.core.match.enums.MatchResult
 import com.kokoo.abai.core.match.enums.MatchStatus
 import com.kokoo.abai.core.match.repository.MatchFormationRepository
@@ -63,6 +55,32 @@ class MatchService(
         saveMatchDetails(matchId, request)
 
         return savedMatch.toResponse()
+    }
+
+    @Transactional
+    fun saveResult(id: Long, request: MatchResultRequest) {
+        val match = matchRepository.findById(id) ?: throw BusinessException(ErrorCode.NOT_FOUND)
+        match.end(request.goalsFor, request.goalsAgainst, request.assist)
+
+        request.members.forEach {
+            val matchMember = matchMemberRepository.findByMatchIdAndMemberId(id, it.id)
+                ?: throw BusinessException(ErrorCode.NOT_FOUND)
+            matchMember.goalsFor = it.goalsFor
+            matchMember.assist = it.assist
+
+            matchMemberRepository.save(matchMember, matchMember.id)
+        }
+
+        request.guests.forEach {
+            val matchGuest = matchGuestRepository.findByMatchIdAndGuestId(id, it.id)
+                ?: throw BusinessException(ErrorCode.NOT_FOUND)
+            matchGuest.goalsFor = it.goalsFor
+            matchGuest.assist = it.assist
+
+            matchGuestRepository.save(matchGuest, matchGuest.id)
+        }
+
+        matchRepository.save(match, id)
     }
 
     @Transactional
@@ -115,7 +133,10 @@ class MatchService(
 
     @Transactional(readOnly = true)
     fun getGroupByResult(startDate: LocalDate, endDate: LocalDate): Map<MatchResult, Int> {
-        return matchRepository.findByMatchAtBetween(startDate.toSearchStartDateTime(), endDate.toSearchEndDateTime())
+        return matchRepository.findByMatchAtBetween(
+            startDate.toSearchStartDateTime(),
+            endDate.toSearchEndDateTime()
+        )
             .filterNot { it.result == MatchResult.READY }
             .map { it.toResponse() }
             .groupBy { it.result }

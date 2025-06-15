@@ -69,6 +69,12 @@ class MatchGuestRepository {
             .where { MatchGuest.matchId eq matchId }
             .map{ it.toMatchGuestRow() }
 
+    fun findByMatchIdAndGuestId(matchId: Long, guestId: String): MatchGuestRow? = MatchGuest
+        .selectAll()
+        .where { MatchGuest.matchId eq matchId }
+        .andWhere { MatchGuest.guestId eq guestId }
+        .singleOrNull()?.toMatchGuestRow()
+
     private fun lessThanId(id: Long?): Op<Boolean> {
         return when (id) {
             null -> Op.TRUE

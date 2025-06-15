@@ -11,8 +11,8 @@ data class MatchGuestRow(
     val id: Long = 0,
     val matchId: Long,
     val guestId: String,
-    val goalsFor: Int = 0,
-    val assist: Int = 0,
+    var goalsFor: Int = 0,
+    var assist: Int = 0,
     val createdAt: LocalDateTime? = LocalDateTime.now(),
     val updatedAt: LocalDateTime? = LocalDateTime.now(),
     val guest: GuestRow? = null

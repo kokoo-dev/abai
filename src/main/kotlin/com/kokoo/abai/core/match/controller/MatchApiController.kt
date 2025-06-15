@@ -2,13 +2,7 @@ package com.kokoo.abai.core.match.controller
 
 import com.kokoo.abai.common.constant.RequestPath
 import com.kokoo.abai.core.common.dto.CursorResponse
-import com.kokoo.abai.core.match.dto.MatchCursorId
-import com.kokoo.abai.core.match.dto.MatchCursorRequest
-import com.kokoo.abai.core.match.dto.MatchFormationResponse
-import com.kokoo.abai.core.match.dto.MatchGuestResponse
-import com.kokoo.abai.core.match.dto.MatchMemberResponse
-import com.kokoo.abai.core.match.dto.MatchRequest
-import com.kokoo.abai.core.match.dto.MatchResponse
+import com.kokoo.abai.core.match.dto.*
 import com.kokoo.abai.core.match.enums.MatchResult
 import com.kokoo.abai.core.match.enums.MatchStatus
 import com.kokoo.abai.core.match.service.MatchService
@@ -47,6 +41,14 @@ class MatchApiController(
         @PathVariable(name = "id") id: Long
     ): ResponseEntity<MatchResponse> {
         return ResponseEntity.ok(matchService.update(id, request))
+    }
+
+    @PostMapping("/{id}/results")
+    fun saveMatchResults(
+        @RequestBody @Valid request: MatchResultRequest,
+        @PathVariable(name = "id") id: Long
+    ) {
+        matchService.saveResult(id, request)
     }
 
     @DeleteMapping("/{id}")

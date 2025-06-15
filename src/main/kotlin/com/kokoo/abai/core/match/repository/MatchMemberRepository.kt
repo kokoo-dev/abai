@@ -77,6 +77,12 @@ class MatchMemberRepository {
             .where { MatchMember.matchId eq matchId }
             .map { it.toMatchMemberRow() }
 
+    fun findByMatchIdAndMemberId(matchId: Long, memberId: Long): MatchMemberRow? = MatchMember
+        .selectAll()
+        .where { MatchMember.matchId eq matchId }
+        .andWhere { MatchMember.memberId eq memberId }
+        .singleOrNull()?.toMatchMemberRow()
+
     fun topGoalsByMatchAtBetween(
         startAt: LocalDateTime,
         endAt: LocalDateTime,

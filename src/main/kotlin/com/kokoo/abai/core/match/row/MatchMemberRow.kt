@@ -11,8 +11,8 @@ data class MatchMemberRow(
     val id: Long = 0,
     val matchId: Long,
     val memberId: Long,
-    val goalsFor: Int = 0,
-    val assist: Int = 0,
+    var goalsFor: Int = 0,
+    var assist: Int = 0,
     val createdAt: LocalDateTime? = LocalDateTime.now(),
     val updatedAt: LocalDateTime? = LocalDateTime.now(),
     val member: MemberRow? = null

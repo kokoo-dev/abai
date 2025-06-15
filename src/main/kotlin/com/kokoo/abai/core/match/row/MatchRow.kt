@@ -15,15 +15,28 @@ data class MatchRow(
     val address: String,
     val longitude: BigDecimal,
     val latitude: BigDecimal,
-    val status: MatchStatus,
-    val result: MatchResult,
-    val goalsFor: Int,
-    val goalsAgainst: Int,
-    val assist: Int,
+    var status: MatchStatus,
+    var result: MatchResult,
+    var goalsFor: Int,
+    var goalsAgainst: Int,
+    var assist: Int,
     val deleted: Boolean = false,
     val createdAt: LocalDateTime? = LocalDateTime.now(),
     val updatedAt: LocalDateTime? = LocalDateTime.now()
-)
+) {
+    fun end(goalsFor: Int, goalsAgainst: Int, assist: Int) {
+        this.status = MatchStatus.COMPLETED
+        this.goalsFor = goalsFor
+        this.goalsAgainst = goalsAgainst
+        this.assist = assist
+
+        this.result = when {
+            goalsFor > goalsAgainst -> MatchResult.VICTORY
+            goalsFor < goalsAgainst -> MatchResult.DEFEAT
+            else -> MatchResult.DRAW
+        }
+    }
+}
 
 fun ResultRow.toMatchRow() = MatchRow(
     id = this[Match.id],
