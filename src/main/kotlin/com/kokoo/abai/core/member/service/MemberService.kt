@@ -4,6 +4,7 @@ import com.kokoo.abai.common.error.ErrorCode
 import com.kokoo.abai.common.exception.BusinessException
 import com.kokoo.abai.core.member.dto.PositionGroupResponse
 import com.kokoo.abai.core.member.dto.MemberResponse
+import com.kokoo.abai.core.member.dto.MemberWithPositionResponse
 import com.kokoo.abai.core.member.dto.toResponse
 import com.kokoo.abai.core.member.enums.MemberStatus
 import com.kokoo.abai.core.member.enums.PositionGroup
@@ -26,11 +27,23 @@ class MemberService(
     }.map { it.toResponse() }
 
     @Transactional(readOnly = true)
-    fun getMembersWithPositions() = memberRepository.findByStatus(MemberStatus.ACTIVATED)
-        .map { member ->
-            val positions = memberPositionRepository.findByMemberId(member.id)
-            member.toResponse(positions.map { position -> position.toResponse() })
-        }
+    fun getMembersWithPositions(): List<MemberWithPositionResponse> =
+        memberPositionRepository.findAll()
+            .groupBy { it.memberId }
+            .map {
+                val positions = if (it.value[0].position == null) {
+                    emptyList()
+                } else {
+                    it.value.map { member -> member.position!! }
+                }
+
+                MemberWithPositionResponse(
+                    id = it.key,
+                    name = it.value[0].name,
+                    uniformNumber = it.value[0].uniformNumber,
+                    positions = positions
+                )
+            }
 
     @Transactional(readOnly = true)
     fun getMember(id: Long): MemberResponse {
@@ -48,5 +61,9 @@ class MemberService(
 
     fun getPositionGroups(): List<PositionGroupResponse> =
         PositionGroup.entries
-            .map { PositionGroupResponse(group = it.name, positions = it.positions.map { position -> position.name }) }
+            .map {
+                PositionGroupResponse(
+                    group = it.name,
+                    positions = it.positions.map { position -> position.name })
+            }
 }

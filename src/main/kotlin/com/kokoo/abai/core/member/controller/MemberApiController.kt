@@ -2,6 +2,7 @@ package com.kokoo.abai.core.member.controller
 
 import com.kokoo.abai.common.constant.RequestPath
 import com.kokoo.abai.core.member.dto.MemberResponse
+import com.kokoo.abai.core.member.dto.MemberWithPositionResponse
 import com.kokoo.abai.core.member.enums.PositionGroup
 import com.kokoo.abai.core.member.service.MemberService
 import org.springframework.http.ResponseEntity
@@ -24,7 +25,7 @@ class MemberApiController(
     }
 
     @GetMapping("/with-positions")
-    fun getMembersWithPositions(): ResponseEntity<List<MemberResponse>> {
+    fun getMembersWithPositions(): ResponseEntity<List<MemberWithPositionResponse>> {
         return ResponseEntity.ok(memberService.getMembersWithPositions())
     }
 

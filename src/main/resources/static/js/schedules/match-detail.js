@@ -153,7 +153,7 @@ function renderFormation(formationType) {
     const positionsContainer = CommonUtils.getTemplateNode('positions-container-template').querySelector('.positions-container')
 
     // 선택된 포메이션 레이아웃 가져오기
-    const layout = formation.getLayouts()[formationType]
+    const layout = formation.getLayouts().get(formationType)
 
     // 포지션을 행별로 그룹화
     const positionsByRow = {}
@@ -414,10 +414,7 @@ const match = {
             method: 'GET',
             onSuccess: (response) => {
                 const formations = response.map(response => response.formation)
-                formation = new Formation({
-                    formations: formations
-                })
-
+                formation = new Formation()
                 formation.initQuarters(formations)
 
                 response.forEach((item, index) => {

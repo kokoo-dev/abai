@@ -364,10 +364,9 @@ const member = {
             playerCard.dataset.playerId = item.id
 
             playerCardNode.querySelector('.player-name').textContent = item.name
-
             item.positions.forEach(position => {
                 const playerPositionNode = CommonUtils.getTemplateNode('player-position-template')
-                playerPositionNode.querySelector('.player-position').textContent = position.position
+                playerPositionNode.querySelector('.player-position').textContent = position
                 playerCard.querySelector('.player-basic-info').appendChild(playerPositionNode)
             })
 

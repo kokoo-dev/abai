@@ -4,8 +4,11 @@ import com.kokoo.abai.common.pagination.Slice
 import com.kokoo.abai.core.member.domain.Member
 import com.kokoo.abai.core.member.domain.MemberPosition
 import com.kokoo.abai.core.common.dto.CursorRequest
+import com.kokoo.abai.core.member.enums.MemberStatus
 import com.kokoo.abai.core.member.row.MemberPositionRow
+import com.kokoo.abai.core.member.row.MemberWithPositionRow
 import com.kokoo.abai.core.member.row.toMemberPositionRow
+import com.kokoo.abai.core.member.row.toMemberWithPositionRow
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
@@ -42,9 +45,15 @@ class MemberPositionRepository {
         .where { MemberPosition.id eq id }
         .singleOrNull()?.toMemberPositionRow()
 
-    fun findAll(): List<MemberPositionRow> = MemberPosition.rightJoin(Member)
-        .selectAll()
-        .map { it.toMemberPositionRow() }
+    fun findAll(): List<MemberWithPositionRow> = MemberPosition.rightJoin(Member)
+        .select(
+            Member.id,
+            Member.name,
+            Member.uniformNumber,
+            MemberPosition.position
+        )
+        .where { Member.status eq MemberStatus.ACTIVATED}
+        .map { it.toMemberWithPositionRow() }
 
     fun findByMemberId(memberId: Long): List<MemberPositionRow> = MemberPosition
         .selectAll()

@@ -43,7 +43,16 @@ class MatchService(
 
     @Transactional
     fun update(matchId: Long, request: MatchRequest): MatchResponse {
-        val savedMatch = matchRepository.save(request.toRow(), matchId)
+        val match = matchRepository.findById(matchId) ?: throw BusinessException(ErrorCode.NOT_FOUND)
+        val saveRow = request.toRow().apply {
+            status = match.status
+            result = match.result
+            goalsFor = match.goalsFor
+            goalsAgainst = match.goalsAgainst
+            assist = match.assist
+        }
+
+        val savedMatch = matchRepository.save(saveRow, matchId)
 
         matchMemberRepository.deleteByMatchId(matchId)
         matchGuestRepository.deleteByMatchId(matchId)
