@@ -41,8 +41,15 @@ const modalPlayerList = document.querySelector('.modal-player-list')
 const closeModalBtn = document.querySelector('.close-modal')
 
 // 포메이션
-let formation = new Formation({
-    formations: Array.from(formationSelect.options).map(option => option.value)
+let formation = new Formation()
+const formationKeys = [...formation.getLayouts().keys()]
+
+// 포메이션 option 추가
+formationKeys.forEach(item => {
+    const option = document.createElement('option')
+    option.value = item
+    option.textContent = item.split('').join('-')
+    formationSelect.appendChild(option)
 })
 
 // 경기 정보
@@ -79,7 +86,7 @@ const match = {
                     id: it.guest.id,
                     name: it.guest.name,
                     number: 0,
-                    position: 'MF',
+                    positions: [],
                     isGuest: true
                 }
 
@@ -161,7 +168,7 @@ const saveModeHandler = {
         },
         loadPlayers() { // 선수 데이터 로드
             ApiClient.request({
-                url: '/v1/members',
+                url: '/v1/members/with-positions',
                 method: 'GET',
                 onSuccess: (response) => {
                     allPlayers = response.map(it => {
@@ -172,7 +179,7 @@ const saveModeHandler = {
                             id: it.id,
                             number: it.uniformNumber,
                             name: it.name,
-                            position: it.preferredPosition,
+                            positions: it.positions,
                             isGuest: false
                         }
                     })
@@ -183,6 +190,8 @@ const saveModeHandler = {
 
                     // 선수 목록 렌더링
                     renderPlayerList()
+
+                    autoAssignFormation()
                 }
             })
         },
@@ -204,7 +213,7 @@ const saveModeHandler = {
         },
         loadPlayers() { // 선수 데이터 로드
             ApiClient.request({
-                url: '/v1/members',
+                url: '/v1/members/with-positions',
                 method: 'GET',
                 onSuccess: (response) => {
                     allPlayers = response.map(it => {
@@ -212,7 +221,7 @@ const saveModeHandler = {
                             id: it.id,
                             number: it.uniformNumber,
                             name: it.name,
-                            position: it.preferredPosition,
+                            positions: it.positions,
                             isGuest: false
                         }
                     })
@@ -489,7 +498,7 @@ function renderFormation(formationType) {
     const positionsContainer = CommonUtils.getTemplateNode('positions-container-template').querySelector('.positions-container')
 
     // 선택된 포메이션 레이아웃 가져오기
-    const layout = formation.getLayouts()[formationType]
+    const layout = formation.getLayouts().get(formationType)
 
     // 포지션을 행별로 그룹화
     const positionsByRow = {}
@@ -709,6 +718,117 @@ function removePosition(positionElement) {
     if (existingName) {
         existingName.remove()
     }
+}
+
+function autoAssignFormation() {
+    const currentQuarter = formation.getCurrentQuarter()
+    const players = allPlayers.filter(item => selectedPlayers.has(item.id))
+    const NUM_GAMES = 4
+    const POSITIONS_PER_GAME = 11
+
+    // 출전 기록 및 통계 초기화
+    const playerStats = new Map(players.map(p => [
+        p.id,
+        {
+            player: p,
+            gamesPlayed: 0,
+            gamesAssigned: Array(NUM_GAMES).fill(false),
+            lastGameIndex: -1
+        }
+    ]))
+
+    // GK 선호 플레이어 미리 필터링
+    const goalKeepers = players.filter(p => p.positions.includes('GK'))
+    const fieldPlayers = players.filter(p => !p.positions.includes('GK'))
+
+    // 결과 초기화
+    const gameAssignments = Array.from({ length: NUM_GAMES }, (_, i) => {
+        formation.setCurrentQuarter(i + 1)
+
+        return {
+            formation: formation.getLayout(),
+            assignments: [] // { position: 'CM', player: {...} },
+        }
+    })
+
+    // GK 포지션 먼저 고정
+    for (let gameIndex = 0; gameIndex < NUM_GAMES; gameIndex++) {
+        formation.setCurrentQuarter(gameIndex + 1)
+
+        const currentFormation = gameAssignments[gameIndex].formation
+        const gkSlot = currentFormation.find(f => f.position === 'GK')
+        if (!gkSlot) {
+            continue
+        }
+
+        goalKeepers.sort((a, b) => {
+            const aStats = playerStats.get(a.id)
+            const bStats = playerStats.get(b.id)
+
+            // 1. 더 적게 뛴 사람 우선
+            if (aStats.gamesPlayed !== bStats.gamesPlayed) {
+                return aStats.gamesPlayed - bStats.gamesPlayed
+            }
+
+            // 2. 직전 경기 쉰 사람 우선
+            return aStats.lastGameIndex - bStats.lastGameIndex
+        })
+
+        const gk = goalKeepers.find(p => !playerStats.get(p.id).gamesAssigned[gameIndex])
+        console.log(gk)
+        if (gk) {
+            gameAssignments[gameIndex].assignments.push({ ...gkSlot, player: gk })
+            const stat = playerStats.get(gk.id)
+            stat.gamesPlayed += 1
+            stat.gamesAssigned[gameIndex] = true
+            stat.lastGameIndex = gameIndex
+        }
+    }
+
+    // 나머지 포지션 채우기
+    for (let gameIndex = 0; gameIndex < NUM_GAMES; gameIndex++) {
+        const formation = gameAssignments[gameIndex].formation;
+        const assignments = gameAssignments[gameIndex].assignments;
+
+        // 이미 배정된 포지션 제외
+        const remainingPositions = formation.filter(pos =>
+            !assignments.find(a => a.row === pos.row && a.col === pos.col)
+        );
+
+        for (const pos of remainingPositions) {
+            const candidates = fieldPlayers
+                .filter(p => !playerStats.get(p.id).gamesAssigned[gameIndex]) // 아직 이 게임에 안 배정됨
+                .map(p => {
+                    const stat = playerStats.get(p.id);
+                    const prefers = p.positions.includes(pos.position);
+                    return {
+                        ...stat,
+                        prefers,
+                        isGuest: p.isGuest
+                    };
+                });
+
+            // 우선순위 정렬:
+            // 1. 경기 적게 뛴 사람
+            // 2. 비용병 (멤버)
+            // 3. 선호 포지션 포함된 사람
+            candidates.sort((a, b) => {
+                if (a.gamesPlayed !== b.gamesPlayed) return a.gamesPlayed - b.gamesPlayed;
+                if (a.isGuest !== b.isGuest) return a.isGuest ? 1 : -1;
+                if (a.prefers !== b.prefers) return a.prefers ? -1 : 1;
+                return Math.random() - 0.5; // 랜덤 요소
+            });
+
+            const selected = candidates[0];
+            if (selected) {
+                gameAssignments[gameIndex].assignments.push({ ...pos, player: selected.player });
+                selected.gamesPlayed += 1;
+                selected.gamesAssigned[gameIndex] = true;
+            }
+        }
+    }
+
+    formation.setCurrentQuarter(currentQuarter)
 }
 
 const kakaoMap = {
@@ -972,7 +1092,7 @@ const guestPlayer = {
                     id: response.id,
                     name: name,
                     number: 0,
-                    position: 'MF',
+                    positions: [],
                     isGuest: true
                 }
 
