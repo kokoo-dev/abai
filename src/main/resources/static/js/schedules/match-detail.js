@@ -30,6 +30,7 @@ const playerStatsContainer = document.getElementById('player-stats-container')
 let formation = null
 const memberPlayers = []
 const guestPlayers = []
+const currentMemberId = parseInt(document.getElementById('current-member-id').value)
 
 document.addEventListener('DOMContentLoaded', function () {
     match.getMembersAndGuests()
@@ -234,6 +235,11 @@ function addPosition(positionElement, player) {
     // 빈 포지션 클래스 제거
     jersey.classList.remove('empty-position')
 
+    // 현재 로그인한 유저의 포지션 표시
+    if (!player.isGuest && player.id === currentMemberId) {
+        jersey.classList.add('current-user')
+    }
+
     // 기존 번호와 이름 요소가 있으면 제거
     const existingNumber = jersey.querySelector('.player-number')
     if (existingNumber) {
@@ -415,6 +421,8 @@ const match = {
                 formation.initQuarters(formations)
 
                 response.forEach((item, index) => {
+                    let includeQuarterCurrentUser = false
+
                     const quarter = index + 1
                     formation.setCurrentQuarter(quarter)
 
@@ -429,7 +437,17 @@ const match = {
                                 name: position.playerName
                             }
                         )
+
+                        // 현재 로그인한 유저의 참여 쿼터 체크
+                        if (!isGuest && position.memberId === currentMemberId) {
+                            includeQuarterCurrentUser = true
+                        }
                     })
+
+                    // 현재 로그인한 유저의 참여 쿼터 표시
+                    if (includeQuarterCurrentUser) {
+                        document.querySelectorAll('.quarter-tab')[index].classList.add('current-user')
+                    }
                 })
 
                 formation.setCurrentQuarter(1)

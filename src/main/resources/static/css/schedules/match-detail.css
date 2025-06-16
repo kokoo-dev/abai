@@ -288,6 +288,15 @@
     font-weight: 500;
 }
 
+.quarter-tab.current-user {
+    border: 2px solid yellow;
+    box-shadow:
+        0 0 5px yellow,
+        0 0 10px yellow,
+        0 0 15px gold,
+        0 0 20px gold;
+}
+
 /* 포메이션 표시 스타일 */
 .formation-display {
     text-align: center;
@@ -405,8 +414,8 @@
 
 /* 유니폼 크기 약간 줄임 */
 .jersey {
-    width: 36px; /* 약간 줄임 */
-    height: 44px; /* 약간 줄임 */
+    width: 36px;
+    height: 44px;
     background-color: var(--jersey-color);
     border-radius: 0;
     display: flex;
@@ -417,7 +426,7 @@
     font-weight: bold;
     position: relative;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s;
+    transition: all 0.3s ease;
     overflow: visible;
     clip-path: polygon(
         15% 0%,    /* 왼쪽 목 시작 */
@@ -433,6 +442,10 @@
         0% 0%,     /* 왼쪽 소매 시작 - 위쪽에 붙임 */
         15% 0%     /* 왼쪽 어깨 - 위쪽에 붙임 */
     );
+}
+
+.jersey.current-user {
+    background-color: gold
 }
 
 /* 유니폼 목 부분 제거 (T자형 모양에 포함됨) */

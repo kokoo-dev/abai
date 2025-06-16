@@ -181,6 +181,7 @@
     <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
 
     <input type="hidden" id="match-id" name="match-id" th:value="${id}">
+    <input type="hidden" id="current-member-id" th:value="${#authentication.principal.id}">
 
     <script type="module" th:src="@{/js/schedules/match-detail.js}" defer></script>
 </body>
