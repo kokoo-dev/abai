@@ -44,6 +44,7 @@ class MemberService(
                     positions = positions
                 )
             }
+            .sortedBy { it.uniformNumber }
 
     @Transactional(readOnly = true)
     fun getMember(id: Long): MemberResponse {

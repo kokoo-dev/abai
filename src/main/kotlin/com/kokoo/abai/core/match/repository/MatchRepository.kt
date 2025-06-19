@@ -106,6 +106,7 @@ class MatchRepository {
     fun findByStatusAndMatchAtGraterThan(matchAt: LocalDateTime): MatchRow? = Match.selectAll()
         .where { Match.matchAt greater matchAt }
         .andWhere { Match.status eq MatchStatus.READY }
+        .andWhere { Match.deleted eq false }
         .orderBy(Match.matchAt to SortOrder.ASC)
         .limit(1)
         .singleOrNull()?.toMatchRow()

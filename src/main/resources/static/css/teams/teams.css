@@ -578,7 +578,7 @@
     .player-grid {
         grid-template-columns: repeat(3, 1fr);
     }
-    
+
     .summary-grid {
         grid-template-columns: repeat(4, 1fr);
     }
@@ -590,11 +590,11 @@
         align-items: center;
         text-align: center;
     }
-    
+
     .profile-row {
         justify-content: center;
     }
-    
+
     .info-label {
         width: auto;
         margin-right: 0.5rem;

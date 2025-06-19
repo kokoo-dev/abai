@@ -6,7 +6,7 @@ import CommonUtils from "../common/CommonUtils.js"
 // DOM 요소 참조
 const formationSelect = document.getElementById('formation-select')
 const quarterTabs = document.querySelectorAll('.quarter-tab')
-const saveBtn = document.querySelector('.save-btn')
+const saveButton = document.querySelector('.save-btn')
 const fieldElement = document.querySelector('.field')
 
 // 경기 정보 입력 요소 참조
@@ -17,11 +17,11 @@ const matchLocationInput = document.getElementById('match-location')
 const matchAddressInput = document.getElementById('match-address')
 
 // 주소 검색 관련 DOM 요소 참조
-const searchLocationBtn = document.getElementById('search-location')
+const searchLocationButton = document.getElementById('search-location')
 const mapContainer = document.getElementById('map-container')
 const mapElement = document.getElementById('map')
 const keywordInput = document.getElementById('keyword')
-const searchKeywordBtn = document.getElementById('search-keyword')
+const searchKeywordButton = document.getElementById('search-keyword')
 
 // 선수 선택 관련 DOM 요소 참조
 const playerList = document.getElementById('player-list')
@@ -29,16 +29,20 @@ const selectedPlayerCount = document.getElementById('selected-player-count')
 const totalPlayerCount = document.getElementById('total-player-count')
 
 // 용병 추가 관련 DOM 요소 참조
-const addGuestPlayerBtn = document.getElementById('add-guest-player')
+const addGuestPlayerButton = document.getElementById('add-guest-player')
 const guestPlayerModal = document.getElementById('guest-player-modal')
 const guestPlayerNameInput = document.getElementById('guest-player-name')
-const addGuestSubmitBtn = document.getElementById('add-guest-player-btn')
-const guestModalCloseBtn = guestPlayerModal.querySelector('.close-modal')
+const addGuestSubmitButton = document.getElementById('add-guest-player-btn')
 
 // 선수 선택 모달
 const playerSelectModal = document.getElementById('player-select-modal')
 const modalPlayerList = document.querySelector('.modal-player-list')
-const closeModalBtn = document.querySelector('.close-modal')
+
+// 포지션 자동 배정 모달
+const autoPositionButton = document.getElementById('auto-position-btn')
+const autoPositionModal = document.getElementById('auto-position-modal')
+const generatePositionButton = document.getElementById('generate-position-btn')
+const closeModalButtons = document.querySelectorAll('.close-modal')
 
 // 포메이션
 let formation = new Formation()
@@ -69,6 +73,7 @@ let allPlayers = [] // 모든 선수 데이터
 let selectedPlayers = new Set() // 출전 선수 ID 집합
 let guestPlayers = [] // 용병 선수 배열
 const saveMode = document.getElementById('save-mode').value ?? 'create'
+let memberSettingComplete = false
 
 const match = {
     id: document.getElementById('match-id').value,
@@ -191,7 +196,7 @@ const saveModeHandler = {
                     // 선수 목록 렌더링
                     renderPlayerList()
 
-                    autoAssignFormation()
+                    memberSettingComplete = true
                 }
             })
         },
@@ -227,6 +232,7 @@ const saveModeHandler = {
                     })
 
                     match.getMembersAndGuests()
+                    memberSettingComplete = true
                 }
             })
         },
@@ -292,7 +298,7 @@ opponentTeamInput.addEventListener('input', function () {
 
 // 주소 검색 관련 이벤트 처리
 // 주소 검색 버튼 클릭 시
-searchLocationBtn.addEventListener('click', function () {
+searchLocationButton.addEventListener('click', function () {
     // 지도 영역 토글
     if (mapContainer.style.display === 'none' || mapContainer.style.display
         === '') {
@@ -308,7 +314,7 @@ searchLocationBtn.addEventListener('click', function () {
 })
 
 // 키워드 검색 버튼 클릭 시
-searchKeywordBtn.addEventListener('click', function () {
+searchKeywordButton.addEventListener('click', function () {
     kakaoMap.searchPlaces()
 })
 
@@ -347,7 +353,7 @@ fieldElement.addEventListener('click', function (e) {
 })
 
 // 저장 버튼 클릭 이벤트
-saveBtn.addEventListener('click', function () {
+saveButton.addEventListener('click', function () {
     // 필수 정보 확인
     if (!matchInfo.date || !matchInfo.time || !matchInfo.opponentTeam
         || !matchInfo.location || !matchInfo.address) {
@@ -403,16 +409,39 @@ saveBtn.addEventListener('click', function () {
     })
 })
 
-// 모달 닫기 버튼 이벤트
-closeModalBtn.addEventListener('click', function () {
-    playerSelectModal.classList.remove('active')
-})
-
-// 모달 외부 클릭 시 닫기
+// 선수 선택 모달 외부 클릭 시 닫기
 playerSelectModal.addEventListener('click', function (e) {
     if (e.target === playerSelectModal) {
         playerSelectModal.classList.remove('active')
     }
+})
+
+// 모달 닫기 버튼 클릭 이벤트
+closeModalButtons.forEach(button => {
+    button.addEventListener('click', function (e)  {
+        e.target.closest('.modal-container').classList.remove('active')
+    });
+});
+
+// 포지션 자동 배정 버튼 클릭 이벤트
+autoPositionButton.addEventListener('click', function () {
+    autoPositionModal.classList.add('active')
+})
+
+autoPositionModal.addEventListener('click', function (e) {
+    if (e.target === autoPositionModal) {
+        autoPositionModal.classList.remove('active')
+    }
+})
+
+// 자동 배정 생성 버튼 클릭 이벤트
+generatePositionButton.addEventListener('click', function () {
+    if (!memberSettingComplete) {
+        ToastMessage.error('잠시 후 다시 시도해 주세요.')
+    }
+
+    autoAssignFormation()
+    autoPositionModal.classList.remove('active')
 })
 
 // 선수 목록 렌더링 함수
@@ -721,10 +750,8 @@ function removePosition(positionElement) {
 }
 
 function autoAssignFormation() {
-    const currentQuarter = formation.getCurrentQuarter()
     const players = allPlayers.filter(item => selectedPlayers.has(item.id))
-    const NUM_GAMES = 4
-    const POSITIONS_PER_GAME = 11
+    const totalQuarterCount = 4
 
     // 출전 기록 및 통계 초기화
     const playerStats = new Map(players.map(p => [
@@ -732,7 +759,7 @@ function autoAssignFormation() {
         {
             player: p,
             gamesPlayed: 0,
-            gamesAssigned: Array(NUM_GAMES).fill(false),
+            gamesAssigned: Array(totalQuarterCount).fill(false),
             lastGameIndex: -1
         }
     ]))
@@ -742,19 +769,84 @@ function autoAssignFormation() {
     const fieldPlayers = players.filter(p => !p.positions.includes('GK'))
 
     // 결과 초기화
-    const gameAssignments = Array.from({ length: NUM_GAMES }, (_, i) => {
+    const gameAssignments = Array.from({ length: totalQuarterCount }, (_, i) => {
         formation.setCurrentQuarter(i + 1)
 
         return {
             formation: formation.getLayout(),
-            assignments: [] // { position: 'CM', player: {...} },
+            assignments: []
         }
     })
 
-    // GK 포지션 먼저 고정
-    for (let gameIndex = 0; gameIndex < NUM_GAMES; gameIndex++) {
-        formation.setCurrentQuarter(gameIndex + 1)
+    // 나머지 포지션 채우기
+    for (let gameIndex = 0; gameIndex < totalQuarterCount; gameIndex++) {
+        const currentFormation = gameAssignments[gameIndex].formation
 
+        for (const pos of currentFormation) {
+            if (pos.position === 'GK') {
+                continue
+            }
+
+            const candidates = fieldPlayers
+                .filter(p => !playerStats.get(p.id).gamesAssigned[gameIndex]) // 아직 이 게임에 안 배정됨
+                .map(p => {
+                    const stat = playerStats.get(p.id);
+                    const prefers = p.positions.includes(pos.position)
+                    return {
+                        ...stat,
+                        prefers,
+                        isGuest: p.isGuest
+                    }
+                })
+
+            // 1. 경기 적게 뛴 사람
+            // 2. 직전 경기에 안 뛴 사람
+            // 3. 멤버 우선
+            // 4. 선호 포지션
+            candidates.sort((a, b) => {
+                const aStats = playerStats.get(a.player.id)
+                const bStats = playerStats.get(b.player.id)
+
+                if (aStats.gamesPlayed !== bStats.gamesPlayed) {
+                    return aStats.gamesPlayed - bStats.gamesPlayed
+                }
+
+                if (aStats.lastGameIndex !== bStats.lastGameIndex) {
+                    return aStats.lastGameIndex - bStats.lastGameIndex
+                }
+
+                if (a.isGuest && !b.isGuest) {
+                    return 1
+                }
+
+                if (!a.isGuest && b.isGuest) {
+                    return -1
+                }
+
+                if (a.prefers && !b.prefers) {
+                    return -1
+                }
+
+                if (!a.prefers && b.prefers) {
+                    return 1
+                }
+
+                return Math.random() - 0.5 // 랜덤 요소
+            })
+
+            const selected = candidates[0]
+            if (selected) {
+                gameAssignments[gameIndex].assignments.push({ ...pos, player: selected.player })
+                const stat = playerStats.get(selected.player.id)
+                stat.gamesPlayed += 1
+                stat.gamesAssigned[gameIndex] = true
+                stat.lastGameIndex = gameIndex
+            }
+        }
+    }
+
+    // GK 포지션
+    for (let gameIndex = 0; gameIndex < totalQuarterCount; gameIndex++) {
         const currentFormation = gameAssignments[gameIndex].formation
         const gkSlot = currentFormation.find(f => f.position === 'GK')
         if (!gkSlot) {
@@ -775,7 +867,6 @@ function autoAssignFormation() {
         })
 
         const gk = goalKeepers.find(p => !playerStats.get(p.id).gamesAssigned[gameIndex])
-        console.log(gk)
         if (gk) {
             gameAssignments[gameIndex].assignments.push({ ...gkSlot, player: gk })
             const stat = playerStats.get(gk.id)
@@ -785,50 +876,23 @@ function autoAssignFormation() {
         }
     }
 
-    // 나머지 포지션 채우기
-    for (let gameIndex = 0; gameIndex < NUM_GAMES; gameIndex++) {
-        const formation = gameAssignments[gameIndex].formation;
-        const assignments = gameAssignments[gameIndex].assignments;
+    gameAssignments.forEach((gameAssignment, quarterIndex) => {
+        formation.setCurrentQuarter(quarterIndex + 1)
 
-        // 이미 배정된 포지션 제외
-        const remainingPositions = formation.filter(pos =>
-            !assignments.find(a => a.row === pos.row && a.col === pos.col)
-        );
+        gameAssignment.assignments.forEach((assignment, position) => {
+            const player = assignment.player
+            formation.setPlayer(
+                position,
+                {
+                    id: player.id,
+                    type: player.isGuest ? 'GUEST' : 'MEMBER',
+                    name: player.name
+                }
+            )
+        })
+    })
 
-        for (const pos of remainingPositions) {
-            const candidates = fieldPlayers
-                .filter(p => !playerStats.get(p.id).gamesAssigned[gameIndex]) // 아직 이 게임에 안 배정됨
-                .map(p => {
-                    const stat = playerStats.get(p.id);
-                    const prefers = p.positions.includes(pos.position);
-                    return {
-                        ...stat,
-                        prefers,
-                        isGuest: p.isGuest
-                    };
-                });
-
-            // 우선순위 정렬:
-            // 1. 경기 적게 뛴 사람
-            // 2. 비용병 (멤버)
-            // 3. 선호 포지션 포함된 사람
-            candidates.sort((a, b) => {
-                if (a.gamesPlayed !== b.gamesPlayed) return a.gamesPlayed - b.gamesPlayed;
-                if (a.isGuest !== b.isGuest) return a.isGuest ? 1 : -1;
-                if (a.prefers !== b.prefers) return a.prefers ? -1 : 1;
-                return Math.random() - 0.5; // 랜덤 요소
-            });
-
-            const selected = candidates[0];
-            if (selected) {
-                gameAssignments[gameIndex].assignments.push({ ...pos, player: selected.player });
-                selected.gamesPlayed += 1;
-                selected.gamesAssigned[gameIndex] = true;
-            }
-        }
-    }
-
-    formation.setCurrentQuarter(currentQuarter)
+    quarterTabs[0].click()
 }
 
 const kakaoMap = {
@@ -1049,20 +1113,15 @@ const kakaoMap = {
 const guestPlayer = {
     initEvents() {
         // 용병 추가 버튼 클릭 시 모달 열기
-        addGuestPlayerBtn.addEventListener('click', function () {
+        addGuestPlayerButton.addEventListener('click', function () {
             guestPlayerModal.classList.add('active')
 
             // 모달 입력 필드 초기화
             guestPlayerNameInput.value = ''
         })
 
-        // 모달 닫기 버튼 클릭 시
-        guestModalCloseBtn.addEventListener('click', function () {
-            guestPlayerModal.classList.remove('active')
-        })
-
         // 용병 추가 버튼 클릭 시
-        addGuestSubmitBtn.addEventListener('click', function () {
+        addGuestSubmitButton.addEventListener('click', function () {
             guestPlayer.addPlayer()
         })
 
@@ -1070,6 +1129,12 @@ const guestPlayer = {
         guestPlayerNameInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 guestPlayer.addPlayer()
+            }
+        })
+
+        guestPlayerModal.addEventListener('click', function (e) {
+            if (e.target === guestPlayerModal) {
+                guestPlayerModal.classList.remove('active')
             }
         })
     },

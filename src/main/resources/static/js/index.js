@@ -90,10 +90,13 @@ const record = {
                 endDate: formattedEndDate
             },
             onSuccess: (response) => {
-                document.getElementById('result-match-count').textContent = response.VICTORY + response.DRAW + response.DEFEAT
-                document.getElementById('result-victory-count').textContent = response.VICTORY
-                document.getElementById('result-draw-count').textContent = response.DRAW
-                document.getElementById('result-defeat-count').textContent = response.DEFEAT
+                const victory = response.VICTORY ?? 0
+                const draw = response.DRAW ?? 0
+                const defeat = response.DEFEAT ?? 0
+                document.getElementById('result-match-count').textContent = victory + draw + defeat
+                document.getElementById('result-victory-count').textContent = victory
+                document.getElementById('result-draw-count').textContent = draw
+                document.getElementById('result-defeat-count').textContent = defeat
             }
         })
     }

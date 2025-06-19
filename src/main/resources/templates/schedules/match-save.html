@@ -85,6 +85,7 @@
             <label for="formation-select">포메이션</label>
             <select id="formation-select" class="formation-select">
             </select>
+            <button id="auto-position-btn" class="btn auto-position-btn">포지션 자동 배정</button>
         </div>
 
         <!-- 축구장 영역 (넓게) -->
@@ -104,7 +105,7 @@
         </div>
 
         <!-- 선수 할당 모달 추가 -->
-        <div class="player-select-modal" id="player-select-modal">
+        <div class="player-select-modal modal-container" id="player-select-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>선수 선택</h3>
@@ -117,7 +118,7 @@
         </div>
 
         <!-- 용병 추가 모달 -->
-        <div class="guest-player-modal" id="guest-player-modal">
+        <div class="guest-player-modal modal-container" id="guest-player-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>용병 추가</h3>
@@ -130,6 +131,28 @@
                     </div>
                     <div class="form-group modal-actions">
                         <button id="add-guest-player-btn" class="btn add-guest-btn">추가</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 포지션 자동 배정 모달 -->
+        <div class="auto-position-modal modal-container" id="auto-position-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>포지션 자동 배정</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="auto-position-info">
+                        <p>• 플레이어가 선호하는 포지션에 우선 배정해 줍니다.</p>
+                        <p>• 선호하는 포지션이 겹치는 선수가 많은 경우, 랜덤으로 배정됩니다.</p>
+                        <p>• 선호하는 포지션에 골키퍼(GK)가 포함된 경우, 골키퍼에만 배정됩니다.</p>
+                        <p>• 용병보다 팀의 멤버에게 많은 쿼터수를 배정해 줍니다.</p>
+                        <p>• 세부 조정이 필요할 경우, 포지션을 클릭하여 수동으로 변경해야 합니다.</p>
+                    </div>
+                    <div class="modal-actions">
+                        <button id="generate-position-btn" class="btn generate-btn">자동 배정 생성</button>
                     </div>
                 </div>
             </div>
