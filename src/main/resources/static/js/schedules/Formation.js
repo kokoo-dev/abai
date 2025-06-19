@@ -532,6 +532,13 @@ export class Formation {
         return this.#quarters[this.#currentQuarter].players[position]
     }
 
+    getQuarterCountByPlayer() {
+        // TODO id, count 매핑 후 return
+        Object.keys(this.getQuarters()).forEach(quarter => {
+            console.log(this.#quarters[quarter].players)
+        })
+    }
+
     setPlayer(
         position = 0,
         player = {
