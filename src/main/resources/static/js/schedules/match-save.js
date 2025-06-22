@@ -43,6 +43,7 @@ const autoPositionButton = document.getElementById('auto-position-btn')
 const autoPositionModal = document.getElementById('auto-position-modal')
 const generatePositionButton = document.getElementById('generate-position-btn')
 const closeModalButtons = document.querySelectorAll('.close-modal')
+const priorityPlayers = document.getElementById('priority-players')
 
 // 포메이션
 let formation = new Formation()
@@ -74,6 +75,9 @@ let selectedPlayers = new Set() // 출전 선수 ID 집합
 let guestPlayers = [] // 용병 선수 배열
 const saveMode = document.getElementById('save-mode').value ?? 'create'
 let memberSettingComplete = false
+
+// 우선 배정할 선수 ID 집합
+let fewMatchPlayerIds = new Set()
 
 const match = {
     id: document.getElementById('match-id').value,
@@ -426,18 +430,26 @@ playerSelectModal.addEventListener('click', function (e) {
 // 모달 닫기 버튼 클릭 이벤트
 closeModalButtons.forEach(button => {
     button.addEventListener('click', function (e)  {
-        e.target.closest('.modal-container').classList.remove('active')
+        const modal = e.target.closest('.modal-container')
+        modal.classList.remove('active')
+        
+        // auto-position-modal이 닫힐 때 우선 배정 선수 선택 초기화
+        if (modal.id === 'auto-position-modal') {
+            fewMatchPlayerIds.clear()
+        }
     });
 });
 
 // 포지션 자동 배정 버튼 클릭 이벤트
 autoPositionButton.addEventListener('click', function () {
+    renderPriorityPlayers()
     autoPositionModal.classList.add('active')
 })
 
 autoPositionModal.addEventListener('click', function (e) {
     if (e.target === autoPositionModal) {
         autoPositionModal.classList.remove('active')
+        fewMatchPlayerIds.clear()
     }
 })
 
@@ -450,6 +462,60 @@ generatePositionButton.addEventListener('click', function () {
     autoAssignFormation()
     autoPositionModal.classList.remove('active')
 })
+
+// 우선 배정 선수 목록 렌더링 함수
+function renderPriorityPlayers() {
+    priorityPlayers.innerHTML = ''
+    
+    // 선택된 선수들만 필터링
+    const selectedPlayersList = allPlayers.filter(player => selectedPlayers.has(player.id))
+    
+    // 용병이 아닌 선수들을 우선적으로 정렬
+    const sortedPlayers = selectedPlayersList.sort((a, b) => {
+        if (a.isGuest && !b.isGuest) return 1
+        if (!a.isGuest && b.isGuest) return -1
+        return a.number - b.number
+    })
+    
+    sortedPlayers.forEach(player => {
+        const playerItem = document.createElement('div')
+        playerItem.className = 'priority-player-item'
+        playerItem.dataset.playerId = player.id
+        
+        if (player.isGuest) {
+            playerItem.classList.add('guest-player')
+        }
+        
+        // 체크박스 생성
+        const checkbox = document.createElement('input')
+        checkbox.type = 'checkbox'
+        checkbox.id = `priority-${player.id}`
+        checkbox.checked = fewMatchPlayerIds.has(player.id)
+        
+        // 라벨 생성
+        const label = document.createElement('label')
+        label.htmlFor = `priority-${player.id}`
+        label.className = 'priority-player-label'
+        label.innerHTML = `
+            <span class="player-number">${player.number}</span>
+            <span class="player-name">${player.name}</span>
+            ${player.isGuest ? '<span class="guest-badge">용병</span>' : ''}
+        `
+        
+        // 체크박스 변경 이벤트
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                fewMatchPlayerIds.add(player.id)
+            } else {
+                fewMatchPlayerIds.delete(player.id)
+            }
+        })
+        
+        playerItem.appendChild(checkbox)
+        playerItem.appendChild(label)
+        priorityPlayers.appendChild(playerItem)
+    })
+}
 
 // 선수 목록 렌더링 함수
 function renderPlayerList() {
@@ -772,7 +838,8 @@ function autoAssignFormation() {
             player: p,
             gamesPlayed: 0,
             gamesAssigned: Array(totalQuarterCount).fill(false),
-            lastGameIndex: -1
+            lastGameIndex: -1,
+            isFewMatchPriority: fewMatchPlayerIds.has(p.id) // 우선 배정 여부 추가
         }
     ]))
 
@@ -813,8 +880,9 @@ function autoAssignFormation() {
 
             // 1. 경기 적게 뛴 사람
             // 2. 직전 경기에 안 뛴 사람
-            // 3. 멤버 우선
-            // 4. 선호 포지션
+            // 3. 적은 경기 원하는 사람
+            // 4. 멤버 우선
+            // 5. 선호 포지션
             candidates.sort((a, b) => {
                 const aStats = playerStats.get(a.player.id)
                 const bStats = playerStats.get(b.player.id)
@@ -825,6 +893,13 @@ function autoAssignFormation() {
 
                 if (aStats.lastGameIndex !== bStats.lastGameIndex) {
                     return aStats.lastGameIndex - bStats.lastGameIndex
+                }
+
+                if (aStats.isFewMatchPriority && !bStats.isFewMatchPriority) {
+                    return 1
+                }
+                if (!aStats.isFewMatchPriority && bStats.isFewMatchPriority) {
+                    return -1
                 }
 
                 if (a.isGuest && !b.isGuest) {
