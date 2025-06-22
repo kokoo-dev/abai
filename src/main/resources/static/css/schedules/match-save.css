@@ -1762,7 +1762,6 @@ label {
 
 /* 용병 선수 스타일 */
 .quarter-table-row.guest-player .player-name-cell::after {
-    content: " (용병)";
     font-size: 0.7rem;
     color: var(--accent-color);
     font-weight: normal;

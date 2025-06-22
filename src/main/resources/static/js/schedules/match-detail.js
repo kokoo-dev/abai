@@ -105,17 +105,19 @@ if (deleteButton) {
 }
 
 // 모달 열기
-completeMatchBtn.addEventListener('click', () => {
-    playerStatsContainer.innerHTML = ''
+if (completeMatchBtn) {
+    completeMatchBtn.addEventListener('click', () => {
+        playerStatsContainer.innerHTML = ''
 
-    memberPlayers.forEach(item => addModalPlayer(item))
-    guestPlayers.forEach(item => addModalPlayer(item))
+        memberPlayers.forEach(item => addModalPlayer(item))
+        guestPlayers.forEach(item => addModalPlayer(item))
 
-    document.getElementById('goals-for').value = sumGoalOrAssist('.goal-input')
-    document.getElementById('goals-against').value = document.getElementById('goals-against-text').textContent
+        document.getElementById('goals-for').value = sumGoalOrAssist('.goal-input')
+        document.getElementById('goals-against').value = document.getElementById('goals-against-text').textContent
 
-    completeMatchModal.classList.add('active')
-})
+        completeMatchModal.classList.add('active')
+    })
+}
 
 closeModalBtn.addEventListener('click', closeModal)
 
@@ -137,6 +139,10 @@ confirmBtn.addEventListener('click', async () => {
 
 // 포메이션 렌더링 함수
 function renderFormation(formationType) {
+    if (!formationType) {
+        return
+    }
+
     document.querySelector('.formation-text').textContent = formationType.split('').join('-')
 
     // 기존 필드 내용 초기화 (안내 메시지 유지)
@@ -356,15 +362,6 @@ const match = {
                 })
 
                 addRecord(it.member.name, it.goalsFor, it.assist)
-
-                // addModalPlayer({
-                //     id: it.member.id,
-                //     name: it.member.name,
-                //     number: it.member.uniformNumber,
-                //     isGuest: false,
-                //     goalsFor: it.goalsFor,
-                //     assist: it.assist
-                // })
             })
 
             guestResponse.sort((a, b) => a.number - b.number).forEach(it => {
@@ -379,14 +376,6 @@ const match = {
                 })
 
                 addRecord(it.guest.name, it.goalsFor, it.assist)
-                // addModalPlayer({
-                //     id: it.guest.id,
-                //     name: it.guest.name,
-                //     number: 0,
-                //     isGuest: true,
-                //     goalsFor: it.goalsFor,
-                //     assist: it.assist
-                // })
             })
 
             match.getFormations()
@@ -413,8 +402,14 @@ const match = {
             url: `/v1/matches/${match.id}/formations`,
             method: 'GET',
             onSuccess: (response) => {
-                const formations = response.map(response => response.formation)
                 formation = new Formation()
+
+                if (response.length === 0) {
+                    renderFormation(formation.getFormation())
+                    return
+                }
+
+                const formations = response.map(response => response.formation)
                 formation.initQuarters(formations)
 
                 response.forEach((item, index) => {
@@ -446,7 +441,6 @@ const match = {
                         document.querySelectorAll('.quarter-tab')[index].classList.add('current-user')
                     }
                 })
-
                 formation.setCurrentQuarter(1)
                 renderFormation(formation.getFormation())
             }

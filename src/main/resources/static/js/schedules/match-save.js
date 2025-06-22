@@ -197,6 +197,8 @@ const saveModeHandler = {
                     renderPlayerList()
 
                     memberSettingComplete = true
+
+                    playerQuarterStats.init()
                 }
             })
         },
@@ -233,6 +235,8 @@ const saveModeHandler = {
 
                     match.getMembersAndGuests()
                     memberSettingComplete = true
+
+                    playerQuarterStats.init()
                 }
             })
         },
@@ -252,11 +256,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 용병 모달 관련 이벤트 리스너 등록
     guestPlayer.initEvents()
-    
-    // 선수별 쿼터 참여 현황 초기화
-    if (typeof playerQuarterStats !== 'undefined') {
-        playerQuarterStats.init()
-    }
 })
 
 // 포메이션 변경 시 이벤트 처리
@@ -343,6 +342,9 @@ fieldElement.addEventListener('click', function (e) {
 
         const position = positionElement.dataset.position
         formation.removePlayer(position)
+
+        // 통계 업데이트
+        playerQuarterStats.updateStats()
 
         return
     }
@@ -512,11 +514,8 @@ function togglePlayerSelection(playerId) {
     if (playerCard) {
         playerCard.classList.toggle('selected')
     }
-    
-    // 통계 업데이트
-    if (typeof playerQuarterStats !== 'undefined') {
-        playerQuarterStats.updateStats()
-    }
+
+    playerQuarterStats.renderTableAndUpdateStats()
 }
 
 // 포메이션 렌더링 함수
@@ -585,11 +584,6 @@ function renderFormation(formationType) {
 
     // 저장된 선수 포지션 정보 적용
     applyPlayerPositions()
-    
-    // 통계 업데이트
-    if (typeof playerQuarterStats !== 'undefined') {
-        playerQuarterStats.updateStats()
-    }
 }
 
 // 저장된 선수 포지션 정보 적용
@@ -635,11 +629,9 @@ function assignPlayerToPosition(position, player) {
     if (positionElement) {
         addPosition(positionElement, player)
     }
-    
+
     // 통계 업데이트
-    if (typeof playerQuarterStats !== 'undefined') {
-        playerQuarterStats.updateStats()
-    }
+    playerQuarterStats.updateStats()
 }
 
 // 모달에 선수 목록 채우기
@@ -913,6 +905,9 @@ function autoAssignFormation() {
     })
 
     quarterTabs[0].click()
+
+    // 쿼터 수 update
+    playerQuarterStats.updateStats()
 }
 
 const kakaoMap = {
@@ -1199,6 +1194,9 @@ const guestPlayer = {
 
                 // 모달 닫기
                 guestPlayerModal.classList.remove('active')
+
+                // 쿼터 상태 테이블 변경
+                playerQuarterStats.renderTableAndUpdateStats()
             }
         })
     }
@@ -1216,7 +1214,7 @@ const playerQuarterStats = {
 
     init() {
         this.initEvents()
-        this.updateStats()
+        this.renderTableAndUpdateStats()
     },
 
     initEvents() {
@@ -1238,77 +1236,72 @@ const playerQuarterStats = {
             this.statsTable.classList.add('expanded')
             this.toggleButton.textContent = '접기'
             this.toggleButton.classList.add('expanded')
-            this.renderQuarterTable()
         }
+    },
+
+    renderTableAndUpdateStats() {
+        this.renderTable()
+        this.updateStats()
     },
 
     // 통계 업데이트
     updateStats() {
-        // TODO init시 중복 호출 방지
+        const counts = formation.getQuarterCounts()
 
-        // TODO return 값으로 selectedPlayerList 대체
-        formation.getQuarterCountByPlayer()
+        this.totalQuarters.textContent = counts.total
+        this.avgQuarters.textContent = counts.total > 0 ? parseFloat((counts.total / selectedPlayers.size).toFixed(1)) : 0
+        this.maxQuarters.textContent = counts.max
+        this.minQuarters.textContent = counts.min
 
-        const selectedPlayerList = Array.from(selectedPlayers).map(id => 
-            allPlayers.find(player => player.id === id)
-        ).filter(Boolean)
 
-        this.totalQuarters.textContent = selectedPlayerList.length
-
-        // 각 선수별 쿼터 참여 수 계산
-        const playerQuarterCounts = selectedPlayerList.map(player => {
-            let count = 0
-            for (let quarter = 1; quarter <= 4; quarter++) {
-                formation.setCurrentQuarter(quarter)
-                const currentFormation = formation.getFormation()
-                
-                // 해당 쿼터에서 선수가 배정된 포지션이 있는지 확인
-                const isParticipating = Object.values(currentFormation).some(position => 
-                    position && position.id === player.id
-                )
-                if (isParticipating) count++
-            }
-            return count
+        document.querySelectorAll('.quarter-cell').forEach(quarterCell => {
+            quarterCell.textContent = '-'
+            quarterCell.classList.remove('participating')
         })
 
-        // 평균 쿼터 수 계산
-        const avgQuarter = selectedPlayerList.length > 0 
-            ? (playerQuarterCounts.reduce((sum, count) => sum + count, 0) / selectedPlayerList.length).toFixed(1)
-            : 0
+        document.querySelectorAll('.total-quarters-cell').forEach(quarterCell => {
+            quarterCell.textContent = 0
+        })
 
-        // 최대 쿼터 수 계산
-        const maxQuarter = playerQuarterCounts.length > 0 ? Math.max(...playerQuarterCounts) : 0
+        Object.keys(counts.players).forEach(id => {
+            const playerRow = document.querySelector(`[data-id="${id}"]`)
+            const quarterCells = playerRow.querySelectorAll('.quarter-cell')
+            playerRow.querySelector('.total-quarters-cell').textContent = counts.players[id].total
 
-        this.avgQuarters.textContent = avgQuarter
-        this.maxQuarters.textContent = maxQuarter
+            counts.players[id].quarters.forEach(quarter => {
+                quarterCells[quarter - 1].textContent = '참여'
+                quarterCells[quarter - 1].classList.add('participating')
+            })
+        })
     },
 
     // 쿼터 테이블 렌더링
-    renderQuarterTable() {
-        this.statsTable.innerHTML = ''
-
-        // 테이블 헤더 생성
-        const header = document.createElement('div')
-        header.className = 'quarter-table-header'
-        header.innerHTML = `
-            <div>선수</div>
-            <div>1쿼터</div>
-            <div>2쿼터</div>
-            <div>3쿼터</div>
-            <div>4쿼터</div>
-            <div>총 쿼터</div>
-        `
-        this.statsTable.appendChild(header)
+    renderTable() {
+        const body = document.getElementById('player-quarter-body')
+        body.innerHTML = ''
 
         // 선택된 선수 목록
-        const selectedPlayerList = Array.from(selectedPlayers).map(id => 
-            allPlayers.find(player => player.id === id)
-        ).filter(Boolean)
+        const players = Array.from(selectedPlayers)
+            .map(id =>
+                allPlayers.find(player => player.id === id)
+            )
+            .filter(Boolean)
+            .sort((a, b) => {
+                if (a.isGuest && !b.isGuest) {
+                    return 1
+                }
+
+                if (!a.isGuest && b.isGuest) {
+                    return -1
+                }
+
+                return a.number - b.number
+            })
 
         // 각 선수별 행 생성
-        selectedPlayerList.forEach(player => {
+        players.forEach(player => {
             const row = this.createPlayerQuarterRow(player)
-            this.statsTable.appendChild(row)
+            body.appendChild(row)
         })
     },
 
@@ -1316,6 +1309,7 @@ const playerQuarterStats = {
     createPlayerQuarterRow(player) {
         const row = document.createElement('div')
         row.className = 'quarter-table-row'
+        row.dataset.id = player.id
         if (player.isGuest) {
             row.classList.add('guest-player')
         }
@@ -1324,33 +1318,16 @@ const playerQuarterStats = {
         const playerInfoCell = document.createElement('div')
         playerInfoCell.className = 'player-info-cell'
         playerInfoCell.innerHTML = `
-            <div class="player-number-cell">${player.number || '-'}</div>
+            <div class="player-number-cell">${player.number}</div>
             <div class="player-name-cell">${player.name}</div>
         `
         row.appendChild(playerInfoCell)
 
         // 각 쿼터별 참여 여부 확인
-        let totalQuarters = 0
         for (let quarter = 1; quarter <= 4; quarter++) {
-            formation.setCurrentQuarter(quarter)
-            const currentFormation = formation.getFormation()
-            
-            // 해당 쿼터에서 선수가 배정된 포지션이 있는지 확인
-            const isParticipating = Object.values(currentFormation).some(position => 
-                position && position.id === player.id
-            )
-
             const quarterCell = document.createElement('div')
             quarterCell.className = 'quarter-cell'
-            quarterCell.setAttribute('data-quarter', `${quarter}쿼터`)
-            
-            if (isParticipating) {
-                quarterCell.classList.add('participating')
-                quarterCell.textContent = '참여'
-                totalQuarters++
-            } else {
-                quarterCell.textContent = '-'
-            }
+            quarterCell.textContent = '-'
 
             // 쿼터 셀 클릭 이벤트 (포지션 배정으로 이동)
             quarterCell.addEventListener('click', () => {
@@ -1363,7 +1340,7 @@ const playerQuarterStats = {
         // 총 쿼터 수 셀
         const totalCell = document.createElement('div')
         totalCell.className = 'total-quarters-cell'
-        totalCell.textContent = totalQuarters
+        totalCell.textContent = 0
         row.appendChild(totalCell)
 
         return row

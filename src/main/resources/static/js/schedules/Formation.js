@@ -532,11 +532,37 @@ export class Formation {
         return this.#quarters[this.#currentQuarter].players[position]
     }
 
-    getQuarterCountByPlayer() {
-        // TODO id, count 매핑 후 return
-        Object.keys(this.getQuarters()).forEach(quarter => {
-            console.log(this.#quarters[quarter].players)
+    getQuarterCounts() {
+        let total = 0
+        let max = 0
+        const players = {}
+        Object.keys(this.#quarters).forEach(quarter => {
+            const currentQuarter = this.#quarters[quarter]
+            Object.keys(currentQuarter.players).forEach(position => {
+                const player = currentQuarter.players[position]
+
+                if (!players[player.id]) {
+                    players[player.id] = { total: 0, quarters: []}
+                }
+
+                players[player.id].total++
+                players[player.id].quarters.push(parseInt(quarter))
+
+                total++
+                max = Math.max(players[player.id].total, max)
+            })
         })
+
+        let min = 44
+        if (total === 0) {
+            min = 0
+        } else {
+            Object.keys(players).forEach(id => {
+                min = Math.min(players[id].total, min)
+            })
+        }
+
+        return { total, max, min, players }
     }
 
     setPlayer(
