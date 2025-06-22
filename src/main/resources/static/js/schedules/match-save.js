@@ -157,6 +157,8 @@ const match = {
 
                 formation.setCurrentQuarter(1)
                 renderFormation(formation.getFormation())
+
+                playerQuarterStats.init()
             }
         })
     }
@@ -235,8 +237,6 @@ const saveModeHandler = {
 
                     match.getMembersAndGuests()
                     memberSettingComplete = true
-
-                    playerQuarterStats.init()
                 }
             })
         },
