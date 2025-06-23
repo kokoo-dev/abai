@@ -226,11 +226,19 @@
     margin-right: 0.3rem;
 }
 
+.location-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+}
+
 .match-result {
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
     color: white;
     font-weight: 500;
+    flex-shrink: 0;
 }
 
 .win {
