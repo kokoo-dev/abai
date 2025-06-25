@@ -1,5 +1,6 @@
 package com.kokoo.abai.core.member.dto
 
+import com.kokoo.abai.core.member.enums.MemberStatus
 import com.kokoo.abai.core.member.row.MemberRow
 import java.time.LocalDate
 
@@ -7,6 +8,7 @@ data class MemberResponse(
     val id: Long,
     val loginId: String,
     val name: String,
+    val status: MemberStatus,
     val birthday: LocalDate,
     val height: Int,
     val weight: Int,
@@ -21,6 +23,7 @@ fun MemberRow.toResponse(positions: List<MemberPositionResponse> = emptyList()) 
     id = this.id,
     loginId = this.loginId,
     name = this.name,
+    status = this.status,
     birthday = this.birthday,
     height = this.height,
     weight = this.weight,

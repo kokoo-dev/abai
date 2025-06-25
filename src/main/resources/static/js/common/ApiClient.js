@@ -7,7 +7,36 @@ export default class ApiClient {
         headers = {},
         params = {},
         onSuccess = () => {},
-        onError = () => { ToastMessage.error('잠시 후 다시 시도해 주세요.') },
+        onError = (error) => this.#onDefaultError(error),
+        onFinally = () => {}
+    } = {}) {
+        await this.#call({
+            url: `/api${url}`,
+            method,
+            headers,
+            params,
+            onSuccess,
+            onError,
+            onFinally
+        })
+    }
+
+    static async logout() {
+        const message = '비밀번호를 성공적으로 변경하였습니다.'
+        await this.#call({
+            url: `/logout`,
+            method: 'POST',
+            onSuccess: () => { location.replace(`/login?message=${message}`) }
+        })
+    }
+
+    static async #call({
+        url = '',
+        method = 'GET',
+        headers = {},
+        params = {},
+        onSuccess = () => {},
+        onError = (error) => this.#onDefaultError(error),
         onFinally = () => {}
     } = {}) {
         try {
@@ -15,7 +44,7 @@ export default class ApiClient {
             const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content')
 
             const upperMethod = method.toUpperCase()
-            let fullUrl = `/api${url}`
+            let fullUrl = url
             const fetchOptions = {
                 method: upperMethod,
                 headers: {
@@ -56,10 +85,14 @@ export default class ApiClient {
                 onError({ status: result.status, response: response })
             }
         } catch (error) {
-            console.error(error)
             onError({ error })
         } finally {
             onFinally()
         }
+    }
+
+    static #onDefaultError(error) {
+        const message = error?.response?.message ?? '잠시 후 다시 시도해 주세요.'
+        ToastMessage.error(message)
     }
 }

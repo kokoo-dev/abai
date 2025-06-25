@@ -26,13 +26,13 @@ class SecurityConfig(
 //                    .requestMatchers("/schedules", "/schedules/**").hasAuthority(RoleName.SERVICE_ADMIN.name)
 //                    .requestMatchers("/teams", "/teams/**").hasAnyAuthority(RoleId.TEAM_ADMIN.name, RoleId.TEAM_USER.name)
 //                    .requestMatchers("/api/test").hasAnyAuthority(RoleName.TEAM_ADMIN.name)
-                    .requestMatchers("/api/**").permitAll() // TODO 완료 후 권한 적용
+                    .requestMatchers("/api/**").authenticated()
                     .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // resource
                     .requestMatchers("/health-check").anonymous() // health check
                     .anyRequest().authenticated()
             }
             .csrf { csrf ->
-                csrf.ignoringRequestMatchers("/api/**") // TODO 완료 후 권한 적용
+                csrf.ignoringRequestMatchers("/api/**")
             }
             .formLogin { form ->
                 form

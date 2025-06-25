@@ -6,33 +6,45 @@ import com.kokoo.abai.core.member.enums.MemberStatus
 import com.kokoo.abai.core.member.enums.Position
 import com.kokoo.abai.core.member.row.MemberRow
 import com.kokoo.abai.core.member.row.toMemberRow
-import org.jetbrains.exposed.sql.CustomFunction
-import org.jetbrains.exposed.sql.Expression
-import org.jetbrains.exposed.sql.QueryBuilder
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.TextColumnType
-import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.batchInsert
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.javatime.CurrentDate
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.stringLiteral
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Repository
 class MemberRepository {
-    fun save(member: MemberRow): MemberRow = Member.insert {
-        it[loginId] = member.loginId
-        it[password] = member.password
-        it[name] = member.name
-        it[birthday] = member.birthday
-        it[height] = member.height
-        it[weight] = member.weight
-        it[uniformNumber] = member.uniformNumber
-        it[leftFoot] = member.leftFoot
-        it[rightFoot] = member.rightFoot
-    }.resultedValues!!.first().toMemberRow()
+    fun save(row: MemberRow, id: Long? = null): MemberRow {
+        return if (id != null) {
+            Member.update({ Member.id eq id }) {
+                it[loginId] = row.loginId
+                it[password] = row.password
+                it[name] = row.name
+                it[status] = row.status
+                it[birthday] = row.birthday
+                it[height] = row.height
+                it[weight] = row.weight
+                it[uniformNumber] = row.uniformNumber
+                it[leftFoot] = row.leftFoot
+                it[rightFoot] = row.rightFoot
+                it[updatedAt] = LocalDateTime.now()
+            }
+            findById(id)!!
+        } else {
+            Member.insert {
+                it[loginId] = row.loginId
+                it[password] = row.password
+                it[name] = row.name
+                it[status] = row.status
+                it[birthday] = row.birthday
+                it[height] = row.height
+                it[weight] = row.weight
+                it[uniformNumber] = row.uniformNumber
+                it[leftFoot] = row.leftFoot
+                it[rightFoot] = row.rightFoot
+            }.resultedValues!!.first().toMemberRow()
+        }
+    }
 
     fun saveAll(members: List<MemberRow>) = Member.batchInsert(members) {
         this[Member.loginId] = it.loginId
