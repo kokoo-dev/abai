@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
     <link rel="stylesheet" th:href="@{/css/schedules/schedules.css}">
@@ -25,7 +26,7 @@
             <!-- 경기 일정 탭 컨텐츠 -->
             <div id="matches-content" class="content-section active">
                 <!-- 경기 추가 버튼 -->
-                <div class="add-item-btn">
+                <div class="add-item-btn" sec:authorize="hasAnyAuthority('SERVICE_ADMIN', 'TEAM_ADMIN')">
                     <a href="#" class="btn add-btn" id="match-create-button">
                         <i class="fas fa-plus"></i> 새 경기 추가
                     </a>
