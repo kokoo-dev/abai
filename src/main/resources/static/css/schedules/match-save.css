@@ -1363,6 +1363,76 @@ label {
     background-color: #2980b9;
 }
 
+/* 선호하는 포지션 선택 영역 스타일 */
+.position-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.position-checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 60px;
+    justify-content: center;
+}
+
+.position-checkbox-item:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.position-checkbox-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.position-checkbox-item label {
+    margin: 0;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #495057;
+    cursor: pointer;
+    user-select: none;
+}
+
+.position-checkbox-item input[type="checkbox"]:checked + label {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.position-checkbox-item:has(input[type="checkbox"]:checked) {
+    background-color: rgba(52, 152, 219, 0.1);
+    border-color: var(--primary-color);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .position-checkboxes {
+        gap: 0.5rem;
+    }
+    
+    .position-checkbox-item {
+        padding: 0.4rem 0.6rem;
+        min-width: 50px;
+    }
+    
+    .position-checkbox-item label {
+        font-size: 0.85rem;
+    }
+}
+
 .player-card.guest-player::before {
     content: "용병";
     position: absolute;

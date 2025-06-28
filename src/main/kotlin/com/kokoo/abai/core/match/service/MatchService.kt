@@ -6,6 +6,7 @@ import com.kokoo.abai.common.extension.toSearchEndDateTime
 import com.kokoo.abai.common.extension.toSearchStartDateTime
 import com.kokoo.abai.core.common.dto.CursorResponse
 import com.kokoo.abai.core.common.dto.EnumResponse
+import com.kokoo.abai.core.guest.repository.GuestPositionRepository
 import com.kokoo.abai.core.match.dto.*
 import com.kokoo.abai.core.match.enums.MatchResult
 import com.kokoo.abai.core.match.enums.MatchStatus
@@ -28,7 +29,8 @@ class MatchService(
     private val matchMemberRepository: MatchMemberRepository,
     private val matchGuestRepository: MatchGuestRepository,
     private val matchFormationRepository: MatchFormationRepository,
-    private val matchPositionRepository: MatchPositionRepository
+    private val matchPositionRepository: MatchPositionRepository,
+    private val guestPositionRepository: GuestPositionRepository
 ) {
 
     @Transactional
@@ -138,7 +140,14 @@ class MatchService(
     @Transactional(readOnly = true)
     fun getMatchGuests(matchId: Long): List<MatchGuestResponse> =
         matchGuestRepository.findByMatchId(matchId)
-            .map { it.toResponse() }
+            .map {
+                it.toResponse().apply {
+                    this.positions = guestPositionRepository.findByGuestId(it.guestId)
+                        .map { guestPosition ->
+                            guestPosition.position
+                        }
+                }
+            }
 
     @Transactional(readOnly = true)
     fun getGroupByResult(startDate: LocalDate, endDate: LocalDate): Map<MatchResult, Int> {

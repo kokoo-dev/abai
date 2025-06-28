@@ -1,6 +1,7 @@
 package com.kokoo.abai.core.member.controller
 
 import com.kokoo.abai.common.constant.RequestPath
+import com.kokoo.abai.core.common.dto.EnumResponse
 import com.kokoo.abai.core.member.dto.MemberResponse
 import com.kokoo.abai.core.member.dto.MemberWithPositionResponse
 import com.kokoo.abai.core.member.dto.PasswordChangeRequest
@@ -48,5 +49,10 @@ class MemberApiController(
     @GetMapping("/upcoming-birthday")
     fun getUpcomingBirthdayMembers(): ResponseEntity<List<MemberResponse>> {
         return ResponseEntity.ok(memberService.getUpcomingBirthdays())
+    }
+
+    @GetMapping("/positions")
+    fun getPositions(): ResponseEntity<List<EnumResponse>> {
+        return ResponseEntity.ok(memberService.getPositions())
     }
 }

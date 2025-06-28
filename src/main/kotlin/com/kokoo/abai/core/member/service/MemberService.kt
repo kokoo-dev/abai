@@ -3,8 +3,10 @@ package com.kokoo.abai.core.member.service
 import com.kokoo.abai.common.error.ErrorCode
 import com.kokoo.abai.common.exception.BusinessException
 import com.kokoo.abai.common.extension.getPrincipalOrThrow
+import com.kokoo.abai.core.common.dto.EnumResponse
 import com.kokoo.abai.core.member.dto.*
 import com.kokoo.abai.core.member.enums.MemberStatus
+import com.kokoo.abai.core.member.enums.Position
 import com.kokoo.abai.core.member.enums.PositionGroup
 import com.kokoo.abai.core.member.repository.MemberAttributeRepository
 import com.kokoo.abai.core.member.repository.MemberPositionRepository
@@ -69,6 +71,10 @@ class MemberService(
             memberAttributeRepository.findById(id)?.let { attribute ->
                 it.attribute = attribute.toResponse()
             }
+
+            it.positions = memberPositionRepository.findByMemberId(id).map { position ->
+                position.toResponse()
+            }
         }
     }
 
@@ -82,4 +88,7 @@ class MemberService(
                     group = it.name,
                     positions = it.positions.map { position -> position.name })
             }
+
+    fun getPositions(): List<EnumResponse> = Position.entries
+        .map { EnumResponse(name = it.name, value = it.name) }
 }

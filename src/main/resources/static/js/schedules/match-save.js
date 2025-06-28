@@ -96,7 +96,7 @@ const match = {
                     id: it.guest.id,
                     name: it.guest.name,
                     number: 0,
-                    positions: [],
+                    positions: it.positions,
                     isGuest: true
                 }
 
@@ -177,6 +177,8 @@ const saveModeHandler = {
 
             // 선수 데이터 로드
             this.loadPlayers()
+
+            guestPlayer.addPositions()
         },
         loadPlayers() { // 선수 데이터 로드
             ApiClient.request({
@@ -224,6 +226,8 @@ const saveModeHandler = {
 
             // 선수 데이터 로드
             this.loadPlayers()
+
+            guestPlayer.addPositions()
         },
         loadPlayers() { // 선수 데이터 로드
             ApiClient.request({
@@ -832,6 +836,8 @@ function removePosition(positionElement) {
 function autoAssignFormation() {
     const players = allPlayers.filter(item => selectedPlayers.has(item.id))
     const totalQuarterCount = 4
+    const minQuarter = Math.floor(40 / players.length)
+    const maxQuarter = Math.ceil(40 / players.length)
 
     // 출전 기록 및 통계 초기화
     const playerStats = new Map(players.map(p => [
@@ -872,6 +878,7 @@ function autoAssignFormation() {
             const candidates = fieldPlayers
                 .filter(p => !playerStats.get(p.id).gamesAssigned[gameIndex]) // 아직 이 게임에 안 배정됨
                 .filter(p => !preferredPositionOnlyCheckbox.checked || p.positions.includes(pos.position))
+                .filter(p => playerStats.get(p.id).gamesPlayed < maxQuarter)
                 .map(p => {
                     const stat = playerStats.get(p.id);
                     const prefers = p.positions.includes(pos.position)
@@ -1213,6 +1220,9 @@ const guestPlayer = {
     initEvents() {
         // 용병 추가 버튼 클릭 시 모달 열기
         addGuestPlayerButton.addEventListener('click', function () {
+            Array.from(document.querySelectorAll('.guest-position-checkbox'))
+            .forEach(el => el.checked = false)
+
             guestPlayerModal.classList.add('active')
 
             // 모달 입력 필드 초기화
@@ -1246,17 +1256,20 @@ const guestPlayer = {
             return
         }
 
+        const positions = Array.from(document.querySelectorAll('.guest-position-checkbox:checked'))
+            .map(it => it.value)
+
         ApiClient.request({
             url: '/v1/guests',
             method: 'POST',
-            params: { name },
+            params: { name, positions },
             onSuccess: (response) => {
                 // 새 용병 선수 객체 생성
                 const newGuestPlayer = {
                     id: response.id,
                     name: name,
                     number: 0,
-                    positions: [],
+                    positions: response.positions,
                     isGuest: true
                 }
 
@@ -1282,6 +1295,24 @@ const guestPlayer = {
                 // 쿼터 상태 테이블 변경
                 playerQuarterStats.renderTableAndUpdateStats()
             }
+        })
+    },
+    addPositions() {
+        member.getPositions((response) => {
+            response.forEach(it => {
+                const guestPositionNode = CommonUtils.getTemplateNode('guest-position-template')
+                const checkbox = guestPositionNode.querySelector('.guest-position-checkbox')
+                const label = guestPositionNode.querySelector('.guest-position-label')
+
+                const id = `guest-position-${it.value}`
+                checkbox.id = id
+                checkbox.value = it.value
+
+                label.textContent = it.value
+                label.setAttribute('for', id)
+
+                document.querySelector('.position-checkboxes').appendChild(guestPositionNode)
+            })
         })
     }
 }
@@ -1471,6 +1502,16 @@ const playerQuarterStats = {
                     positionElement.classList.add('highlighted')
                 }
             }
+        })
+    }
+}
+
+const member = {
+    getPositions(onSuccess) {
+        ApiClient.request({
+            url: `/v1/members/positions`,
+            method: 'GET',
+            onSuccess: (response) => onSuccess(response)
         })
     }
 }
