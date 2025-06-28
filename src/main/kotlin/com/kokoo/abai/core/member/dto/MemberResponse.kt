@@ -15,7 +15,7 @@ data class MemberResponse(
     val uniformNumber: Int,
     val leftFoot: Int,
     val rightFoot: Int,
-    val positions: List<MemberPositionResponse> = emptyList(),
+    var positions: List<MemberPositionResponse> = emptyList(),
     var attribute: MemberAttributeResponse? = null
 )
 
