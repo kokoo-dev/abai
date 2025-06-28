@@ -44,6 +44,7 @@ const autoPositionModal = document.getElementById('auto-position-modal')
 const generatePositionButton = document.getElementById('generate-position-btn')
 const closeModalButtons = document.querySelectorAll('.close-modal')
 const priorityPlayers = document.getElementById('priority-players')
+const preferredPositionOnlyCheckbox = document.getElementById('preferred-position-only')
 
 // 포메이션
 let formation = new Formation()
@@ -443,6 +444,7 @@ closeModalButtons.forEach(button => {
 // 포지션 자동 배정 버튼 클릭 이벤트
 autoPositionButton.addEventListener('click', function () {
     renderPriorityPlayers()
+    preferredPositionOnlyCheckbox.checked = false
     autoPositionModal.classList.add('active')
 })
 
@@ -853,7 +855,7 @@ function autoAssignFormation() {
 
         return {
             formation: formation.getLayout(),
-            assignments: []
+            assignments: {}
         }
     })
 
@@ -861,13 +863,15 @@ function autoAssignFormation() {
     for (let gameIndex = 0; gameIndex < totalQuarterCount; gameIndex++) {
         const currentFormation = gameAssignments[gameIndex].formation
 
-        for (const pos of currentFormation) {
+        for (let positionIndex = 0; positionIndex < currentFormation.length; positionIndex++) {
+            const pos = currentFormation[positionIndex];
             if (pos.position === 'GK') {
                 continue
             }
 
             const candidates = fieldPlayers
                 .filter(p => !playerStats.get(p.id).gamesAssigned[gameIndex]) // 아직 이 게임에 안 배정됨
+                .filter(p => !preferredPositionOnlyCheckbox.checked || p.positions.includes(pos.position))
                 .map(p => {
                     const stat = playerStats.get(p.id);
                     const prefers = p.positions.includes(pos.position)
@@ -918,12 +922,16 @@ function autoAssignFormation() {
                     return 1
                 }
 
+                if (aStats.player.positions.length !== bStats.player.positions.length) {
+                    return aStats.player.positions.length - bStats.player.positions.length
+                }
+
                 return Math.random() - 0.5 // 랜덤 요소
             })
 
             const selected = candidates[0]
             if (selected) {
-                gameAssignments[gameIndex].assignments.push({ ...pos, player: selected.player })
+                gameAssignments[gameIndex].assignments[positionIndex] = { ...pos, player: selected.player }
                 const stat = playerStats.get(selected.player.id)
                 stat.gamesPlayed += 1
                 stat.gamesAssigned[gameIndex] = true
@@ -955,7 +963,7 @@ function autoAssignFormation() {
 
         const gk = goalKeepers.find(p => !playerStats.get(p.id).gamesAssigned[gameIndex])
         if (gk) {
-            gameAssignments[gameIndex].assignments.push({ ...gkSlot, player: gk })
+            gameAssignments[gameIndex].assignments[10] = { ...gkSlot, player: gk }
             const stat = playerStats.get(gk.id)
             stat.gamesPlayed += 1
             stat.gamesAssigned[gameIndex] = true
@@ -966,7 +974,8 @@ function autoAssignFormation() {
     gameAssignments.forEach((gameAssignment, quarterIndex) => {
         formation.setCurrentQuarter(quarterIndex + 1)
 
-        gameAssignment.assignments.forEach((assignment, position) => {
+        Object.keys(gameAssignment.assignments).forEach(position => {
+            const assignment = gameAssignment.assignments[position]
             const player = assignment.player
             formation.setPlayer(
                 position,

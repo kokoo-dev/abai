@@ -1926,4 +1926,48 @@ label {
 
 .auto-position-btn:hover {
     background-color: #45a049;
+}
+
+/* 선호하는 포지션만 배정하기 섹션 */
+.preferred-position-section {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.preferred-position-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.preferred-checkbox {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--primary-color);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.preferred-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    cursor: pointer;
+    flex: 1;
+}
+
+.checkbox-text {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.95rem;
+}
+
+.checkbox-description {
+    color: #666;
+    font-size: 0.85rem;
+    line-height: 1.4;
 } 
