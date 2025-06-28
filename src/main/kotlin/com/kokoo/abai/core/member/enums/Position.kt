@@ -1,7 +1,7 @@
 package com.kokoo.abai.core.member.enums
 
 enum class Position {
-    CF, SS,
+    CF,
     LW, RW,
     AM, CM, CDM,
     RB, LB,

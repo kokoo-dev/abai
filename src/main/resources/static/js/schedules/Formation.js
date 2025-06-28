@@ -3,7 +3,6 @@ export class Formation {
     #currentQuarter = 1
     #positions = {
         CF: 'CF',
-        SS: 'SS',
         LW: 'LW',
         RW: 'RW',
         AM: 'AM',
@@ -138,7 +137,7 @@ export class Formation {
             {
                 row: 2,
                 col: 1,
-                position: this.#positions.SS
+                position: this.#positions.AM
             },
             {
                 row: 3,
