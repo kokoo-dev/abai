@@ -2,6 +2,7 @@ package com.kokoo.abai.web
 
 import com.kokoo.abai.core.faq.service.FaqCategoryService
 import com.kokoo.abai.core.faq.service.FaqService
+import com.kokoo.abai.core.member.service.MemberService
 import com.kokoo.abai.core.notice.service.NoticeCategoryService
 import com.kokoo.abai.core.notice.service.NoticeService
 import org.springframework.stereotype.Controller
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 @Controller
 @RequestMapping("/see-more")
 class SeeMoreWebController(
+    private val memberService: MemberService,
     private val faqService: FaqService,
     private val faqCategoryService: FaqCategoryService,
     private val noticeService: NoticeService,
@@ -22,6 +24,7 @@ class SeeMoreWebController(
 
     @GetMapping("")
     fun seeMore(model: Model): String {
+        model.addAttribute("positions", memberService.getPositions())
 
         return "see-more/see-more"
     }

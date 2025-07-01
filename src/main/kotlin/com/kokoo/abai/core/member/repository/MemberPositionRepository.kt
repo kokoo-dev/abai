@@ -5,12 +5,14 @@ import com.kokoo.abai.core.member.domain.Member
 import com.kokoo.abai.core.member.domain.MemberPosition
 import com.kokoo.abai.core.common.dto.CursorRequest
 import com.kokoo.abai.core.member.enums.MemberStatus
+import com.kokoo.abai.core.member.enums.Position
 import com.kokoo.abai.core.member.row.MemberPositionRow
 import com.kokoo.abai.core.member.row.MemberWithPositionRow
 import com.kokoo.abai.core.member.row.toMemberPositionRow
 import com.kokoo.abai.core.member.row.toMemberWithPositionRow
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
@@ -40,6 +42,9 @@ class MemberPositionRepository {
     }.map { it.toMemberPositionRow() }
 
     fun delete(id: Long) = MemberPosition.deleteWhere { MemberPosition.id eq id }
+    fun delete(memberId: Long, positions: List<Position>) = MemberPosition.deleteWhere {
+        (MemberPosition.memberId eq memberId) and (position inList positions)
+    }
 
     fun findById(id: Long): MemberPositionRow? = MemberPosition.selectAll()
         .where { MemberPosition.id eq id }
@@ -52,7 +57,7 @@ class MemberPositionRepository {
             Member.uniformNumber,
             MemberPosition.position
         )
-        .where { Member.status eq MemberStatus.ACTIVATED}
+        .where { Member.status eq MemberStatus.ACTIVATED }
         .map { it.toMemberWithPositionRow() }
 
     fun findByMemberId(memberId: Long): List<MemberPositionRow> = MemberPosition

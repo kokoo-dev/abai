@@ -14,47 +14,46 @@
         <div class="see-more-section">
             <div class="card profile-card">
                 <div class="profile-header">
-                    <div class="profile-name">김축구</div>
-                    <div class="profile-position">FW</div>
+                    <div class="profile-name">프로필</div>
                 </div>
 
                 <form class="profile-form">
                     <div class="form-group">
-                        <label for="username">이름</label>
-                        <input type="text" id="username" name="username" value="김축구" class="form-control">
+                        <label for="name">이름</label>
+                        <input type="text" id="name" name="name" value="" class="form-control">
                     </div>
                     <div class="form-group">
-                        <label for="phoneNumber">연락처</label>
-                        <input type="tel" id="phoneNumber" name="phoneNumber" value="010-1234-5678" class="form-control">
+                        <label>선호 포지션</label>
+                        <div class="position-checkboxes">
+                            <div th:each="position: ${positions}" class="position-checkbox-item">
+                                <input type="checkbox" th:id="'position-' + ${position.value}" name="positions" th:value="${position.value}" class="position-checkbox">
+                                <label th:for="'position-' + ${position.value}" class="position-label" th:text="${position.value}"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="height">키 (cm)</label>
+                            <input type="number" id="height" name="height" value="" class="form-control" min="100" max="250">
+                        </div>
+                        <div class="form-group">
+                            <label for="weight">몸무게 (kg)</label>
+                            <input type="number" id="weight" name="weight" value="" class="form-control" min="30" max="200">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="left-foot">왼발</label>
+                            <input type="number" id="left-foot" name="leftFoot" value="" class="form-control" min="1" max="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="right-foot">오른발</label>
+                            <input type="number" id="right-foot" name="rightFoot" value="" class="form-control" min="1" max="5">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="position">포지션</label>
-                        <select id="position" name="position" class="form-control">
-                            <option value="GK">골키퍼 (GK)</option>
-                            <option value="DF">수비수 (DF)</option>
-                            <option value="MF">미드필더 (MF)</option>
-                            <option value="FW" selected>공격수 (FW)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">이메일</label>
-                        <input type="email" id="email" name="email" value="soccer@example.com" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="birthdate">생년월일</label>
-                        <input type="date" id="birthdate" name="birthdate" value="1995-05-15" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="address">주소</label>
-                        <input type="text" id="address" name="address" value="서울시 강남구" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="bio">자기소개</label>
-                        <textarea id="bio" name="bio" class="form-control" rows="3">안녕하세요. 축구를 좋아하는 김축구입니다. 주로 공격수로 뛰고 있으며 골 넣는 것을 좋아합니다.</textarea>
-                    </div>
-                    <div class="form-group checkbox-group">
-                        <input type="checkbox" id="notifications" name="notifications" checked>
-                        <label for="notifications">알림 수신</label>
+                        <label for="birthday">생년월일</label>
+                        <input type="date" id="birthday" name="birthday" value="" class="form-control">
                     </div>
                     <button type="submit" class="btn save-btn">저장하기</button>
                 </form>

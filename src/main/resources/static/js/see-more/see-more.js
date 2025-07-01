@@ -20,21 +20,13 @@ const loginHistoryButton = document.getElementById('login-history-button')
 const logoutButton = document.querySelector('.logout-btn')
 
 document.addEventListener('DOMContentLoaded', function() {
-    
+    my.getProfile()
 })
 
 profileForm.addEventListener('submit', function(e) {
     e.preventDefault()
 
-    // 폼 데이터 수집
-    const formData = new FormData(this)
-    const userData = {}
-
-    for (const [key, value] of formData.entries()) {
-        userData[key] = value
-    }
-
-    // TODO update
+    my.saveProfile()
 })
 
 changePasswordButton.addEventListener('click', function() {
@@ -174,4 +166,72 @@ function showError(fieldId, message) {
     errorDiv.textContent = message
     errorDiv.classList.add('show')
     field.focus()
+}
+
+const my = {
+    isSaveEnabled: false,
+    preferredPositions: [],
+    originalPositions: [],
+    getProfile() {
+        ApiClient.request({
+            url: `/v1/my/profile`,
+            method: 'GET',
+            onSuccess: (response) => {
+                my.setProfileInput(response)
+            }
+        })
+    },
+    saveProfile() {
+        if (!my.isSaveEnabled) {
+            return
+        }
+
+        my.isSaveEnabled = false
+
+        const requestBody = {}
+        const elements = profileForm.elements
+        for (let element of elements) {
+            if (!element.name) {
+                continue
+            }
+
+            requestBody[element.name] = element.value
+        }
+
+        delete requestBody.positions
+
+        const currentPositions = Array.from(document.querySelectorAll('.position-checkbox'))
+            .filter(it => it.checked)
+            .map(it => it.value)
+
+        requestBody.deletePositions = my.originalPositions.filter(it => !currentPositions.includes(it))
+        requestBody.createPositions = currentPositions.filter(it => !my.originalPositions.includes(it))
+
+        ApiClient.request({
+            url: `/v1/my/profile`,
+            method: 'POST',
+            params: requestBody,
+            onSuccess: (response) => {
+                my.setProfileInput(response)
+                ToastMessage.success('프로필이 저장되었습니다.')
+            }
+        })
+    },
+    setProfileInput(response) {
+        profileForm.reset()
+
+        document.getElementById('name').value = response.name
+        document.getElementById('height').value = response.height
+        document.getElementById('weight').value = response.weight
+        document.getElementById('left-foot').value = response.leftFoot
+        document.getElementById('right-foot').value = response.rightFoot
+        document.getElementById('birthday').value = response.birthday
+
+        response.positions.forEach(it => {
+            document.getElementById(`position-${it.position}`).checked = true
+        })
+
+        my.originalPositions = response.positions.map(it => it.position)
+        my.isSaveEnabled = true
+    }
 }
