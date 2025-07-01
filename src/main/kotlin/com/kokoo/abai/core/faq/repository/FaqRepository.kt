@@ -1,6 +1,7 @@
 package com.kokoo.abai.core.faq.repository
 
 import com.kokoo.abai.core.faq.domain.Faq
+import com.kokoo.abai.core.faq.domain.FaqCategory
 import com.kokoo.abai.core.faq.row.FaqRow
 import com.kokoo.abai.core.faq.row.toFaqRow
 import org.jetbrains.exposed.sql.*
@@ -34,7 +35,8 @@ class FaqRepository {
         .where { Faq.id eq id }
         .singleOrNull()?.toFaqRow()
 
-    fun findAll(): List<FaqRow> = Faq.selectAll()
+    fun findAll(): List<FaqRow> = Faq.innerJoin(FaqCategory)
+        .selectAll()
         .orderBy(Faq.id to SortOrder.DESC)
         .map { it.toFaqRow() }
 

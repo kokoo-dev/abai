@@ -84,6 +84,8 @@
 .faq-answer p {
   margin: 0;
   line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .action-buttons {

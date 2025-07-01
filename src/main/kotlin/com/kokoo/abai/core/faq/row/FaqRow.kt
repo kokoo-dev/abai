@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 data class FaqRow(
     val id: Long = 0,
     val categoryId: Long,
+    val category: FaqCategoryRow? = null,
     val question: String,
     val answer: String,
     val createdAt: LocalDateTime? = LocalDateTime.now(),
@@ -16,6 +17,7 @@ data class FaqRow(
 fun ResultRow.toFaqRow() = FaqRow(
     id = this[Faq.id],
     categoryId = this[Faq.categoryId],
+    category = this.toFaqCategoryRow(),
     question = this[Faq.question],
     answer = this[Faq.answer],
     createdAt = this[Faq.createdAt],
