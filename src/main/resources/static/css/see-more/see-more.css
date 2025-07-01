@@ -414,3 +414,181 @@ input:checked + .slider:before {
 .error-message.show {
     display: block;
 }
+
+/* 로그인 기록 모달 스타일 */
+.login-history-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.login-history-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.login-history-modal .modal-content {
+    background-color: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.login-history-modal .modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+}
+
+.login-history-modal .modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.login-history-modal .close {
+    color: #aaa;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.login-history-modal .close:hover,
+.login-history-modal .close:focus {
+    color: #666;
+    background-color: #f0f0f0;
+}
+
+.login-history-modal .modal-body {
+    padding: 0;
+    max-height: calc(80vh - 80px);
+    overflow: hidden;
+}
+
+.login-history-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.login-history-table {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 400px;
+}
+
+.login-history-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.login-history-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+}
+
+.login-history-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid var(--border-color);
+    background-color: #f8f9fa;
+}
+
+.login-history-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    color: #495057;
+}
+
+.login-history-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.login-history-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.login-history-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.load-more-container {
+    padding: 1rem;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    background-color: #f8f9fa;
+}
+
+.load-more-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.load-more-btn:hover {
+    background-color: #2980b9;
+}
+
+.load-more-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .login-history-modal .modal-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+    
+    .login-history-table {
+        max-height: 300px;
+    }
+    
+    .login-history-table th,
+    .login-history-table td {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .login-history-modal .modal-header {
+        padding: 1rem;
+    }
+    
+    .login-history-modal .modal-header h3 {
+        font-size: 1.1rem;
+    }
+}

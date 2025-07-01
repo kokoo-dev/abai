@@ -14,7 +14,8 @@ import kotlin.text.Charsets.UTF_8
 class SecurityConfig(
     private val customUserDetailsService: CustomUserDetailsService,
     private val authEntryPoint: DelegatingAuthenticationEntryPoint,
-    private val accessDeniedHandler: DelegatingAccessDeniedHandler
+    private val accessDeniedHandler: DelegatingAccessDeniedHandler,
+    private val customAuthenticationSuccessHandler: CustomAuthenticationSuccessHandler
 ) {
 
     @Bean
@@ -38,6 +39,7 @@ class SecurityConfig(
                 form
                     .loginPage("/login")
                     .defaultSuccessUrl("/", false)
+                    .successHandler(customAuthenticationSuccessHandler)
                     .failureUrl("/login?message=${URLEncoder().encode("접속 정보를 다시 확인해 주세요.", UTF_8)}")
                     .permitAll()
             }

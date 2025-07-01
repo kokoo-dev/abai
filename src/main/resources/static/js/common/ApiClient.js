@@ -92,6 +92,8 @@ export default class ApiClient {
     }
 
     static #onDefaultError(error) {
+        console.error(error)
+
         const message = error?.response?.message ?? '잠시 후 다시 시도해 주세요.'
         ToastMessage.error(message)
     }

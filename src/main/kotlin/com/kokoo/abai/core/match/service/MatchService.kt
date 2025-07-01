@@ -109,7 +109,7 @@ class MatchService(
         val lastId = matches.contents.lastOrNull()
             ?.let { MatchCursorId(matchAt = it.matchAt.atOffset(ZoneOffset.UTC), id = it.id) }
 
-        return CursorResponse.Companion.of(matches, lastId) { it.toResponse() }
+        return CursorResponse.of(matches, lastId) { it.toResponse() }
     }
 
     @Transactional(readOnly = true)

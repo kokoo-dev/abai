@@ -144,6 +144,35 @@
         </div>
     </div>
 
+    <!-- 로그인 기록 모달 -->
+    <div id="login-history-modal" class="login-history-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>로그인 기록</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="login-history-container">
+                    <div class="login-history-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>접속 시간</th>
+                                    <th>IP 주소</th>
+                                </tr>
+                            </thead>
+                            <tbody id="login-history-tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="load-more-container" id="load-more-container">
+                        <button class="btn load-more-btn" id="load-more-btn">더 보기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
 
     <script type="module" th:src="@{/js/see-more/see-more.js}" defer></script>

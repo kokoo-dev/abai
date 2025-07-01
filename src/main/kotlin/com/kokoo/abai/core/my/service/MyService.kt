@@ -3,12 +3,17 @@ package com.kokoo.abai.core.my.service
 import com.kokoo.abai.common.error.ErrorCode
 import com.kokoo.abai.common.exception.BusinessException
 import com.kokoo.abai.common.extension.getPrincipalOrThrow
+import com.kokoo.abai.core.common.dto.CursorRequest
+import com.kokoo.abai.core.common.dto.CursorResponse
 import com.kokoo.abai.core.member.dto.*
+import com.kokoo.abai.core.member.repository.LoginHistoryRepository
 import com.kokoo.abai.core.member.repository.MemberAttributeRepository
 import com.kokoo.abai.core.member.repository.MemberPositionRepository
 import com.kokoo.abai.core.member.repository.MemberRepository
 import com.kokoo.abai.core.member.row.MemberPositionRow
+import com.kokoo.abai.core.member.dto.LoginHistoryResponse
 import com.kokoo.abai.core.my.dto.MyProfileSaveRequest
+import com.kokoo.abai.core.member.dto.toResponse
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional
 class MyService(
     private val memberRepository: MemberRepository,
     private val memberAttributeRepository: MemberAttributeRepository,
-    private val memberPositionRepository: MemberPositionRepository
+    private val memberPositionRepository: MemberPositionRepository,
+    private val loginHistoryRepository: LoginHistoryRepository
 ) {
     @Transactional
     fun saveProfile(request: MyProfileSaveRequest): MemberResponse {
@@ -55,5 +61,14 @@ class MyService(
                 position.toResponse()
             }
         }
+    }
+
+    @Transactional(readOnly = true)
+    fun getLoginHistory(request: CursorRequest<Long>): CursorResponse<LoginHistoryResponse, Long> {
+        val memberId = SecurityContextHolder.getContext().getPrincipalOrThrow().id
+        val histories = loginHistoryRepository.findByMemberId(memberId, request.lastId, request.size)
+        val lastId = histories.contents.lastOrNull()?.id
+        
+        return CursorResponse.of(histories, lastId) { it.toResponse() }
     }
 }
