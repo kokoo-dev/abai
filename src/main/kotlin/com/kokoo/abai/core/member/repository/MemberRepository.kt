@@ -97,4 +97,12 @@ class MemberRepository {
             .andWhere { birthdayMMDD lessEq futureMMDD }
             .map { it.toMemberRow() }
     }
+
+    fun countByStatus(status: MemberStatus): Long {
+        val countAlias = Count(Member.id).alias("count")
+
+        return Member.select(countAlias)
+            .where { Member.status eq status }
+            .single()[countAlias]
+    }
 }

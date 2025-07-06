@@ -16,6 +16,9 @@ const copyAddressButton = document.querySelector('.copy-address-btn')
 // 쿼터
 const quarterTabs = document.querySelectorAll('.quarter-tab')
 
+// 참여 현황 쿼터 탭
+const quarterParticipationTabs = document.querySelectorAll('.quarter-tab-participation')
+
 // 편집, 삭제 버튼
 const editButton = document.querySelector('.edit-btn')
 const deleteButton = document.querySelector('.delete-btn')
@@ -28,10 +31,12 @@ const confirmBtn = completeMatchModal.querySelector('.confirm-btn')
 const playerStatsContainer = document.getElementById('player-stats-container')
 
 let formation = null
+let allPlayers = []
 const memberPlayers = []
 const guestPlayers = []
 const currentMemberId = parseInt(document.getElementById('current-member-id').value)
 
+// DOM 로드 시 참여 현황 탭 초기화
 document.addEventListener('DOMContentLoaded', function () {
     match.getMembersAndGuests()
 })
@@ -83,6 +88,20 @@ quarterTabs.forEach(tab => {
 
         // 포메이션 렌더링
         renderFormation(currentFormation)
+    })
+})
+
+// 참여 현황 쿼터 탭 클릭 이벤트
+quarterParticipationTabs.forEach(tab => {
+    tab.addEventListener('click', function () {
+        const quarter = parseInt(this.dataset.quarter)
+
+        // 현재 활성화된 탭 변경
+        document.querySelector('.quarter-tab-participation.active').classList.remove('active')
+        this.classList.add('active')
+
+        // 쿼터별 참여 현황 표시
+        participation.showQuarterParticipation(quarter)
     })
 })
 
@@ -412,6 +431,17 @@ const match = {
                 const formations = response.map(response => response.formation)
                 formation.initQuarters(formations)
 
+                // 모든 선수에 quarters 정보 초기화
+                allPlayers = [...memberPlayers, ...guestPlayers]
+                allPlayers.forEach(player => {
+                    player.quarters = [
+                        { playing: false },
+                        { playing: false },
+                        { playing: false },
+                        { playing: false }
+                    ]
+                })
+
                 response.forEach((item, index) => {
                     let includeQuarterCurrentUser = false
 
@@ -420,15 +450,22 @@ const match = {
 
                     item.positions.forEach(position => {
                         const isGuest = position.playerType === 'GUEST'
+                        const playerId = isGuest ? position.guestId : position.memberId
 
                         formation.setPlayer(
                             position.position,
                             {
-                                id: isGuest ? position.guestId : position.memberId,
+                                id: playerId,
                                 type: position.playerType,
                                 name: position.playerName
                             }
                         )
+
+                        // 선수의 쿼터별 참여 정보 업데이트
+                        const player = allPlayers.find(p => p.id === playerId)
+                        if (player) {
+                            player.quarters[quarter - 1].playing = true
+                        }
 
                         // 현재 로그인한 유저의 참여 쿼터 체크
                         if (!isGuest && position.memberId === currentMemberId) {
@@ -443,6 +480,9 @@ const match = {
                 })
                 formation.setCurrentQuarter(1)
                 renderFormation(formation.getFormation())
+
+                // 멤버 정보 불러온 후 참여 정보 초기화
+                participation.loadParticipationData()
             }
         })
     },
@@ -484,5 +524,140 @@ const match = {
                 location.reload()
             }
         })
+    }
+}
+
+const participation = {
+    loadParticipationData() {
+        // 전체 참여 현황 요약 업데이트
+        participation.updateParticipationSummary()
+
+        // 쿼터별 참여 현황 업데이트
+        participation.updateQuarterParticipation()
+
+        // 개인별 참여 현황 업데이트
+        participation.updateIndividualParticipation()
+    },
+    updateParticipationSummary() {
+        const totalMemberCount = document.getElementById('total-member-count').value
+        // 멤버 참여율 계산
+        const participationRate = memberPlayers.length > 0 ? Math.round((memberPlayers.length / totalMemberCount) * 100) : 0
+
+        // DOM 업데이트
+        document.getElementById('member-participants').textContent = `${memberPlayers.length} / ${allPlayers.length}`
+        document.getElementById('guest-participants').textContent = `${guestPlayers.length} / ${allPlayers.length}`
+        document.getElementById('participation-rate').textContent = `${participationRate}%`
+    },
+    updateQuarterParticipation() {
+        // 각 쿼터별 참여 현황 업데이트
+        for (let quarter = 1; quarter <= 4; quarter++) {
+            participation.updateQuarterContent(quarter)
+        }
+
+        // 첫 번째 쿼터 표시
+        participation.showQuarterParticipation(1)
+    },
+    updateQuarterContent(quarter) {
+        const quarterContentNode = CommonUtils.getTemplateNode('quarter-content-template')
+        const quarterContent = quarterContentNode.querySelector('.quarter-content')
+        quarterContent.id = `quarter-${quarter}-content`
+        if (quarter === 1) {
+            quarterContent.classList.add('active')
+        }
+
+        const playingList = quarterContentNode.querySelector('.participation-player-list')
+        allPlayers.filter(player =>
+            player.quarters && player.quarters[quarter - 1] && player.quarters[quarter - 1].playing
+        ).forEach(player => {
+            const playerItem = participation.createPlayerListItem(player)
+            playingList.appendChild(playerItem)
+        })
+
+        const restingList = quarterContentNode.querySelector('.rest-player-list')
+        allPlayers.filter(player =>
+            !player.quarters || !player.quarters[quarter - 1] || !player.quarters[quarter - 1].playing
+        ).forEach(player => {
+            const playerItem = participation.createPlayerListItem(player)
+            restingList.appendChild(playerItem)
+        })
+
+        document.querySelector('.quarter-participation').appendChild(quarterContentNode)
+    },
+    createPlayerListItem(player) {
+        const playerItem = CommonUtils.getTemplateNode('participation-player-item-template')
+        playerItem.querySelector('.player-number').textContent = player.number || 0
+        playerItem.querySelector('.player-name').textContent = player.name
+
+        return playerItem
+    },
+    showQuarterParticipation(quarter) {
+        // 모든 쿼터 컨텐츠 숨기기
+        document.querySelectorAll('.quarter-content').forEach(content => {
+            content.classList.remove('active')
+        })
+
+        // 선택된 쿼터 컨텐츠 표시
+        document.getElementById(`quarter-${quarter}-content`).classList.add('active')
+    },
+    updateIndividualParticipation() {
+        const container = document.getElementById('individual-stats-container')
+        container.innerHTML = ''
+
+        allPlayers.forEach(player => {
+            const playerCard = participation.createIndividualStatCard(player)
+            container.appendChild(playerCard)
+        })
+    },
+    createIndividualStatCard(player) {
+        // 참여 쿼터 수 계산
+        const participatingQuarters = player.quarters ?
+            player.quarters.filter(quarter => quarter.playing).length : 0
+
+        const card = CommonUtils.getTemplateNode('individual-stat-card-template')
+        card.querySelector('.player-name').textContent = player.name
+        card.querySelector('.player-number').textContent = `#${player.number || 0}`
+        card.querySelector('.participation-count').textContent = participatingQuarters
+        card.querySelector('.participation-time').textContent = participation.formatMinutes(participatingQuarters * 30)
+
+        // 쿼터별 참여 현황 바 생성
+        const quarterBars = participation.createQuarterParticipationBars(player)
+        const bars = card.querySelector('.quarter-participation-bars')
+        quarterBars.forEach(bar => bars.appendChild(bar))
+
+        return card
+    },
+    createQuarterParticipationBars(player) {
+        const barsHtml = []
+
+        for (let quarter = 1; quarter <= 4; quarter++) {
+            const isPlaying = player.quarters && player.quarters[quarter - 1] && player.quarters[quarter - 1].playing
+
+            const quarterBar = CommonUtils.getTemplateNode('quarter-bar-template')
+            quarterBar.querySelector('.quarter-bar-label').textContent = `${quarter}쿼터`
+
+            const barFill = quarterBar.querySelector('.quarter-bar-fill')
+
+            if (isPlaying) {
+                barFill.classList.add('active')
+            }
+
+            quarterBar.querySelector('.quarter-bar-value').textContent = isPlaying ? '참여' : '휴식'
+
+            barsHtml.push(quarterBar)
+        }
+
+        return barsHtml
+    },
+    formatMinutes(totalMinutes) {
+        if (totalMinutes < 60) {
+            return `${totalMinutes}분`;
+        }
+
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+
+        return minutes === 0
+            ? `${hours}시간`
+            : `${hours}시간 ${minutes}분`;
     }
 }

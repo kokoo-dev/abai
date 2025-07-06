@@ -30,6 +30,7 @@ class MatchRepository {
                 it[goalsAgainst] = row.goalsAgainst
                 it[assist] = row.assist
                 it[deleted] = row.deleted
+                it[totalMemberCount] = row.totalMemberCount
                 it[updatedAt] = LocalDateTime.now()
             }
             findById(id)!!
@@ -46,6 +47,7 @@ class MatchRepository {
                 it[goalsFor] = row.goalsFor
                 it[goalsAgainst] = row.goalsAgainst
                 it[assist] = row.assist
+                it[totalMemberCount] = row.totalMemberCount
             }.resultedValues!!.first()
             findById(result[Match.id])!!
         }

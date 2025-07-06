@@ -81,6 +81,9 @@ class MemberService(
     @Transactional(readOnly = true)
     fun getUpcomingBirthdays() = memberRepository.findUpcomingBirthdays().map { it.toResponse() }
 
+    @Transactional(readOnly = true)
+    fun getActivatedMemberCount() = memberRepository.countByStatus(MemberStatus.ACTIVATED)
+
     fun getPositionGroups(): List<PositionGroupResponse> =
         PositionGroup.entries
             .map {

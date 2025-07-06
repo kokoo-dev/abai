@@ -55,4 +55,9 @@ class MemberApiController(
     fun getPositions(): ResponseEntity<List<EnumResponse>> {
         return ResponseEntity.ok(memberService.getPositions())
     }
+
+    @GetMapping("/counts")
+    fun getMemberCount(): ResponseEntity<Long> {
+        return ResponseEntity.ok(memberService.getActivatedMemberCount())
+    }
 }

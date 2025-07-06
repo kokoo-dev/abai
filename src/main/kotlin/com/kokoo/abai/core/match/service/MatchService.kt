@@ -17,6 +17,8 @@ import com.kokoo.abai.core.match.repository.MatchPositionRepository
 import com.kokoo.abai.core.match.repository.MatchRepository
 import com.kokoo.abai.core.match.row.MatchGuestRow
 import com.kokoo.abai.core.match.row.MatchMemberRow
+import com.kokoo.abai.core.member.enums.MemberStatus
+import com.kokoo.abai.core.member.repository.MemberRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -30,12 +32,16 @@ class MatchService(
     private val matchGuestRepository: MatchGuestRepository,
     private val matchFormationRepository: MatchFormationRepository,
     private val matchPositionRepository: MatchPositionRepository,
-    private val guestPositionRepository: GuestPositionRepository
+    private val guestPositionRepository: GuestPositionRepository,
+    private val memberRepository: MemberRepository,
 ) {
 
     @Transactional
     fun create(request: MatchRequest): MatchResponse {
-        val savedMatch = matchRepository.save(request.toRow())
+        val saveRow = request.toRow().apply {
+            totalMemberCount = memberRepository.countByStatus(MemberStatus.ACTIVATED).toInt() // 생성 시에만 당시 인원수 입력
+        }
+        val savedMatch = matchRepository.save(saveRow)
         val matchId = savedMatch.id
 
         saveMatchDetails(matchId, request)
@@ -52,6 +58,7 @@ class MatchService(
             goalsFor = match.goalsFor
             goalsAgainst = match.goalsAgainst
             assist = match.assist
+            totalMemberCount = match.totalMemberCount
         }
 
         val savedMatch = matchRepository.save(saveRow, matchId)

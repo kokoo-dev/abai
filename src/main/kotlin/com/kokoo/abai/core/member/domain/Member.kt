@@ -18,5 +18,4 @@ object Member : BaseTable("member") {
     val rightFoot = integer("right_foot")
 
     override val primaryKey = PrimaryKey(id)
-
 }

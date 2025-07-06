@@ -41,6 +41,7 @@
         <div class="tabs">
             <button class="tab-btn active" data-tab="lineup">라인업</button>
             <button class="tab-btn" data-tab="record">개인 기록</button>
+            <button class="tab-btn" data-tab="participation">참여 현황</button>
             <button class="tab-btn" data-tab="stats">통계</button>
         </div>
 
@@ -69,6 +70,61 @@
             <div class="card">
                 <h3 class="section-title">개인 기록</h3>
                 <div class="record-stats-grid" id="record-wrapper">
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="participation">
+            <div class="card">
+                <h3 class="section-title">참여 현황</h3>
+                
+                <!-- 전체 참여율 요약 -->
+                <div class="participation-summary">
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-value" id="member-participants">0</div>
+                            <div class="summary-label">멤버 참여 인원</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-value" id="guest-participants">0</div>
+                            <div class="summary-label">용병 참여 인원</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-value" id="participation-rate">0%</div>
+                            <div class="summary-label">멤버 참여율</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 쿼터별 참여 현황 -->
+                <div class="quarter-participation">
+                    <h4 class="subsection-title">쿼터별 참여 현황</h4>
+                    <div class="quarter-tabs-participation">
+                        <button class="quarter-tab-participation active" data-quarter="1">1쿼터</button>
+                        <button class="quarter-tab-participation" data-quarter="2">2쿼터</button>
+                        <button class="quarter-tab-participation" data-quarter="3">3쿼터</button>
+                        <button class="quarter-tab-participation" data-quarter="4">4쿼터</button>
+                    </div>
+                </div>
+
+                <!-- 개인별 참여 현황 -->
+                <div class="individual-participation">
+                    <h4 class="subsection-title">개인별 참여 현황</h4>
+                    <div class="individual-stats-grid" id="individual-stats-container">
+                    </div>
                 </div>
             </div>
         </div>
@@ -176,12 +232,84 @@
         </div>
     </template>
 
+    <template id="quarter-content-template">
+        <div class="quarter-content">
+            <div class="participation-lists">
+                <div class="participating-players">
+                    <h5>참여 선수</h5>
+                    <div class="player-list participation-player-list" id="quarter-1-playing">
+                    </div>
+                </div>
+                <div class="resting-players">
+                    <h5>휴식 선수</h5>
+                    <div class="player-list rest-player-list" id="quarter-1-resting">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="quarter-bar-template">
+        <div class="quarter-bar">
+            <div class="quarter-bar-label"></div>
+            <div class="quarter-bar-progress">
+                <div class="quarter-bar-fill"></div>
+            </div>
+            <div class="quarter-bar-value"></div>
+        </div>
+    </template>
+
+    <template id="participation-player-item-template">
+        <div class="player-list-item">
+            <div class="player-number">0</div>
+            <div class="player-name">홍길동</div>
+        </div>
+    </template>
+
+    <template id="individual-stat-card-template">
+        <div class="individual-stat-card">
+            <div class="individual-stat-header">
+                <div class="individual-stat-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="individual-stat-info">
+                    <h4 class="player-name"></h4>
+                    <div class="player-number"></div>
+                </div>
+            </div>
+            <div class="individual-stat-details">
+                <div class="individual-stat-item">
+                    <div class="stat-value participation-count">1</div>
+                    <div class="stat-label">참여 쿼터</div>
+                </div>
+                <div class="individual-stat-item">
+                    <div class="stat-value participation-time">60분</div>
+                    <div class="stat-label">총 출전 시간</div>
+                </div>
+            </div>
+            <div class="quarter-participation-bars">
+
+            </div>
+        </div>
+    </template>
+
+    <template id="quarter-bar-template">
+        <div class="quarter-bar">
+            <div class="quarter-bar-label">1쿼터</div>
+            <div class="quarter-bar-progress">
+                <div class="quarter-bar-fill"></div>
+            </div>
+            <div class="quarter-bar-value">참여</div>
+        </div>
+    </template>
+
     <th:block th:replace="~{schedules/position-template :: positionTemplateFragment}"></th:block>
 
     <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
 
     <input type="hidden" id="match-id" name="match-id" th:value="${id}">
     <input type="hidden" id="current-member-id" th:value="${#authentication.principal.id}">
+    <input type="hidden" id="total-member-count" th:value="${match.totalMemberCount}">
 
     <script type="module" th:src="@{/js/schedules/match-detail.js}" defer></script>
 </body>

@@ -21,6 +21,7 @@ data class MatchRow(
     var goalsAgainst: Int,
     var assist: Int,
     val deleted: Boolean = false,
+    var totalMemberCount: Int = 0,
     val createdAt: LocalDateTime? = LocalDateTime.now(),
     val updatedAt: LocalDateTime? = LocalDateTime.now()
 ) {
@@ -51,6 +52,7 @@ fun ResultRow.toMatchRow() = MatchRow(
     goalsFor = this[Match.goalsFor],
     goalsAgainst = this[Match.goalsAgainst],
     assist = this[Match.assist],
+    totalMemberCount = this[Match.totalMemberCount],
     createdAt = this[Match.createdAt],
     updatedAt = this[Match.updatedAt]
 ) 

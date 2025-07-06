@@ -22,6 +22,7 @@ object Match : BaseTable("match") {
     val goalsAgainst = integer("goals_against").default(0)
     val assist = integer("assist").default(0)
     val deleted = bool("deleted").default(false)
+    val totalMemberCount = integer("total_member_count").default(0)
 
     override val primaryKey = PrimaryKey(id)
 
