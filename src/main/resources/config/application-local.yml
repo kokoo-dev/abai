@@ -7,3 +7,6 @@ spring:
     generate-ddl: true
   thymeleaf:
     cache: false
+
+server:
+  port: 7989

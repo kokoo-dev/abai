@@ -28,6 +28,14 @@ class RecordApiController(
         return ResponseEntity.ok(recordService.getSummary(startDate, endDate))
     }
 
+    @GetMapping("/attendance-rate")
+    fun getAttendanceRate(
+        @RequestParam(name = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") startDate: LocalDate,
+        @RequestParam(name = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") endDate: LocalDate
+    ): ResponseEntity<Double> {
+        return ResponseEntity.ok(recordService.getAttendanceRate(startDate, endDate))
+    }
+
     @GetMapping("/goal-ranks")
     fun getGoalRanks(
         @RequestParam(name = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") startDate: LocalDate,

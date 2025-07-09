@@ -2,6 +2,7 @@ package com.kokoo.abai.core.record.service
 
 import com.kokoo.abai.common.error.ErrorCode
 import com.kokoo.abai.common.exception.BusinessException
+import com.kokoo.abai.common.extension.toSearchEndDateTime
 import com.kokoo.abai.common.extension.toSearchStartDateTime
 import com.kokoo.abai.core.match.repository.MatchMemberRepository
 import com.kokoo.abai.core.match.repository.MatchRepository
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import kotlin.math.pow
+import kotlin.math.round
 
 @Service
 class RecordService(
@@ -26,8 +29,32 @@ class RecordService(
 
         return matchRepository.sumByMatchAtBetween(
             startAt = startDate.toSearchStartDateTime(),
-            endAt = endDate.toSearchStartDateTime(),
+            endAt = endDate.toSearchEndDateTime(),
         ).toResponse()
+    }
+
+    @Transactional(readOnly = true)
+    fun getAttendanceRate(startDate: LocalDate, endDate: LocalDate): Double {
+        val startAt = startDate.toSearchStartDateTime()
+        val endAt = endDate.toSearchEndDateTime()
+
+        val totalMember = matchRepository.findByMatchAtBetween(
+            startAt = startAt,
+            endAt = endAt
+        ).sumOf { it.totalMemberCount }
+
+        val totalMatchMember = matchMemberRepository.countByMatchAtBetween(startAt, endAt)
+
+        if (totalMember == 0 || totalMatchMember == 0L) {
+            return 0.0
+        }
+
+        val factor = 10.0.pow(2)
+        return round(
+            totalMatchMember.toDouble()
+                .div(totalMember)
+                .times(100) * factor
+        ) / factor
     }
 
     @Transactional(readOnly = true)
@@ -36,7 +63,7 @@ class RecordService(
 
         return matchMemberRepository.topGoalsByMatchAtBetween(
             startAt = startDate.toSearchStartDateTime(),
-            endAt = endDate.toSearchStartDateTime(),
+            endAt = endDate.toSearchEndDateTime(),
             limit = 3
         ).map { it.toResponse() }
     }
@@ -47,7 +74,7 @@ class RecordService(
 
         return matchMemberRepository.topAssistsByMatchAtBetween(
             startAt = startDate.toSearchStartDateTime(),
-            endAt = endDate.toSearchStartDateTime(),
+            endAt = endDate.toSearchEndDateTime(),
             limit = 3
         ).map { it.toResponse() }
     }
@@ -58,7 +85,7 @@ class RecordService(
 
         return matchMemberRepository.findAllByMatchAtBetween(
             startAt = startDate.toSearchStartDateTime(),
-            endAt = endDate.toSearchStartDateTime()
+            endAt = endDate.toSearchEndDateTime()
         ).map { it.toResponse() }
     }
 

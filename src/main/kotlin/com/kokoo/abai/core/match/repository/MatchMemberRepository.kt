@@ -175,6 +175,19 @@ class MatchMemberRepository {
             .map { it.toMemberRecordRow(record) }
     }
 
+    fun countByMatchAtBetween(
+        startAt: LocalDateTime,
+        endAt: LocalDateTime
+    ): Long {
+        return MatchMember.innerJoin(Match)
+            .select(
+                MatchMember.idCount,
+            )
+            .where { Match.matchAt.between(startAt, endAt) }
+            .andWhere { Match.deleted eq false }
+            .single()[MatchMember.idCount]
+    }
+
     private fun topGoalsOrAssistsSubQuery(
         startAt: LocalDateTime,
         endAt: LocalDateTime

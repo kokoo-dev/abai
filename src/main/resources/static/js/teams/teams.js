@@ -265,6 +265,7 @@ function applyAbsoluteDateFilter(startDate, endDate) {
 // 데이터에 날짜 범위 필터 적용 함수
 function applyDateRangeToData(startDate, endDate) {
     record.getSummary(startDate, endDate)
+    record.getAttendanceRate(startDate, endDate)
     record.getGoalRanks(startDate, endDate)
     record.getAssistRanks(startDate, endDate)
     record.getAllPlayers(startDate, endDate)
@@ -453,6 +454,17 @@ const record = {
                 document.getElementById('summary-goals-for').textContent = response.goalsFor
                 document.getElementById('summary-goals-against').textContent = response.goalsAgainst
                 document.getElementById('summary-assist').textContent = response.assist
+            }
+        })
+    },
+    getAttendanceRate(startDate, endDate) {
+        ApiClient.request({
+            url: '/v1/records/attendance-rate',
+            method: 'GET',
+            params: { startDate, endDate },
+            onSuccess: (response) => {
+                document.getElementById('attendance-rate-value').textContent = `${response}%`
+                document.getElementById('attendance-chart-fill').style.width = `${response}%`
             }
         })
     },
