@@ -5,6 +5,7 @@ import com.kokoo.abai.core.match.domain.Match
 import com.kokoo.abai.core.match.domain.MatchMember
 import com.kokoo.abai.core.member.domain.Member
 import com.kokoo.abai.core.common.dto.CursorRequest
+import com.kokoo.abai.core.match.enums.MatchStatus
 import com.kokoo.abai.core.match.row.MatchMemberRow
 import com.kokoo.abai.core.match.row.toMatchMemberRow
 import com.kokoo.abai.core.record.row.AssistRankRow
@@ -154,6 +155,7 @@ class MatchMemberRepository {
             )
             .where { Match.matchAt.between(startAt, endAt) }
             .andWhere { Match.deleted eq false }
+            .andWhere { Match.status eq MatchStatus.COMPLETED }
             .groupBy(MatchMember.memberId)
             .alias("record")
 
@@ -185,6 +187,7 @@ class MatchMemberRepository {
             )
             .where { Match.matchAt.between(startAt, endAt) }
             .andWhere { Match.deleted eq false }
+            .andWhere { Match.status eq MatchStatus.COMPLETED }
             .single()[MatchMember.idCount]
     }
 
@@ -199,6 +202,7 @@ class MatchMemberRepository {
         )
         .where { Match.matchAt.between(startAt, endAt) }
         .andWhere { Match.deleted eq false }
+        .andWhere { Match.status eq MatchStatus.COMPLETED }
         .groupBy(MatchMember.memberId)
         .alias("top")
 

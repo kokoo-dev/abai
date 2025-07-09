@@ -87,12 +87,21 @@ class MatchRepository {
         return Slice(contents, contents.size, hasNext)
     }
 
-    fun findByMatchAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): List<MatchRow> = Match.selectAll()
+    fun findByMatchAtBetweenAndStatus(
+        startAt: LocalDateTime,
+        endAt: LocalDateTime,
+        status: MatchStatus? = null
+    ): List<MatchRow> = Match.selectAll()
         .where { Match.matchAt.between(startAt, endAt) }
         .andWhere { Match.deleted eq false }
+        .andWhere { equalStatus(status) }
         .map { it.toMatchRow() }
 
-    fun sumByMatchAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): MatchSummaryRow = Match
+    fun sumByMatchAtBetweenAndStatus(
+        startAt: LocalDateTime,
+        endAt: LocalDateTime,
+        status: MatchStatus? = null
+    ): MatchSummaryRow = Match
         .select(
             Match.idCount,
             Match.goalsForSum,
@@ -100,7 +109,7 @@ class MatchRepository {
             Match.assistSum
         )
         .where { Match.matchAt.between(startAt, endAt) }
-        .andWhere { Match.status eq MatchStatus.COMPLETED }
+        .andWhere { equalStatus(status) }
         .andWhere { Match.deleted eq false }
         .single()
         .toMatchSummaryRow()

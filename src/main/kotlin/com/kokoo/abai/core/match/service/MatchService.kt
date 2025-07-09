@@ -125,7 +125,7 @@ class MatchService(
 
     @Transactional(readOnly = true)
     fun getMatchForSchedule(startDate: LocalDate, endDate: LocalDate): List<MatchResponse> =
-        matchRepository.findByMatchAtBetween(
+        matchRepository.findByMatchAtBetweenAndStatus(
             startDate.toSearchStartDateTime(),
             endDate.toSearchEndDateTime()
         ).map { it.toResponse() }
@@ -158,7 +158,7 @@ class MatchService(
 
     @Transactional(readOnly = true)
     fun getGroupByResult(startDate: LocalDate, endDate: LocalDate): Map<MatchResult, Int> {
-        return matchRepository.findByMatchAtBetween(
+        return matchRepository.findByMatchAtBetweenAndStatus(
             startDate.toSearchStartDateTime(),
             endDate.toSearchEndDateTime()
         )

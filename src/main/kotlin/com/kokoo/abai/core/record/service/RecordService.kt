@@ -4,6 +4,7 @@ import com.kokoo.abai.common.error.ErrorCode
 import com.kokoo.abai.common.exception.BusinessException
 import com.kokoo.abai.common.extension.toSearchEndDateTime
 import com.kokoo.abai.common.extension.toSearchStartDateTime
+import com.kokoo.abai.core.match.enums.MatchStatus
 import com.kokoo.abai.core.match.repository.MatchMemberRepository
 import com.kokoo.abai.core.match.repository.MatchRepository
 import com.kokoo.abai.core.record.dto.AssistRankResponse
@@ -27,9 +28,10 @@ class RecordService(
     fun getSummary(startDate: LocalDate, endDate: LocalDate): MatchSummaryResponse {
         validateDate(startDate, endDate)
 
-        return matchRepository.sumByMatchAtBetween(
+        return matchRepository.sumByMatchAtBetweenAndStatus(
             startAt = startDate.toSearchStartDateTime(),
             endAt = endDate.toSearchEndDateTime(),
+            status = MatchStatus.COMPLETED
         ).toResponse()
     }
 
@@ -38,9 +40,10 @@ class RecordService(
         val startAt = startDate.toSearchStartDateTime()
         val endAt = endDate.toSearchEndDateTime()
 
-        val totalMember = matchRepository.findByMatchAtBetween(
+        val totalMember = matchRepository.findByMatchAtBetweenAndStatus(
             startAt = startAt,
-            endAt = endAt
+            endAt = endAt,
+            status = MatchStatus.COMPLETED
         ).sumOf { it.totalMemberCount }
 
         val totalMatchMember = matchMemberRepository.countByMatchAtBetween(startAt, endAt)
