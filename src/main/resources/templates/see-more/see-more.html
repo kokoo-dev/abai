@@ -102,6 +102,18 @@
                 </div>
             </div>
 
+            <!-- 관리자 전용 섹션 -->
+            <div class="card admin-card" sec:authorize="hasAnyAuthority('SERVICE_ADMIN', 'TEAM_ADMIN')">
+                <h3 class="section-title">관리자 메뉴</h3>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">사용자 관리</div>
+                        <div class="setting-desc">사용자 등록, 수정, 삭제 관리</div>
+                    </div>
+                    <a href="/admin/members" class="btn view-btn">관리</a>
+                </div>
+            </div>
+
             <div class="logout-section">
                 <form id="logout-form" class="logout-form" action="/logout" method="post" onsubmit="return false">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/admin/members.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="page-title">
+            <h1>사용자 관리</h1>
+            <p class="page-subtitle">팀원 정보를 관리할 수 있습니다.</p>
+        </div>
+
+        <!-- 액션 버튼 -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="add-member-btn">
+                <i class="fas fa-plus"></i> 새 사용자 추가
+            </button>
+        </div>
+
+        <!-- 검색 및 필터 -->
+        <div class="search-filter-section">
+            <div class="search-box">
+                <input type="text" placeholder="사용자 이름 또는 로그인 ID 검색" class="search-input" id="search-input">
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 사용자 목록 -->
+        <div class="member-list-section">
+            <div class="member-table-container">
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>이름</th>
+                            <th>로그인 ID</th>
+                            <th>등번호</th>
+                            <th>상태</th>
+                            <th>생년월일</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="member-tbody">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 사용자 추가/수정 모달 -->
+    <div id="member-modal" class="member-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">새 사용자 추가</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="member-form" class="member-form">
+                <input type="hidden" id="member-id" name="id">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="login-id">로그인 ID *</label>
+                        <input type="text" id="login-id" name="loginId" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">이름 *</label>
+                        <input type="text" id="name" name="name" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="uniform-number">등번호 *</label>
+                        <input type="number" id="uniform-number" name="uniformNumber" class="form-control" min="1" max="99" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">상태 *</label>
+                        <select id="status" name="status" class="form-control" required>
+                            <option th:each="status : ${memberStatuses}"
+                                    th:value="${status.value}"
+                                    th:text="${status.name}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>포지션</label>
+                    <div class="modal-checkboxes">
+                        <div th:each="positionGroup : ${positionGroups}" class="modal-checkbox-group">
+                            <div class="modal-checkbox-group-title" th:text="${positionGroup.group}"></div>
+                            <div class="modal-checkbox-items">
+                                <div th:each="position : ${positionGroup.positions}" class="modal-checkbox-item position-checkbox-item">
+                                    <input type="checkbox" th:id="'position-' + ${position}" name="positions" th:value="${position}" class="modal-checkbox position-checkbox">
+                                    <label th:for="'position-' + ${position}" class="modal-label" th:text="${position}"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="birthday">생년월일</label>
+                    <input type="date" id="birthday" name="birthday" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>권한</label>
+                    <div class="modal-checkboxes">
+                        <div class="modal-checkbox-items">
+                            <div th:each="role: ${lowerRoles}" class="modal-checkbox-item role-checkbox-item">
+                                <input type="checkbox" th:id="'role-' + ${role.value}" name="roles" th:value="${role.value}" class="modal-checkbox role-checkbox">
+                                <label th:for="'role-' + ${role.value}" class="modal-label" th:text="${role.name}"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn cancel-btn" id="cancel-member">취소</button>
+                    <button type="submit" class="btn save-btn" id="save-member">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 사용자 삭제 확인 모달 -->
+    <div id="withdraw-modal" class="withdraw-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>사용자 삭제</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>정말로 이 사용자를 삭제하시겠습니까?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn cancel-btn" id="cancel-delete">취소</button>
+                <button class="btn delete-btn" id="confirm-withdrawal">탈퇴</button>
+            </div>
+        </div>
+    </div>
+
+    <template id="members-template">
+        <tr>
+            <td class="name"></td>
+            <td class="login-id"></td>
+            <td class="uniform-number"></td>
+            <td class="status-badge-td">
+                <span class="status-badge"></span>
+            </td>
+            <td class="birthday"></td>
+            <td class="action-buttons-cell">
+                <button class="btn btn-warning btn-sm edit-member-btn">
+                    <i class="fas fa-edit"></i> 수정
+                </button>
+                <button class="btn btn-danger btn-sm withdraw-member-btn">
+                    <i class="fas fa-trash"></i> 탈퇴
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
+
+    <script type="module" th:src="@{/js/admin/members.js}" defer></script>
+</body>
+</html> 

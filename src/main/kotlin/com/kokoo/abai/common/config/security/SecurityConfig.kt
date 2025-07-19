@@ -1,5 +1,6 @@
 package com.kokoo.abai.common.config.security
 
+import com.kokoo.abai.core.member.enums.RoleId
 import org.apache.catalina.util.URLEncoder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -24,9 +25,8 @@ class SecurityConfig(
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers("/login").anonymous()
-//                    .requestMatchers("/schedules", "/schedules/**").hasAuthority(RoleName.SERVICE_ADMIN.name)
-//                    .requestMatchers("/teams", "/teams/**").hasAnyAuthority(RoleId.TEAM_ADMIN.name, RoleId.TEAM_USER.name)
-//                    .requestMatchers("/api/test").hasAnyAuthority(RoleName.TEAM_ADMIN.name)
+                    .requestMatchers("/admin/**").hasAnyAuthority(RoleId.SERVICE_ADMIN.name, RoleId.TEAM_ADMIN.name)
+                    .requestMatchers("/api/v1/admin/members/**").hasAnyAuthority(RoleId.SERVICE_ADMIN.name, RoleId.TEAM_ADMIN.name)
                     .requestMatchers("/api/**").authenticated()
                     .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // resource
                     .requestMatchers("/health-check").anonymous() // health check

@@ -4,6 +4,7 @@ import com.kokoo.abai.core.member.domain.MemberAttribute
 import com.kokoo.abai.core.member.row.MemberAttributeRow
 import com.kokoo.abai.core.member.row.toMemberAttributeRow
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -35,4 +36,6 @@ class MemberAttributeRepository {
     fun findById(id: Long): MemberAttributeRow? = MemberAttribute.selectAll()
         .where { MemberAttribute.id eq id }
         .singleOrNull()?.toMemberAttributeRow()
+
+    fun delete(id: Long) = MemberAttribute.deleteWhere { MemberAttribute.id eq id }
 } 

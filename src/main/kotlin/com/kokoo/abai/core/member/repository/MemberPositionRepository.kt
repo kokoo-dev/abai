@@ -46,6 +46,8 @@ class MemberPositionRepository {
         (MemberPosition.memberId eq memberId) and (position inList positions)
     }
 
+    fun deleteByMemberId(memberId: Long) = MemberPosition.deleteWhere { MemberPosition.memberId eq memberId }
+
     fun findById(id: Long): MemberPositionRow? = MemberPosition.selectAll()
         .where { MemberPosition.id eq id }
         .singleOrNull()?.toMemberPositionRow()

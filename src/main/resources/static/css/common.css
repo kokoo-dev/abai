@@ -131,6 +131,14 @@ button {
   margin-bottom: 0.75rem;
 }
 
+.admin-card {
+  border-left: 4px solid #dc3545;
+}
+
+.admin-card .section-title {
+  color: #dc3545;
+}
+
 .section-title {
   font-size: 1.25rem;
   font-weight: 500;

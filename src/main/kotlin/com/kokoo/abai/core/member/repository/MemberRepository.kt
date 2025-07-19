@@ -7,6 +7,7 @@ import com.kokoo.abai.core.member.enums.Position
 import com.kokoo.abai.core.member.row.MemberRow
 import com.kokoo.abai.core.member.row.toMemberRow
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.CurrentDate
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
@@ -58,13 +59,43 @@ class MemberRepository {
         this[Member.rightFoot] = it.rightFoot
     }.map { it.toMemberRow() }
 
+    fun updateStatus(id: Long, status: MemberStatus) = Member.update({ Member.id eq id }) {
+        it[Member.status] = status
+    }
+
+    fun delete(id: Long) {
+        Member.deleteWhere { Member.id eq id }
+    }
+
     fun findById(id: Long): MemberRow? = Member.selectAll()
         .where { Member.id eq id }
         .singleOrNull()?.toMemberRow()
 
-    fun findByLoginId(loginId: String): MemberRow? = Member.selectAll()
+    fun findByLoginIdAndStatus(
+        loginId: String,
+        status: MemberStatus = MemberStatus.ACTIVATED
+    ): MemberRow? = Member.selectAll()
         .where { Member.loginId eq loginId }
+        .andWhere { Member.status eq status }
         .singleOrNull()?.toMemberRow()
+
+    fun existsByLoginIdAndStatus(
+        loginId: String,
+        status: MemberStatus = MemberStatus.ACTIVATED
+    ): Boolean = Member.selectAll()
+        .where { Member.loginId eq loginId }
+        .andWhere { Member.status eq status }
+        .limit(1)
+        .any()
+
+    fun existsByUniformNumberAndStatus(
+        uniformNumber: Int,
+        status: MemberStatus = MemberStatus.ACTIVATED
+    ): Boolean = Member.selectAll()
+        .where { Member.uniformNumber eq uniformNumber }
+        .andWhere { Member.status eq status }
+        .limit(1)
+        .any()
 
     fun findByStatus(status: MemberStatus): List<MemberRow> = Member.selectAll()
         .where { Member.status eq status }
@@ -87,9 +118,12 @@ class MemberRepository {
             }
         }
 
-        val birthdayMMDD = CustomFunction("TO_CHAR", TextColumnType(), Member.birthday, stringLiteral("MM-DD"))
-        val todayMMDD = CustomFunction("TO_CHAR", TextColumnType(), CurrentDate, stringLiteral("MM-DD"))
-        val futureMMDD = CustomFunction("TO_CHAR", TextColumnType(), sevenDaysLater, stringLiteral("MM-DD"))
+        val birthdayMMDD =
+            CustomFunction("TO_CHAR", TextColumnType(), Member.birthday, stringLiteral("MM-DD"))
+        val todayMMDD =
+            CustomFunction("TO_CHAR", TextColumnType(), CurrentDate, stringLiteral("MM-DD"))
+        val futureMMDD =
+            CustomFunction("TO_CHAR", TextColumnType(), sevenDaysLater, stringLiteral("MM-DD"))
 
         return Member.selectAll()
             .where { Member.status eq MemberStatus.ACTIVATED }
@@ -105,4 +139,16 @@ class MemberRepository {
             .where { Member.status eq status }
             .single()[countAlias]
     }
+
+    fun findByUniformNumberAndStatus(
+        uniformNumber: Int,
+        status: MemberStatus = MemberStatus.ACTIVATED
+    ): MemberRow? = Member.selectAll()
+        .where { Member.uniformNumber eq uniformNumber }
+        .andWhere { Member.status eq status }
+        .singleOrNull()?.toMemberRow()
+
+    fun findAll(): List<MemberRow> = Member.selectAll()
+        .orderBy(Member.uniformNumber to SortOrder.ASC)
+        .map { it.toMemberRow() }
 }

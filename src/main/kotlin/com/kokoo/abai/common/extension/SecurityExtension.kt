@@ -7,6 +7,11 @@ import com.kokoo.abai.core.member.enums.RoleId
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContext
 
+fun SecurityContext.getMyHighestRole(): RoleId = this.getPrincipalOrThrow()
+    .authorities
+    .map { enumValueOf<RoleId>(it.authority) }
+    .minBy { it.level }
+
 fun SecurityContext.getPrincipalOrThrow(): CustomUserDetails {
     val authentication = this.authentication
     if (authentication == null || !authentication.isAuthenticated) {

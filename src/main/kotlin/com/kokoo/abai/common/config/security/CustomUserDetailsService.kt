@@ -17,7 +17,7 @@ class CustomUserDetailsService(
 
     @Transactional
     override fun loadUserByUsername(username: String): UserDetails {
-        val member = memberRepository.findByLoginId(username)
+        val member = memberRepository.findByLoginIdAndStatus(username)
             ?: throw UsernameNotFoundException("User not found: $username")
 
         val roles = memberRoleRepository.findByMemberId(member.id)

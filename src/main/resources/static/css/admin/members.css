@@ -1,0 +1,520 @@
+/* 관리자 사용자 관리 페이지 스타일 */
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 100px; /* 하단 탭과 겹치지 않도록 여백 추가 */
+}
+
+.page-title {
+    margin-bottom: 30px;
+}
+
+.page-title h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.page-subtitle {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* 액션 버튼 */
+.action-buttons {
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #1e7e34;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+}
+
+.btn:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    border: 1px solid #999;
+    opacity: 0.6;
+}
+
+/* 검색 및 필터 */
+.search-filter-section {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 300px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+    font-size: 14px;
+}
+
+.search-btn {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+}
+
+.filter-section {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+/* 사용자 목록 테이블 */
+.member-list-section {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 80px; /* 하단 탭 높이 + 여백 */
+}
+
+.member-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+    width: 100%;
+    max-width: 100%;
+}
+
+.member-table-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.member-table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.member-table-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.member-table-container::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+.member-table {
+    width: 100%;
+    min-width: 800px; /* 테이블 최소 너비를 늘려서 확실히 스크롤이 생기도록 */
+    border-collapse: collapse;
+    table-layout: fixed; /* 테이블 레이아웃 고정 */
+}
+
+.member-table th,
+.member-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.member-table th:nth-child(1),
+.member-table td:nth-child(1) {
+    width: 120px; /* 이름 */
+    min-width: 120px;
+}
+
+.member-table th:nth-child(2),
+.member-table td:nth-child(2) {
+    width: 150px; /* 로그인 ID */
+    min-width: 150px;
+}
+
+.member-table th:nth-child(3),
+.member-table td:nth-child(3) {
+    width: 100px; /* 등번호 */
+    min-width: 100px;
+}
+
+.member-table th:nth-child(4),
+.member-table td:nth-child(4) {
+    width: 100px; /* 상태 */
+    min-width: 100px;
+}
+
+.member-table th:nth-child(5),
+.member-table td:nth-child(5) {
+    width: 120px; /* 생년월일 */
+    min-width: 120px;
+}
+
+.member-table th:nth-child(6),
+.member-table td:nth-child(6) {
+    width: 200px; /* 관리 버튼들 */
+    min-width: 200px;
+}
+
+.member-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+}
+
+.member-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.member-table td {
+    vertical-align: middle;
+}
+
+/* 상태 배지 */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    display: inline-block;
+    min-width: 50px;
+    text-align: center;
+}
+
+.status-activated {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-inactivated {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* 관리 버튼 */
+.action-buttons-cell {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* 모달 스타일 */
+.member-modal,
+.withdraw-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.member-modal.active,
+.withdraw-modal.active {
+    display: block;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
+/* 폼 스타일 */
+.member-form {
+    padding: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    flex: 1;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.password-requirements {
+    margin-top: 5px;
+    color: #666;
+    font-size: 12px;
+}
+
+/* 포지션 체크박스 */
+.modal-checkboxes {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #f8f9fa;
+}
+
+.modal-checkbox-group {
+    margin-bottom: 15px;
+}
+
+.modal-checkbox-group:last-child {
+    margin-bottom: 0;
+}
+
+.modal-checkbox-group-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.modal-checkbox-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.modal-checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.modal-checkbox {
+    margin: 0;
+}
+
+.modal-label {
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* 폼 액션 */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.save-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+/* 삭제 모달 */
+.withdraw-modal .modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .search-filter-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box {
+        min-width: auto;
+    }
+    
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+    
+    .member-table th,
+    .member-table td {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    .member-table {
+        min-width: 800px; /* 모바일에서도 최소 너비 유지 */
+    }
+    
+    .container {
+        padding: 15px;
+        padding-bottom: 100px;
+    }
+    
+    .action-buttons-cell {
+        flex-direction: column;
+        gap: 3px;
+    }
+    
+    .member-table-container {
+        overflow-x: auto; /* 모바일에서도 가로 스크롤 보장 */
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* 로딩 상태 */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* 빈 상태 */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: #ddd;
+} 

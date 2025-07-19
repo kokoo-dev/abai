@@ -8,9 +8,14 @@ import com.kokoo.abai.core.member.dto.*
 import com.kokoo.abai.core.member.enums.MemberStatus
 import com.kokoo.abai.core.member.enums.Position
 import com.kokoo.abai.core.member.enums.PositionGroup
+import com.kokoo.abai.core.member.enums.RoleId
+import com.kokoo.abai.core.member.row.MemberRow
+import com.kokoo.abai.core.member.row.MemberPositionRow
+import com.kokoo.abai.core.member.row.MemberRoleRow
 import com.kokoo.abai.core.member.repository.MemberAttributeRepository
 import com.kokoo.abai.core.member.repository.MemberPositionRepository
 import com.kokoo.abai.core.member.repository.MemberRepository
+import com.kokoo.abai.core.member.repository.MemberRoleRepository
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
@@ -20,7 +25,8 @@ import org.springframework.transaction.annotation.Transactional
 class MemberService(
     private val memberRepository: MemberRepository,
     private val memberPositionRepository: MemberPositionRepository,
-    private val memberAttributeRepository: MemberAttributeRepository
+    private val memberAttributeRepository: MemberAttributeRepository,
+    private val memberRoleRepository: MemberRoleRepository
 ) {
     @Transactional
     fun changePassword(request: PasswordChangeRequest) {
@@ -94,4 +100,7 @@ class MemberService(
 
     fun getPositions(): List<EnumResponse> = Position.entries
         .map { EnumResponse(name = it.name, value = it.name) }
+
+    fun getMemberStatuses() = MemberStatus.entries
+        .map { EnumResponse(name = it.koreanName, value = it.name) }
 }

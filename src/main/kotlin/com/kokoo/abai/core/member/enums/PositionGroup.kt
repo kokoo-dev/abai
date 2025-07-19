@@ -5,6 +5,6 @@ enum class PositionGroup(
 ) {
     FW(listOf(Position.CF)),
     MF(listOf(Position.LW, Position.RW, Position.AM, Position.CM, Position.CDM)),
-    DF(listOf(Position.RB, Position.LB, Position.RB, Position.LB, Position.CB)),
+    DF(listOf(Position.RB, Position.LB, Position.CB)),
     GK(listOf(Position.GK))
 }

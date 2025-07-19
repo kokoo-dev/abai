@@ -12,6 +12,8 @@ enum class ErrorCode(
     EXCEED_RANGE_ONE_YEAR(HttpStatus.BAD_REQUEST.value(), "EXCEED_RANGE_ONE_YEAR", "검색 범위는 최대 1년입니다."),
     ALREADY_ENDED_MATCH(HttpStatus.BAD_REQUEST.value(), "ALREADY_ENDED_MATCH", "이미 종료된 경기입니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST.value(), "INVALID_PASSWORD", "비밀번호를 다시 확인해 주세요."),
+    EXISTS_LOGIN_ID(HttpStatus.BAD_REQUEST.value(), "EXISTS_LOGIN_ID", "이미 존재하는 아이디입니다."),
+    EXISTS_UNIFORM_NUMBER(HttpStatus.BAD_REQUEST.value(), "EXISTS_UNIFORM_NUMBER", "이미 존재하는 등번호입니다."),
 
     // 401
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.name, "인증되지 않은 요청입니다."),
