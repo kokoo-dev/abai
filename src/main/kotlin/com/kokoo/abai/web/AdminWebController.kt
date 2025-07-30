@@ -1,5 +1,6 @@
 package com.kokoo.abai.web
 
+import com.kokoo.abai.core.equipment.service.EquipmentService
 import com.kokoo.abai.core.member.service.MemberService
 import com.kokoo.abai.core.member.service.RoleService
 import org.springframework.stereotype.Controller
@@ -11,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping("/admin")
 class AdminWebController(
     private val memberService: MemberService,
-    private val roleService: RoleService
+    private val roleService: RoleService,
+    private val equipmentService: EquipmentService
 ) {
 
     @GetMapping("/members")
@@ -21,5 +23,14 @@ class AdminWebController(
         model.addAttribute("lowerRoles", roleService.getLowerRoles())
 
         return "admin/members"
+    }
+
+    @GetMapping("/equipments")
+    fun equipments(model: Model): String {
+        model.addAttribute("equipmentTypes", equipmentService.getEquipmentTypes())
+        model.addAttribute("equipmentStatuses", equipmentService.getEquipmentStatuses())
+        model.addAttribute("members", memberService.getActivatedMembers())
+
+        return "admin/equipments"
     }
 } 

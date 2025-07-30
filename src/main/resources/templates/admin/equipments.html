@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="~{fragments/head :: headFragment}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/admin/equipments.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="page-title">
+            <h1>물품 관리</h1>
+            <p class="page-subtitle">팀 물품을 관리할 수 있습니다.</p>
+        </div>
+
+        <!-- 액션 버튼 -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="add-equipment-btn">
+                <i class="fas fa-plus"></i> 새 물품 추가
+            </button>
+        </div>
+
+        <!-- 검색 및 필터 -->
+        <div class="search-filter-section">
+            <div class="search-box">
+                <input type="text" placeholder="물품명 검색" class="search-input" id="search-input">
+                <button class="search-btn" id="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="filter-section">
+                <div class="filter-box">
+                    <select class="filter-select" id="type-filter">
+                        <option value="">전체 유형</option>
+                        <option th:each="type: ${equipmentTypes}"
+                                th:value="${type.value}"
+                                th:text="${type.name}">
+                        </option>
+                    </select>
+                </div>
+                <div class="filter-box">
+                    <select class="filter-select" id="status-filter">
+                        <option value="">전체 상태</option>
+                        <option th:each="status: ${equipmentStatuses}"
+                                th:value="${status.value}"
+                                th:text="${status.name}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 물품 목록 -->
+        <div class="equipment-list-section">
+            <div class="equipment-table-container">
+                <table class="equipment-table">
+                    <thead>
+                        <tr>
+                            <th>아이디</th>
+                            <th>물품명</th>
+                            <th>카테고리</th>
+                            <th>소유자</th>
+                            <th>상태</th>
+                            <th>등록일</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="equipment-tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 물품 추가/수정 모달 -->
+    <div id="equipment-modal" class="equipment-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">새 물품 추가</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="equipment-form" class="equipment-form">
+                <input type="hidden" id="equipment-id" name="id">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">물품명 *</label>
+                        <input type="text" id="name" name="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="type">소유자 *</label>
+                        <select id="owner" name="owner" class="form-control" required>
+                            <option th:each="member: ${members}"
+                                    th:value="${member.id}"
+                                    th:text="${member.name} + ' #' + ${member.uniformNumber}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="type">유형 *</label>
+                        <select id="type" name="type" class="form-control" required>
+                            <option th:each="type: ${equipmentTypes}"
+                                    th:value="${type.value}"
+                                    th:text="${type.name}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">상태 *</label>
+                        <select id="status" name="status" class="form-control" required>
+                            <option th:each="status: ${equipmentStatuses}"
+                                    th:value="${status.value}"
+                                    th:text="${status.name}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">설명</label>
+                    <textarea id="description" name="description" class="form-control" rows="3" placeholder="물품에 대한 추가 설명을 입력하세요"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn cancel-btn" id="cancel-equipment">취소</button>
+                    <button type="submit" class="btn save-btn" id="save-equipment">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 물품 삭제 확인 모달 -->
+    <div id="delete-modal" class="delete-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>물품 삭제</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>정말로 이 물품을 삭제하시겠습니까?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn cancel-btn" id="cancel-delete">취소</button>
+                <button class="btn delete-btn" id="confirm-delete">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <template id="equipment-template">
+        <tr>
+            <td class="id"></td>
+            <td class="name"></td>
+            <td class="type-badge-td">
+                <span class="type-badge"></span>
+            </td>
+            <td class="owner"></td>
+            <td class="status-badge-td">
+                <span class="status-badge"></span>
+            </td>
+            <td class="created-date"></td>
+            <td class="action-buttons-cell">
+                <button class="btn btn-warning btn-sm edit-equipment-btn">
+                    <i class="fas fa-edit"></i> 수정
+                </button>
+                <button class="btn btn-danger btn-sm delete-equipment-btn">
+                    <i class="fas fa-trash"></i> 삭제
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <th:block th:replace="~{fragments/nav :: navFragment}"></th:block>
+
+    <script type="module" th:src="@{/js/admin/equipments.js}" defer></script>
+</body>
+</html> 

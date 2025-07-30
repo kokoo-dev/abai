@@ -26,7 +26,7 @@ class SecurityConfig(
                 auth
                     .requestMatchers("/login").anonymous()
                     .requestMatchers("/admin/**").hasAnyAuthority(RoleId.SERVICE_ADMIN.name, RoleId.TEAM_ADMIN.name)
-                    .requestMatchers("/api/v1/admin/members/**").hasAnyAuthority(RoleId.SERVICE_ADMIN.name, RoleId.TEAM_ADMIN.name)
+                    .requestMatchers("/api/v1/admin/**").hasAnyAuthority(RoleId.SERVICE_ADMIN.name, RoleId.TEAM_ADMIN.name)
                     .requestMatchers("/api/**").authenticated()
                     .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // resource
                     .requestMatchers("/health-check").anonymous() // health check
