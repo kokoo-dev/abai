@@ -144,7 +144,7 @@
         </div>
 
         <div class="action-buttons" sec:authorize="hasAnyAuthority('SERVICE_ADMIN', 'TEAM_ADMIN')">
-            <button class="btn edit-btn">
+            <button th:if="${match.status != T(com.kokoo.abai.core.match.enums.MatchStatus).COMPLETED}" class="btn edit-btn">
                 <i class="fas fa-edit"></i> 경기 정보 수정
             </button>
             <button class="btn delete-btn">
