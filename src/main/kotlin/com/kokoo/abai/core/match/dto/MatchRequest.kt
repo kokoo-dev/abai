@@ -20,6 +20,7 @@ data class MatchRequest(
     val result: MatchResult = MatchResult.READY,
     val goalsFor: Int = 0,
     val goalsAgainst: Int = 0,
+    val opponentOwnGoal: Int = 0,
     val assist: Int = 0,
     val formations: List<MatchFormationRequest> = emptyList(),
 
@@ -39,5 +40,6 @@ fun MatchRequest.toRow() = MatchRow(
     result = this.result,
     goalsFor = this.goalsFor,
     goalsAgainst = this.goalsAgainst,
+    opponentOwnGoal = this.opponentOwnGoal,
     assist = this.assist,
 )

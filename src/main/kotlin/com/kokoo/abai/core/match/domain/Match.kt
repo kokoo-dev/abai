@@ -20,6 +20,7 @@ object Match : BaseTable("match") {
     val result = enumerationByName("result", 30, MatchResult::class).default(MatchResult.READY)
     val goalsFor = integer("goals_for").default(0)
     val goalsAgainst = integer("goals_against").default(0)
+    val opponentOwnGoal = integer("opponent_own_goal").default(0)
     val assist = integer("assist").default(0)
     val deleted = bool("deleted").default(false)
     val totalMemberCount = integer("total_member_count").default(0)

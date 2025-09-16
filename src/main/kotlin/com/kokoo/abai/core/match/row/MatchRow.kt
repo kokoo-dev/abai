@@ -19,16 +19,18 @@ data class MatchRow(
     var result: MatchResult,
     var goalsFor: Int,
     var goalsAgainst: Int,
+    var opponentOwnGoal: Int,
     var assist: Int,
     val deleted: Boolean = false,
     var totalMemberCount: Int = 0,
     val createdAt: LocalDateTime? = LocalDateTime.now(),
     val updatedAt: LocalDateTime? = LocalDateTime.now()
 ) {
-    fun end(goalsFor: Int, goalsAgainst: Int, assist: Int) {
+    fun end(goalsFor: Int, goalsAgainst: Int, opponentOwnGoal: Int, assist: Int) {
         this.status = MatchStatus.COMPLETED
         this.goalsFor = goalsFor
         this.goalsAgainst = goalsAgainst
+        this.opponentOwnGoal = opponentOwnGoal
         this.assist = assist
 
         this.result = when {
@@ -51,6 +53,7 @@ fun ResultRow.toMatchRow() = MatchRow(
     result = this[Match.result],
     goalsFor = this[Match.goalsFor],
     goalsAgainst = this[Match.goalsAgainst],
+    opponentOwnGoal = this[Match.opponentOwnGoal],
     assist = this[Match.assist],
     totalMemberCount = this[Match.totalMemberCount],
     createdAt = this[Match.createdAt],

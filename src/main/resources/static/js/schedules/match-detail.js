@@ -29,6 +29,7 @@ const completeMatchModal = document.getElementById('complete-match-modal')
 const closeModalBtn = completeMatchModal.querySelector('.close-modal')
 const confirmBtn = completeMatchModal.querySelector('.confirm-btn')
 const playerStatsContainer = document.getElementById('player-stats-container')
+const opponentOwnGoalInput = document.getElementById('opponent-own-goal')
 
 let formation = null
 let allPlayers = []
@@ -38,6 +39,9 @@ const currentMemberId = parseInt(document.getElementById('current-member-id').va
 
 // DOM 로드 시 참여 현황 탭 초기화
 document.addEventListener('DOMContentLoaded', function () {
+    match.getDetail((response) => {
+        opponentOwnGoalInput.value = response.opponentOwnGoal || 0
+    })
     match.getMembersAndGuests()
 })
 
@@ -154,6 +158,10 @@ confirmBtn.addEventListener('click', async () => {
     }
 
     match.saveResult()
+})
+
+opponentOwnGoalInput.addEventListener('input', function() {
+    document.getElementById('goals-for').value = sumGoalOrAssist('.goal-input')
 })
 
 // 포메이션 렌더링 함수
@@ -348,9 +356,13 @@ function addModalPlayer(player) {
 }
 
 function sumGoalOrAssist(selector) {
-    return Array.from(document.querySelectorAll(selector))
+    const membersGoal = Array.from(document.querySelectorAll(selector))
         .map(input => parseInt(input.value, 10) || 0)
         .reduce((previous, current) => previous + current, 0)
+
+    const opponentOwnGoal = parseInt(opponentOwnGoalInput.value, 10) || 0
+
+    return membersGoal + opponentOwnGoal
 }
 
 const match = {
@@ -362,6 +374,13 @@ const match = {
             onSuccess: (response) => {
                 location.replace('/schedules/matches')
             }
+        })
+    },
+    getDetail(onSuccess) {
+        ApiClient.request({
+            url: `/v1/matches/${match.id}`,
+            method: 'GET',
+            onSuccess: (response) => onSuccess(response)
         })
     },
     getMembersAndGuests() {
@@ -489,6 +508,7 @@ const match = {
     saveResult() {
         const goalsFor = document.getElementById('goals-for').value
         const goalsAgainst = document.getElementById('goals-against').value
+        const opponentOwnGoal = opponentOwnGoalInput.value
         const assist = Array.from(document.querySelectorAll('.assist-input'))
             .map(input => parseInt(input.value, 10) || 0)
             .reduce((previous, current) => previous + current, 0)
@@ -516,6 +536,7 @@ const match = {
             params: {
                 goalsFor,
                 goalsAgainst,
+                opponentOwnGoal,
                 assist,
                 members: groupedPlayers['MEMBER'],
                 guests: groupedPlayers['GUEST']

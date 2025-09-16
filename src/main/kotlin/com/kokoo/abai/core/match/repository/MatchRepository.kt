@@ -28,6 +28,7 @@ class MatchRepository {
                 it[result] = row.result
                 it[goalsFor] = row.goalsFor
                 it[goalsAgainst] = row.goalsAgainst
+                it[opponentOwnGoal] = row.opponentOwnGoal
                 it[assist] = row.assist
                 it[deleted] = row.deleted
                 it[totalMemberCount] = row.totalMemberCount
@@ -46,6 +47,7 @@ class MatchRepository {
                 it[result] = row.result
                 it[goalsFor] = row.goalsFor
                 it[goalsAgainst] = row.goalsAgainst
+                it[opponentOwnGoal] = row.opponentOwnGoal
                 it[assist] = row.assist
                 it[totalMemberCount] = row.totalMemberCount
             }.resultedValues!!.first()

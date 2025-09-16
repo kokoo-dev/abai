@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty
 data class MatchResultRequest(
     val goalsFor: Int = 0,
     val goalsAgainst: Int = 0,
+    val opponentOwnGoal: Int = 0,
     val assist: Int = 0,
 
     @field:NotEmpty

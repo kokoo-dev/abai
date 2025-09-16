@@ -21,6 +21,7 @@ data class MatchResponse(
     val result: MatchResult,
     val goalsFor: Int,
     val goalsAgainst: Int,
+    val opponentOwnGoal: Int,
     val assist: Int,
     val totalMemberCount: Int
 )
@@ -37,6 +38,7 @@ fun MatchRow.toResponse() = MatchResponse(
     result = this.result,
     goalsFor = this.goalsFor,
     goalsAgainst = this.goalsAgainst,
+    opponentOwnGoal = this.opponentOwnGoal,
     assist = this.assist,
     totalMemberCount = this.totalMemberCount
 )

@@ -303,7 +303,7 @@
     padding: 2px 6px;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    z-index: 9999;
+    z-index: 999;
 }
 
 /* 포메이션 표시 스타일 */
@@ -839,6 +839,38 @@
 .score-separator {
     font-size: 1.5rem;
     font-weight: bold;
+}
+
+/* 상대 자책골 입력 스타일 */
+.own-goal-section {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    padding-top: 1rem;
+}
+
+.own-goal-input {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.own-goal-input label {
+    font-weight: 500;
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+.own-goal-input input {
+    width: 50px;
+    text-align: center;
+    padding: 0.4rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #495057;
 }
 
 /* 선수 기록 섹션 */

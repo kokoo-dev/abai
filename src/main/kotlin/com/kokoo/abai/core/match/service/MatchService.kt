@@ -57,6 +57,7 @@ class MatchService(
             result = match.result
             goalsFor = match.goalsFor
             goalsAgainst = match.goalsAgainst
+            opponentOwnGoal = match.opponentOwnGoal
             assist = match.assist
             totalMemberCount = match.totalMemberCount
         }
@@ -78,7 +79,7 @@ class MatchService(
     @Transactional
     fun saveResult(id: Long, request: MatchResultRequest) {
         val match = matchRepository.findById(id) ?: throw BusinessException(ErrorCode.NOT_FOUND)
-        match.end(request.goalsFor, request.goalsAgainst, request.assist)
+        match.end(request.goalsFor, request.goalsAgainst, request.opponentOwnGoal, request.assist)
 
         request.members.forEach {
             val matchMember = matchMemberRepository.findByMatchIdAndMemberId(id, it.id)
